@@ -4,6 +4,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"encoding/json"
+	"net/http"
 	"os"
 )
 
@@ -50,4 +52,11 @@ func Decrypt(text string) (string, error) {
 	plainText := make([]byte, len(cipherText))
 	cfb.XORKeyStream(plainText, cipherText)
 	return string(plainText), nil
+}
+
+func Response(res any, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		panic(err)
+	}
 }

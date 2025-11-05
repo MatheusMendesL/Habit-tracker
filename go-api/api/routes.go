@@ -3,7 +3,9 @@ package api
 import (
 	"fmt"
 	"go-api/helper"
+	"go-api/response"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -17,14 +19,12 @@ func ControlRoutes() *chi.Mux {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 
-	r.Get("/life", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello, the api is running")
+	r.Get("/api_status", func(w http.ResponseWriter, r *http.Request) {
+		helper.Response(map[string]string{"api_version": os.Getenv("API_VERSION")}, w)
 	})
 
 	r.Route("/user", func(r chi.Router) {
-		r.Get("/get_all_users", func(w http.ResponseWriter, r *http.Request) {
-
-		})
+		r.Get("/get_all_users", response.GetAllUsers)
 
 		r.Get("/get_by_id/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 			id := chi.URLParam(r, "id")
