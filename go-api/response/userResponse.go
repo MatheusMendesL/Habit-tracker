@@ -4,10 +4,9 @@ import (
 	"go-api/core"
 	"go-api/helper"
 	"net/http"
-)
 
-// This send the data to the user, getting that with the core path
-// this is like the controller in MVC
+	"github.com/go-chi/chi"
+)
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	res, err := core.GetAllUsers()
@@ -29,4 +28,19 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	helper.Response(res, w)
 
+}
+
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	id_codified, err := helper.Encrypt(id)
+	if err != nil {
+		panic(err)
+	}
+
+	id_decodified, err := helper.Decrypt(id_codified)
+	if err != nil {
+		panic(err)
+	}
+
+	helper.Response(id_codified+" Decodificado: "+id_decodified, w)
 }
