@@ -19,10 +19,7 @@ func main() {
 	r.Mount("/", api.ControlRoutes())
 
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = ":8080"
-	}
-	fmt.Println("Server running on", port)
+	fmt.Println("Server running!")
 
 	if err := http.ListenAndServe(port, r); err != nil {
 		panic(err)
