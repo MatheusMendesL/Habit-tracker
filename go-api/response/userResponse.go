@@ -12,21 +12,11 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	res, err := core.GetAllUsers()
 
 	if err != nil {
-		panic(err)
+		helper.Response(map[string]string{"Error": "Cannot get the users with the function"}, w, http.StatusBadRequest)
+		return
 	}
 
-	/* users, exist := res[1]
-	if !exist {
-		panic("This user not exists")
-	} */
-
-	// setting the header to the response
-	/* w.Header().Set("Content-Type", "application/json")
-
-	// setting the response
-	json.NewEncoder(w).Encode(res) */
-
-	helper.Response(res, w)
+	helper.Response(res, w, http.StatusOK)
 
 }
 
@@ -34,13 +24,20 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	id_codified, err := helper.Encrypt(id)
 	if err != nil {
-		panic(err)
+		helper.Response(map[string]string{"error": "error to codify"}, w, http.StatusBadRequest)
+		return
 	}
 
 	id_decodified, err := helper.Decrypt(id_codified)
 	if err != nil {
-		panic(err)
+		helper.Response(map[string]string{"error": "error to decodify"}, w, http.StatusBadRequest)
+		return
 	}
 
-	helper.Response(id_codified+" Decodificado: "+id_decodified, w)
+	ids := map[string]string{
+		"Codificado:":   id_codified,
+		"Decodificado:": id_decodified,
+	}
+
+	helper.Response(ids, w, http.StatusOK)
 }

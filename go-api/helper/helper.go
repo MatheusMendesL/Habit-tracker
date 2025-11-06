@@ -54,7 +54,7 @@ func Decrypt(text string) (string, error) {
 	return string(plainText), nil
 }
 
-func Response(res any, w http.ResponseWriter) {
+func Response(res any, w http.ResponseWriter, status int) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		panic(err)
