@@ -10,13 +10,15 @@ import (
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	res, err := core.GetAllUsers()
-
 	if err != nil {
 		helper.Response(map[string]string{"Error": "Cannot get the users with the function"}, w, http.StatusBadRequest)
 		return
 	}
 
-	helper.Response(res, w, http.StatusOK)
+	// this need to be switched on the future, probably don´t use this implementation on a real db
+	for _, user := range res {
+		helper.Response(map[string]string{"message": "Seu nome é: " + user.Name + " e o seu email é: " + user.Email}, w, http.StatusOK)
+	}
 
 }
 

@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 )
@@ -56,7 +57,8 @@ func Decrypt(text string) (string, error) {
 
 func Response(res any, w http.ResponseWriter, status int) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-		panic(err)
+		fmt.Fprintln(w, "error: ", err)
 	}
 }
