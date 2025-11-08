@@ -13,6 +13,11 @@ import (
 // config the errors message
 // config funcs to help
 
+type Response_struct struct {
+	Error string `json:"error,omitempty"`
+	Data  any    `json:"data,omitempty"`
+}
+
 func encode(b []byte) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
@@ -55,10 +60,19 @@ func Decrypt(text string) (string, error) {
 	return string(plainText), nil
 }
 
-func Response(res any, w http.ResponseWriter, status int) {
+func Response(res Response_struct, w http.ResponseWriter, status int) {
 	w.Header().Set("Content-Type", "application/json")
+
+	data, err := json.Marshal(res)
+	if err != nil {
+		fmt.Println("Erro ao fazer marshal no json ", err)
+		Response(Response_struct{Error: "something went wrong"}, w, http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		fmt.Fprintln(w, "error: ", err)
+	if _, err := w.Write(data); err != nil {
+		fmt.Println("erro ao enviar resposta: ", err)
+		return
 	}
 }
