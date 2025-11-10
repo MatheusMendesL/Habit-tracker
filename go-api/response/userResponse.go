@@ -3,6 +3,7 @@ package response
 import (
 	"go-api/core"
 	"go-api/helper"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -26,12 +27,14 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	id_codified, err := helper.Encrypt(id)
 	if err != nil {
+		slog.Error("error to codify", "error", err)
 		helper.Response(helper.Response_struct{Error: "error to codify"}, w, http.StatusBadRequest)
 		return
 	}
 
 	id_decodified, err := helper.Decrypt(id_codified)
 	if err != nil {
+		slog.Error("Erro", "Error: ", "Error to decodify")
 		helper.Response(helper.Response_struct{Error: "error to decodify"}, w, http.StatusBadRequest)
 		return
 	}
