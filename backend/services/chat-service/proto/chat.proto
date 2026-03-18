@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "./pb/chat";
+
+message Test {
+  int32 id = 1;
+  string name = 2;
+}
+
+message TestResponse {
+  int32 test = 1;
+}
+
+service chatService {
+  rpc test(Test) returns (TestResponse);
+}
