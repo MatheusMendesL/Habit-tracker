@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  auth-node:
+    build: ../backend/auth-service-node
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../backend/auth-service-node/.env
+    depends_on:
+      - redis

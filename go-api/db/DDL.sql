@@ -1,3 +1,0 @@
--- Will define the tables of the project
--- It is necessary to do the files of this path
--- And the operation of the db in probably other path with this way
