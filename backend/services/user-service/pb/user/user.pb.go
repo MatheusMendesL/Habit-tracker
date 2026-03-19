@@ -825,6 +825,102 @@ func (x *UnfollowResponse) GetSuccess() bool {
 	return false
 }
 
+type SearchUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Email         *string                `protobuf:"bytes,2,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchUserRequest) Reset() {
+	*x = SearchUserRequest{}
+	mi := &file_proto_user_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchUserRequest) ProtoMessage() {}
+
+func (x *SearchUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchUserRequest.ProtoReflect.Descriptor instead.
+func (*SearchUserRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *SearchUserRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *SearchUserRequest) GetEmail() string {
+	if x != nil && x.Email != nil {
+		return *x.Email
+	}
+	return ""
+}
+
+type SearchUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          []*User                `protobuf:"bytes,1,rep,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchUserResponse) Reset() {
+	*x = SearchUserResponse{}
+	mi := &file_proto_user_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchUserResponse) ProtoMessage() {}
+
+func (x *SearchUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchUserResponse.ProtoReflect.Descriptor instead.
+func (*SearchUserResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SearchUserResponse) GetUser() []*User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_proto_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_proto_rawDesc = "" +
@@ -878,7 +974,15 @@ const file_proto_user_proto_rawDesc = "" +
 	"\runfollowed_id\x18\x01 \x01(\x05R\funfollowedId\x12%\n" +
 	"\x0eunfollowing_id\x18\x02 \x01(\x05R\runfollowingId\",\n" +
 	"\x10UnfollowResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb0\x04\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"Z\n" +
+	"\x11SearchUserRequest\x12\x17\n" +
+	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x19\n" +
+	"\x05email\x18\x02 \x01(\tH\x01R\x05email\x88\x01\x01B\a\n" +
+	"\x05_nameB\b\n" +
+	"\x06_email\"4\n" +
+	"\x12SearchUserResponse\x12\x1e\n" +
+	"\x04user\x18\x01 \x03(\v2\n" +
+	".user.UserR\x04user2\xf1\x04\n" +
 	"\vUserService\x12B\n" +
 	"\vGetUserByID\x12\x18.user.GetUserByIDRequest\x1a\x19.user.GetUserByIDResponse\x12H\n" +
 	"\rListFollowers\x12\x1a.user.ListFollowersRequest\x1a\x1b.user.ListFollowersResponse\x12H\n" +
@@ -888,7 +992,9 @@ const file_proto_user_proto_rawDesc = "" +
 	"\bUnfollow\x12\x15.user.UnfollowRequest\x1a\x16.user.UnfollowResponse\x129\n" +
 	"\bEditUser\x12\x15.user.EditUserRequest\x1a\x16.user.EditUserResponse\x12?\n" +
 	"\n" +
-	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x18.user.DeleteUserResponseB\vZ\t./pb/userb\x06proto3"
+	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x18.user.DeleteUserResponse\x12?\n" +
+	"\n" +
+	"SearchUser\x12\x17.user.SearchUserRequest\x1a\x18.user.SearchUserResponseB\vZ\t./pb/userb\x06proto3"
 
 var (
 	file_proto_user_proto_rawDescOnce sync.Once
@@ -902,7 +1008,7 @@ func file_proto_user_proto_rawDescGZIP() []byte {
 	return file_proto_user_proto_rawDescData
 }
 
-var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_proto_user_proto_goTypes = []any{
 	(*User)(nil),                   // 0: user.User
 	(*GetUserByIDRequest)(nil),     // 1: user.GetUserByIDRequest
@@ -921,33 +1027,38 @@ var file_proto_user_proto_goTypes = []any{
 	(*StartFollowingResponse)(nil), // 14: user.StartFollowingResponse
 	(*UnfollowRequest)(nil),        // 15: user.UnfollowRequest
 	(*UnfollowResponse)(nil),       // 16: user.UnfollowResponse
+	(*SearchUserRequest)(nil),      // 17: user.SearchUserRequest
+	(*SearchUserResponse)(nil),     // 18: user.SearchUserResponse
 }
 var file_proto_user_proto_depIdxs = []int32{
 	0,  // 0: user.GetUserByIDResponse.user:type_name -> user.User
 	0,  // 1: user.ListFollowersResponse.followers:type_name -> user.User
 	0,  // 2: user.ListFollowingResponse.following:type_name -> user.User
 	0,  // 3: user.EditUserResponse.user:type_name -> user.User
-	1,  // 4: user.UserService.GetUserByID:input_type -> user.GetUserByIDRequest
-	3,  // 5: user.UserService.ListFollowers:input_type -> user.ListFollowersRequest
-	5,  // 6: user.UserService.ListFollowing:input_type -> user.ListFollowingRequest
-	9,  // 7: user.UserService.EditPassword:input_type -> user.EditPasswordRequest
-	13, // 8: user.UserService.StartFollowing:input_type -> user.StartFollowingRequest
-	15, // 9: user.UserService.Unfollow:input_type -> user.UnfollowRequest
-	7,  // 10: user.UserService.EditUser:input_type -> user.EditUserRequest
-	11, // 11: user.UserService.DeleteUser:input_type -> user.DeleteUserRequest
-	2,  // 12: user.UserService.GetUserByID:output_type -> user.GetUserByIDResponse
-	4,  // 13: user.UserService.ListFollowers:output_type -> user.ListFollowersResponse
-	6,  // 14: user.UserService.ListFollowing:output_type -> user.ListFollowingResponse
-	10, // 15: user.UserService.EditPassword:output_type -> user.EditPasswordResponse
-	14, // 16: user.UserService.StartFollowing:output_type -> user.StartFollowingResponse
-	16, // 17: user.UserService.Unfollow:output_type -> user.UnfollowResponse
-	8,  // 18: user.UserService.EditUser:output_type -> user.EditUserResponse
-	12, // 19: user.UserService.DeleteUser:output_type -> user.DeleteUserResponse
-	12, // [12:20] is the sub-list for method output_type
-	4,  // [4:12] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	0,  // 4: user.SearchUserResponse.user:type_name -> user.User
+	1,  // 5: user.UserService.GetUserByID:input_type -> user.GetUserByIDRequest
+	3,  // 6: user.UserService.ListFollowers:input_type -> user.ListFollowersRequest
+	5,  // 7: user.UserService.ListFollowing:input_type -> user.ListFollowingRequest
+	9,  // 8: user.UserService.EditPassword:input_type -> user.EditPasswordRequest
+	13, // 9: user.UserService.StartFollowing:input_type -> user.StartFollowingRequest
+	15, // 10: user.UserService.Unfollow:input_type -> user.UnfollowRequest
+	7,  // 11: user.UserService.EditUser:input_type -> user.EditUserRequest
+	11, // 12: user.UserService.DeleteUser:input_type -> user.DeleteUserRequest
+	17, // 13: user.UserService.SearchUser:input_type -> user.SearchUserRequest
+	2,  // 14: user.UserService.GetUserByID:output_type -> user.GetUserByIDResponse
+	4,  // 15: user.UserService.ListFollowers:output_type -> user.ListFollowersResponse
+	6,  // 16: user.UserService.ListFollowing:output_type -> user.ListFollowingResponse
+	10, // 17: user.UserService.EditPassword:output_type -> user.EditPasswordResponse
+	14, // 18: user.UserService.StartFollowing:output_type -> user.StartFollowingResponse
+	16, // 19: user.UserService.Unfollow:output_type -> user.UnfollowResponse
+	8,  // 20: user.UserService.EditUser:output_type -> user.EditUserResponse
+	12, // 21: user.UserService.DeleteUser:output_type -> user.DeleteUserResponse
+	18, // 22: user.UserService.SearchUser:output_type -> user.SearchUserResponse
+	14, // [14:23] is the sub-list for method output_type
+	5,  // [5:14] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_proto_init() }
@@ -956,13 +1067,14 @@ func file_proto_user_proto_init() {
 		return
 	}
 	file_proto_user_proto_msgTypes[7].OneofWrappers = []any{}
+	file_proto_user_proto_msgTypes[17].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_proto_rawDesc), len(file_proto_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

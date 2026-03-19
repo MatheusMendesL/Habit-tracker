@@ -79,6 +79,15 @@ message UnfollowResponse {
   bool success = 1;
 }
 
+message SearchUserRequest {
+  optional string name = 1;
+  optional string email = 2;
+}
+
+message SearchUserResponse {
+  repeated User user = 1;
+}
+
 service UserService {
   rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse);
   rpc ListFollowers(ListFollowersRequest) returns (ListFollowersResponse);
@@ -88,4 +97,5 @@ service UserService {
   rpc Unfollow(UnfollowRequest) returns (UnfollowResponse);
   rpc EditUser(EditUserRequest) returns (EditUserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc SearchUser(SearchUserRequest) returns (SearchUserResponse);
 }
