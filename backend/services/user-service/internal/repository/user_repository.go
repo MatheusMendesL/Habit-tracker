@@ -26,8 +26,24 @@ func (r *UserRepository) FindByID(ctx context.Context, id int32) (*db.User, erro
 	}, nil
 }
 
-func (r *UserRepository) SearchUser(ctx context.Context, name string, email string) (*db.User, error) {
-	// fazer busca no banco, retorno vai pro return
+func (r *UserRepository) SearchUser(ctx context.Context, name string, email string) ([]*db.User, error) {
+	params := db.SearchUserParams{
+		Name:  name,
+		Email: email,
+	}
+	rows, err := r.q.SearchUser(ctx, params)
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*db.User, 0, len(rows))
+	for _, row := range rows {
+		users = append(users, &db.User{
+			ID:    row.ID,
+			Name:  row.Name,
+			Email: row.Email,
+		})
+	}
+	return users, nil
 }

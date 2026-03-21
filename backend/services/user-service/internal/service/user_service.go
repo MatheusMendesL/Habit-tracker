@@ -18,16 +18,6 @@ func (s *UserService) GetUserByID(ctx context.Context, id int32) (*db.User, erro
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *UserService) SearchUser(ctx context.Context, name string, email string) (*db.User, error) {
-	user, err := s.repo.SearchUser(ctx, name, email)
-
-	if err != nil {
-		return &db.User{}, err
-	}
-
-	return &db.User{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
-	}, nil
+func (s *UserService) SearchUser(ctx context.Context, name string, email string) ([]*db.User, error) {
+	return s.repo.SearchUser(ctx, name, email)
 }
