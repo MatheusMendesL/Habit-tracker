@@ -6,8 +6,11 @@ WHERE id = ?;
 -- name: SearchUser :many
 SELECT id, name, email
 FROM users
-WHERE ( ? IS NULL OR name LIKE ? )
-  AND ( ? IS NULL OR email LIKE ? );
+WHERE
+    (name LIKE CONCAT('%', sqlc.arg(name), '%') OR sqlc.arg(name) = '')
+  AND
+    (email LIKE CONCAT('%', sqlc.arg(email), '%') OR sqlc.arg(email) = '')
+    LIMIT 20;
 
 -- name: UpdateUser :exec
 UPDATE users

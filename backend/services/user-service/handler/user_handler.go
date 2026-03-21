@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	pb "shared/pb/user"
 	AppErr "user-service/internal/errors"
 	"user-service/internal/service"
@@ -56,16 +55,30 @@ func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDReques
 }
 
 func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
-	if req.Name == nil || req.Email == nil {
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrNullField.Error())
+	// .GetName() e .GetEmail() retornam "" se o campo for nulo no JSON
+	name := req.GetName()
+	email := req.GetEmail()
+
+	if name == "" && email == "" {
+		return nil, status.Error(codes.InvalidArgument, "Informe nome ou email")
 	}
 
-	users, err := s.userService.SearchUser(ctx, *req.Name, *req.Email)
-
+	users, err := s.userService.SearchUser(ctx, name, email)
 	if err != nil {
-		return nil, ReceiveErrors(err)
+		return nil, err
 	}
 
-	fmt.Print(users)
-	return nil, nil
+	// Mapeia para a resposta do Protobuf
+	var pbUsers []*pb.User
+	for _, u := range users {
+		pbUsers = append(pbUsers, &pb.User{
+			Id:    u.ID,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
+	return &pb.SearchUserResponse{
+		User: pbUsers,
+	}, nil
 }
