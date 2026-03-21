@@ -17,3 +17,7 @@ func NewUserService(r *repository.UserRepository) *UserService {
 func (s *UserService) GetUserByID(ctx context.Context, id int32) (*model.User, error) {
 	return s.repo.FindByID(ctx, id)
 }
+
+func (s *UserService) SearchUser(ctx context.Context, name string, email string) (*model.User, error) {
+	return s.repo.SearchUser(ctx, name, email)
+}
