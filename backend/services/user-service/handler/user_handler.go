@@ -55,7 +55,6 @@ func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDReques
 }
 
 func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
-	// .GetName() e .GetEmail() retornam "" se o campo for nulo no JSON
 	name := req.GetName()
 	email := req.GetEmail()
 
@@ -68,7 +67,6 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 		return nil, err
 	}
 
-	// Mapeia para a resposta do Protobuf
 	var pbUsers []*pb.User
 	for _, u := range users {
 		pbUsers = append(pbUsers, &pb.User{
