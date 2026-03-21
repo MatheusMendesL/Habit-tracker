@@ -47,3 +47,13 @@ func (r *UserRepository) SearchUser(ctx context.Context, name string, email stri
 	}
 	return users, nil
 }
+
+func (r *UserRepository) DeleteUser(ctx context.Context, id int32) error {
+	err := r.q.DeleteUser(ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

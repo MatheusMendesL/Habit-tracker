@@ -80,3 +80,16 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 		User: pbUsers,
 	}, nil
 }
+
+func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	err := s.userService.DeleteUser(ctx, req.UserId)
+	if err != nil {
+		return &pb.DeleteUserResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	return &pb.DeleteUserResponse{
+		Success: true,
+	}, nil
+}
