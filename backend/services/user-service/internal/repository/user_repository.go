@@ -3,8 +3,6 @@ package repository
 import (
 	"context"
 	"user-service/db"
-
-	model "user-service/internal/model"
 )
 
 type UserRepository struct {
@@ -15,17 +13,20 @@ func NewUserRepository(q *db.Queries) *UserRepository {
 	return &UserRepository{q: q}
 }
 
-func (r *UserRepository) FindByID(ctx context.Context, id int32) (*model.User, error) {
-	// vai pegar baseado nos sql q vão ser gerados
+func (r *UserRepository) FindByID(ctx context.Context, id int32) (*db.User, error) {
+	row, err := r.q.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
 
-	return &model.User{
-		ID:    id,
-		Name:  "teste",
-		Email: "teste@email.com",
+	return &db.User{
+		ID:    row.ID,
+		Name:  row.Name,
+		Email: row.Email,
 	}, nil
 }
 
-func (r *UserRepository) SearchUser(ctx context.Context, name string, email string) (*model.User, error) {
+func (r *UserRepository) SearchUser(ctx context.Context, name string, email string) (*db.User, error) {
 	// fazer busca no banco, retorno vai pro return
 
 	return nil, nil
