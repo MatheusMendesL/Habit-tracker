@@ -21,3 +21,7 @@ func (s *UserService) GetUserByID(ctx context.Context, id int32) (*db.User, erro
 func (s *UserService) SearchUser(ctx context.Context, name string, email string) ([]*db.User, error) {
 	return s.repo.SearchUser(ctx, name, email)
 }
+
+func (s *UserService) DeleteUser(ctx context.Context, id int32) error {
+	return s.repo.DeleteUser(ctx, id)
+}
