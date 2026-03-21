@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	pb "shared/pb/user"
@@ -21,8 +22,10 @@ func ReceiveErrors(err error) error {
 	switch {
 	case errors.Is(err, AppErr.ErrInvalidArgument):
 		return status.Error(codes.InvalidArgument, err.Error())
-	case errors.Is(err, AppErr.ErrNotFound) || errors.Is(err, AppErr.ErrNullField):
+	case errors.Is(err, AppErr.ErrNullField):
 		return status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, sql.ErrNoRows):
+		return status.Error(codes.NotFound, AppErr.ErruUserNotFound.Error())
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func Conn() (*sql.DB, *Queries, error) {
-	db, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/habit_tracker")
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/habit_tracker")
 	if err != nil {
 		return nil, nil, err
 	}
