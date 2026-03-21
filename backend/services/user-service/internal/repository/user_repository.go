@@ -2,14 +2,17 @@ package repository
 
 import (
 	"context"
+	"user-service/db"
 
 	model "user-service/internal/model"
 )
 
-type UserRepository struct{}
+type UserRepository struct {
+	q *db.Queries
+}
 
-func NewUserRepository() *UserRepository {
-	return &UserRepository{}
+func NewUserRepository(q *db.Queries) *UserRepository {
+	return &UserRepository{q: q}
 }
 
 func (r *UserRepository) FindByID(ctx context.Context, id int32) (*model.User, error) {

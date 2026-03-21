@@ -6,3 +6,4 @@ backend/services/**/cert/ca-key.pem
 backend/services/**/cert/*-service-ext.cnf
 backend/services/**/cert/*-cert-ext.cnf
 backend/services/**/cert/*-service-key.pem
+backend/services/**/.env
