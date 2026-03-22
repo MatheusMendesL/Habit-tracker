@@ -9,9 +9,7 @@ import (
 	"user-service/internal/repository"
 	"user-service/internal/service"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -42,10 +40,9 @@ func startServer() (err error) {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpcRecovery.UnaryServerInterceptor(),
+		grpc.UnaryInterceptor(
 			grpcZap.UnaryServerInterceptor(logger),
-		)),
+		),
 	)
 
 	pb.RegisterUserServiceServer(grpcServer, userHandler)

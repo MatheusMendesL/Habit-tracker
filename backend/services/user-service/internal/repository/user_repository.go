@@ -57,3 +57,19 @@ func (r *UserRepository) DeleteUser(ctx context.Context, id int32) error {
 
 	return nil
 }
+
+func (r *UserRepository) UpdateUser(ctx context.Context, req db.UpdateUserParams) (*db.User, error) {
+	err := r.q.UpdateUser(ctx, req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := r.FindByID(ctx, req.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

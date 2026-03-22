@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	pb "shared/pb/user"
+	"user-service/db"
 	AppErr "user-service/internal/errors"
 	"user-service/internal/service"
 
@@ -91,5 +92,21 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 
 	return &pb.DeleteUserResponse{
 		Success: true,
+	}, nil
+}
+
+func (s *UserHandler) UpdateUser(ctx context.Context, req db.UpdateUserParams) (*pb.EditUserResponse, error) {
+	user, err := s.userService.UpdateUser(ctx, req)
+
+	if err != nil {
+		return nil, ReceiveErrors(err)
+	}
+
+	return &pb.EditUserResponse{
+		User: &pb.User{
+			Id:    user.ID,
+			Name:  user.Name,
+			Email: user.Email,
+		},
 	}, nil
 }
