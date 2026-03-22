@@ -25,7 +25,7 @@ func ReceiveErrors(err error) error {
 	case errors.Is(err, AppErr.ErrNullField):
 		return status.Error(codes.NotFound, err.Error())
 	case errors.Is(err, sql.ErrNoRows):
-		return status.Error(codes.NotFound, AppErr.ErruUserNotFound.Error())
+		return status.Error(codes.NotFound, AppErr.ErrUserNotFound.Error())
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}
@@ -60,7 +60,7 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 	email := req.GetEmail()
 
 	if name == "" && email == "" {
-		return nil, status.Error(codes.InvalidArgument, "Informe nome ou email")
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInformedIncorrect.Error())
 	}
 
 	users, err := s.userService.SearchUser(ctx, name, email)
