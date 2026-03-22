@@ -25,3 +25,7 @@ func (s *UserService) SearchUser(ctx context.Context, name string, email string)
 func (s *UserService) DeleteUser(ctx context.Context, id int32) error {
 	return s.repo.DeleteUser(ctx, id)
 }
+
+func (s *UserService) UpdateUser(ctx context.Context, user db.UpdateUserParams) (*db.User, error) {
+	return s.repo.UpdateUser(ctx, user)
+}
