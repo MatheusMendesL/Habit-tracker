@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	pb "shared/pb/user"
+	"time"
 	"user-service/db"
 	AppErr "user-service/internal/errors"
 	"user-service/internal/service"
@@ -18,6 +19,12 @@ type UserHandler struct {
 	pb.UnimplementedUserServiceServer
 	userService *service.UserService
 	logger      *zap.Logger
+}
+
+const defaultTimeout = 3 * time.Second
+
+func (s *UserHandler) withTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(ctx, defaultTimeout)
 }
 
 func ReceiveErrors(err error) error {
@@ -41,6 +48,9 @@ func NewUserHandler(s *service.UserService, logger *zap.Logger) *UserHandler {
 }
 
 func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDRequest) (*pb.GetUserByIDResponse, error) {
+
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
 
 	if req.UserId == 0 {
 		s.logger.Warn("Invalid User id",
@@ -72,6 +82,9 @@ func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDReques
 }
 
 func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest) (*pb.SearchUserResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	name := req.GetName()
 	email := req.GetEmail()
 
@@ -108,6 +121,9 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 }
 
 func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	userId := req.GetUserId()
 
 	if userId == 0 {
@@ -139,6 +155,9 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 }
 
 func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (*pb.EditUserResponse, error) {
+
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
 
 	if req.Name == nil && req.Email == nil {
 		s.logger.Warn("empty data",
@@ -180,6 +199,9 @@ func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (
 }
 
 func (s *UserHandler) StartFollowing(ctx context.Context, req *pb.StartFollowingRequest) (*pb.StartFollowingResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	if req.FollowerId == 0 || req.FolloweeId == 0 {
 		s.logger.Warn("empty field",
 			zap.Int32("followerID", req.FollowerId),
@@ -214,6 +236,9 @@ func (s *UserHandler) StartFollowing(ctx context.Context, req *pb.StartFollowing
 }
 
 func (s *UserHandler) StopFollowing(ctx context.Context, req *pb.UnfollowRequest) (*pb.UnfollowResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	if req.UnfollowingId == 0 || req.UnfollowedId == 0 {
 		s.logger.Warn("empty field",
 			zap.Int32("UnfollowingId", req.UnfollowingId),
@@ -248,6 +273,9 @@ func (s *UserHandler) StopFollowing(ctx context.Context, req *pb.UnfollowRequest
 }
 
 func (s *UserHandler) ListFollowers(ctx context.Context, req *pb.ListFollowersRequest) (*pb.ListFollowersResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	userID := req.GetUserId()
 	if userID == 0 {
 		s.logger.Warn("empty Field",
@@ -284,6 +312,9 @@ func (s *UserHandler) ListFollowers(ctx context.Context, req *pb.ListFollowersRe
 }
 
 func (s *UserHandler) ListFollowing(ctx context.Context, req *pb.ListFollowingRequest) (*pb.ListFollowingResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	userID := req.GetUserId()
 
 	if userID == 0 {
@@ -322,6 +353,9 @@ func (s *UserHandler) ListFollowing(ctx context.Context, req *pb.ListFollowingRe
 }
 
 func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRequest) (*pb.EditPasswordResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
 	newPassword := req.NewPassword
 	if newPassword == "" {
 		s.logger.Warn("newPassword is null")
