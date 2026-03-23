@@ -127,3 +127,12 @@ func (r *UserRepository) ListFollowing(ctx context.Context, userID int32) ([]*db
 
 	return users, nil
 }
+
+func (r *UserRepository) UpdatePassword(ctx context.Context, req *db.UpdatePasswordParams) error {
+	params := db.UpdatePasswordParams{
+		ID:       req.ID,
+		Password: req.Password,
+	}
+
+	return r.q.UpdatePassword(ctx, params)
+}

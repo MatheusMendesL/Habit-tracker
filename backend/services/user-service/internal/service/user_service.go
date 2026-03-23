@@ -50,3 +50,7 @@ func (s *UserService) ListFollowers(ctx context.Context, userId int32) ([]*db.Us
 func (s *UserService) ListFollowing(ctx context.Context, userId int32) ([]*db.User, error) {
 	return s.repo.ListFollowing(ctx, userId)
 }
+
+func (s *UserService) UpdatePassword(ctx context.Context, pass *db.UpdatePasswordParams) error {
+	return s.repo.UpdatePassword(ctx, pass)
+}

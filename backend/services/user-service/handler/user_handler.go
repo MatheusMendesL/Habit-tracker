@@ -83,6 +83,12 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 }
 
 func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	userId := req.GetUserId()
+
+	if userId == 0 {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
 	err := s.userService.DeleteUser(ctx, req.UserId)
 	if err != nil {
 		return &pb.DeleteUserResponse{
@@ -209,5 +215,30 @@ func (s *UserHandler) ListFollowing(ctx context.Context, req *pb.ListFollowingRe
 
 	return &pb.ListFollowingResponse{
 		Following: pbUsers,
+	}, nil
+}
+
+func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRequest) (*pb.EditPasswordResponse, error) {
+	if req.NewPassword == "" {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrNullField.Error())
+	}
+	userID := req.GetUserId()
+	if userID == 0 {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	err := s.userService.UpdatePassword(ctx, &db.UpdatePasswordParams{
+		Password: req.NewPassword,
+		ID:       userID,
+	})
+
+	if err != nil {
+		return &pb.EditPasswordResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	return &pb.EditPasswordResponse{
+		Success: true,
 	}, nil
 }
