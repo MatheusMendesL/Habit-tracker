@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	pb "shared/pb/user"
@@ -20,35 +19,37 @@ import (
 )
 
 func main() {
-	log.Println("Starting server...")
-
-	if err := startServer(); err != nil {
-		panic(err)
-	}
+	startServer()
 }
 
-func startServer() (err error) {
+func startServer() {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	logger.Info("Starting server")
+
 	list, err := net.Listen("tcp", ":8080")
 
 	if err != nil {
-		return err
+		logger.Fatal("The server is not listening", zap.Error(err))
 	}
 	dbConn, queries, err := db.Conn()
 	if err != nil {
-		return err
+		logger.Fatal("Error to connect with de DB", zap.Error(err))
 	}
 	defer dbConn.Close()
 
 	userRepo := repository.NewUserRepository(queries)
 	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(userService)
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
+	userHandler := handler.NewUserHandler(userService, logger)
 
-	tlsCredentials, err := loadTLScreadentials()
+	tlsCredentials, err := loadTLCredentials()
 
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatal("failed to load TLS credentials", zap.Error(err))
 	}
 
 	grpcServer := grpc.NewServer(
@@ -61,13 +62,11 @@ func startServer() (err error) {
 	pb.RegisterUserServiceServer(grpcServer, userHandler)
 
 	if err := grpcServer.Serve(list); err != nil {
-		return err
+		logger.Fatal("The server is not running", zap.Error(err))
 	}
-
-	return nil
 }
 
-func loadTLScreadentials() (credentials.TransportCredentials, error) {
+func loadTLCredentials() (credentials.TransportCredentials, error) {
 	pemClientCA, err := os.ReadFile("./cert/ca-cert.pem")
 
 	if err != nil {
