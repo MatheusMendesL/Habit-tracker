@@ -73,3 +73,57 @@ func (r *UserRepository) UpdateUser(ctx context.Context, req db.UpdateUserParams
 
 	return user, nil
 }
+
+func (r *UserRepository) StartFollowing(ctx context.Context, followerID, followeeID int32) error {
+	params := db.StartFollowingParams{
+		FollowerID: followerID,
+		FolloweeID: followeeID,
+	}
+	return r.q.StartFollowing(ctx, params)
+
+}
+
+func (r *UserRepository) StopFollowing(ctx context.Context, followerID, followeeID int32) error {
+	params := db.UnfollowParams{
+		FollowerID: followerID,
+		FolloweeID: followeeID,
+	}
+	return r.q.Unfollow(ctx, params)
+
+}
+
+func (r *UserRepository) ListFollowers(ctx context.Context, userID int32) ([]*db.User, error) {
+	rows, err := r.q.ListFollowers(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*db.User, 0, len(rows))
+	for _, row := range rows {
+		users = append(users, &db.User{
+			ID:    row.ID,
+			Name:  row.Name,
+			Email: row.Email,
+		})
+	}
+
+	return users, nil
+}
+
+func (r *UserRepository) ListFollowing(ctx context.Context, userID int32) ([]*db.User, error) {
+	rows, err := r.q.ListFollowing(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*db.User, 0, len(rows))
+	for _, row := range rows {
+		users = append(users, &db.User{
+			ID:    row.ID,
+			Name:  row.Name,
+			Email: row.Email,
+		})
+	}
+
+	return users, nil
+}

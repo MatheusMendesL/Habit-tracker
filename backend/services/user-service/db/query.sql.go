@@ -207,14 +207,14 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users
-SET name = COALESCE(?, name),
-    email = COALESCE(?, email)
+SET name = COALESCE(sqlc.narg('name'), name),
+    email = COALESCE(sqlc.narg('email'), email)
 WHERE id = ?
 `
 
 type UpdateUserParams struct {
-	Name  string
-	Email string
+	Name  *string
+	Email *string
 	ID    int32
 }
 

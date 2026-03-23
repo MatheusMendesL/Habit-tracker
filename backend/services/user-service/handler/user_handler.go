@@ -23,7 +23,7 @@ func ReceiveErrors(err error) error {
 	case errors.Is(err, AppErr.ErrInvalidArgument):
 		return status.Error(codes.InvalidArgument, err.Error())
 	case errors.Is(err, AppErr.ErrNullField):
-		return status.Error(codes.NotFound, err.Error())
+		return status.Error(codes.InvalidArgument, err.Error())
 	case errors.Is(err, sql.ErrNoRows):
 		return status.Error(codes.NotFound, AppErr.ErrUserNotFound.Error())
 	default:
@@ -65,7 +65,7 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 
 	users, err := s.userService.SearchUser(ctx, name, email)
 	if err != nil {
-		return nil, err
+		return nil, ReceiveErrors(err)
 	}
 
 	var pbUsers []*pb.User
@@ -95,9 +95,19 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	}, nil
 }
 
-func (s *UserHandler) UpdateUser(ctx context.Context, req db.UpdateUserParams) (*pb.EditUserResponse, error) {
-	user, err := s.userService.UpdateUser(ctx, req)
+func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (*pb.EditUserResponse, error) {
 
+	if req.Name == nil && req.Email == nil {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInformedIncorrect.Error())
+	}
+
+	params := db.UpdateUserParams{
+		ID:    req.UserId,
+		Name:  req.Name,
+		Email: req.Email,
+	}
+
+	user, err := s.userService.UpdateUser(ctx, params)
 	if err != nil {
 		return nil, ReceiveErrors(err)
 	}
@@ -108,5 +118,96 @@ func (s *UserHandler) UpdateUser(ctx context.Context, req db.UpdateUserParams) (
 			Name:  user.Name,
 			Email: user.Email,
 		},
+	}, nil
+}
+
+func (s *UserHandler) StartFollowing(ctx context.Context, req *pb.StartFollowingRequest) (*pb.StartFollowingResponse, error) {
+	if req.FollowerId == 0 || req.FolloweeId == 0 {
+		return &pb.StartFollowingResponse{
+			Success: false,
+		}, status.Error(codes.InvalidArgument, AppErr.ErrNullField.Error())
+	}
+
+	err := s.userService.StartFollowing(ctx, req.FollowerId, req.FolloweeId)
+
+	if err != nil {
+		return &pb.StartFollowingResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	return &pb.StartFollowingResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *UserHandler) StopFollowing(ctx context.Context, req *pb.UnfollowRequest) (*pb.UnfollowResponse, error) {
+	if req.UnfollowingId == 0 || req.UnfollowedId == 0 {
+		return &pb.UnfollowResponse{
+			Success: false,
+		}, status.Error(codes.InvalidArgument, AppErr.ErrNullField.Error())
+	}
+
+	err := s.userService.StopFollowing(ctx, req.UnfollowingId, req.UnfollowedId)
+
+	if err != nil {
+		return &pb.UnfollowResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	return &pb.UnfollowResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *UserHandler) ListFollowers(ctx context.Context, req *pb.ListFollowersRequest) (*pb.ListFollowersResponse, error) {
+	userID := req.GetUserId()
+	if userID == 0 {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	users, err := s.userService.ListFollowers(ctx, userID)
+	if err != nil {
+		return nil, ReceiveErrors(err)
+	}
+
+	var pbUsers []*pb.User
+	for _, u := range users {
+		pbUsers = append(pbUsers, &pb.User{
+			Id:    u.ID,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
+	return &pb.ListFollowersResponse{
+		Followers: pbUsers,
+	}, nil
+}
+
+func (s *UserHandler) ListFollowing(ctx context.Context, req *pb.ListFollowingRequest) (*pb.ListFollowingResponse, error) {
+	userID := req.GetUserId()
+
+	if userID == 0 {
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	users, err := s.userService.ListFollowing(ctx, userID)
+	if err != nil {
+		return nil, ReceiveErrors(err)
+	}
+
+	var pbUsers []*pb.User
+	for _, u := range users {
+		pbUsers = append(pbUsers, &pb.User{
+			Id:    u.ID,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
+	return &pb.ListFollowingResponse{
+		Following: pbUsers,
 	}, nil
 }
