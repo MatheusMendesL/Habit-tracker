@@ -1,9 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"fmt"
 	"net"
 	"os"
 	pb "shared/pb/user"
@@ -13,9 +10,9 @@ import (
 	"user-service/internal/service"
 
 	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 func main() {
@@ -29,9 +26,14 @@ func startServer() {
 	}
 	defer logger.Sync()
 
+	_ = godotenv.Load()
+
 	logger.Info("Starting server")
 
-	list, err := net.Listen("tcp", ":8080")
+	typeServer := os.Getenv("TYPE")
+	portServer := os.Getenv("PORT")
+
+	list, err := net.Listen(typeServer, portServer)
 
 	if err != nil {
 		logger.Fatal("The server is not listening", zap.Error(err))
@@ -46,14 +48,14 @@ func startServer() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService, logger)
 
-	tlsCredentials, err := loadTLCredentials()
+	/*tlsCredentials, err := loadTLCredentials()
 
 	if err != nil {
 		logger.Fatal("failed to load TLS credentials", zap.Error(err))
-	}
+	}*/
 
 	grpcServer := grpc.NewServer(
-		grpc.Creds(tlsCredentials),
+		/*grpc.Creds(tlsCredentials),*/
 		grpc.UnaryInterceptor(
 			grpcZap.UnaryServerInterceptor(logger),
 		),
@@ -66,7 +68,7 @@ func startServer() {
 	}
 }
 
-func loadTLCredentials() (credentials.TransportCredentials, error) {
+/*func loadTLCredentials() (credentials.TransportCredentials, error) {
 	pemClientCA, err := os.ReadFile("./cert/ca-cert.pem")
 
 	if err != nil {
@@ -89,9 +91,9 @@ func loadTLCredentials() (credentials.TransportCredentials, error) {
 
 	config := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
-		/*ClientAuth:   tls.RequireAndVerifyClientCert,*/
+		/*ClientAuth:   tls.RequireAndVerifyClientCert,
 		ClientCAs: certPool,
 	}
 
 	return credentials.NewTLS(config), nil
-}
+}*/
