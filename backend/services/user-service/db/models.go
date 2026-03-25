@@ -8,12 +8,6 @@ import (
 	"database/sql"
 )
 
-type Follower struct {
-	FollowerID int32
-	FolloweeID int32
-	CreatedAt  sql.NullTime
-}
-
 type User struct {
 	ID        int32
 	Name      string

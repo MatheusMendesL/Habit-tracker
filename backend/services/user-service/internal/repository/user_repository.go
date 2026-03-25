@@ -74,7 +74,7 @@ func (r *UserRepository) UpdateUser(ctx context.Context, req db.UpdateUserParams
 	return user, nil
 }
 
-func (r *UserRepository) StartFollowing(ctx context.Context, followerID, followeeID int32) error {
+/*func (r *UserRepository) StartFollowing(ctx context.Context, followerID, followeeID int32) error {
 	params := db.StartFollowingParams{
 		FollowerID: followerID,
 		FolloweeID: followeeID,
@@ -126,7 +126,7 @@ func (r *UserRepository) ListFollowing(ctx context.Context, userID int32) ([]*db
 	}
 
 	return users, nil
-}
+}*/
 
 func (r *UserRepository) UpdatePassword(ctx context.Context, req *db.UpdatePasswordParams) error {
 	params := db.UpdatePasswordParams{
@@ -135,4 +135,30 @@ func (r *UserRepository) UpdatePassword(ctx context.Context, req *db.UpdatePassw
 	}
 
 	return r.q.UpdatePassword(ctx, params)
+}
+
+func (r *UserRepository) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.GetUsersByIDsRow, error) {
+	if len(ids) == 0 {
+		return []db.GetUsersByIDsRow{}, nil
+	}
+
+	users, err := r.q.GetUsersByIDs(ctx, ids)
+
+	if err != nil {
+		return []db.GetUsersByIDsRow{}, err
+	}
+
+	m := make(map[int32]db.GetUsersByIDsRow, len(users))
+	for _, u := range users {
+		m[u.ID] = u
+	}
+
+	ordered := make([]db.GetUsersByIDsRow, 0, len(ids))
+	for _, id := range ids {
+		if u, ok := m[id]; ok {
+			ordered = append(ordered, u)
+		}
+	}
+
+	return ordered, nil
 }

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package social;
+
+option go_package = "pb/social";
+
+message Follow {
+  int32 follower_id = 1;
+  int32 followee_id = 2;
+}
+
+message StartFollowingRequest {
+  int32 follower_id = 1;
+  int32 followee_id = 2;
+}
+
+message StartFollowingResponse {
+  bool success = 1;
+}
+
+message UnfollowRequest {
+  int32 follower_id = 1;
+  int32 followee_id = 2;
+}
+
+message UnfollowResponse {
+  bool success = 1;
+}
+
+message ListFollowersRequest {
+  int32 user_id = 1;
+}
+
+message ListFollowersResponse {
+  repeated int32 follower_ids = 1;
+}
+
+message ListFollowingRequest {
+  int32 user_id = 1;
+}
+
+message ListFollowingResponse {
+  repeated int32 following_ids = 1;
+}
+
+service SocialService {
+  rpc StartFollowing(StartFollowingRequest) returns (StartFollowingResponse);
+  rpc Unfollow(UnfollowRequest) returns (UnfollowResponse);
+  rpc ListFollowers(ListFollowersRequest) returns (ListFollowersResponse);
+  rpc ListFollowing(ListFollowingRequest) returns (ListFollowingResponse);
+}

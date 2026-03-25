@@ -27,22 +27,7 @@ WHERE id = ?;
 DELETE FROM users
 WHERE id = ?;
 
--- name: StartFollowing :exec
-INSERT INTO followers (follower_id, followee_id)
-VALUES (?, ?);
-
--- name: Unfollow :exec
-DELETE FROM followers
-WHERE follower_id = ? AND followee_id = ?;
-
--- name: ListFollowers :many
-SELECT u.id, u.name, u.email
-FROM followers f
-         JOIN users u ON u.id = f.follower_id
-WHERE f.followee_id = ?;
-
--- name: ListFollowing :many
-SELECT u.id, u.name, u.email
-FROM followers f
-         JOIN users u ON u.id = f.followee_id
-WHERE f.follower_id = ?;
+-- name: GetUsersByIDs :many
+SELECT id, name, email
+FROM users
+WHERE id IN (sqlc.slice('user_ids'));

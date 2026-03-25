@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"strings"
 )
 
 const deleteUser = `-- name: DeleteUser :exec
@@ -38,64 +39,37 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, er
 	return i, err
 }
 
-const listFollowers = `-- name: ListFollowers :many
-SELECT u.id, u.name, u.email
-FROM followers f
-         JOIN users u ON u.id = f.follower_id
-WHERE f.followee_id = ?
+const getUsersByIDs = `-- name: GetUsersByIDs :many
+SELECT id, name, email
+FROM users
+WHERE id IN (/*SLICE:user_ids*/?)
 `
 
-type ListFollowersRow struct {
+type GetUsersByIDsRow struct {
 	ID    int32
 	Name  string
 	Email string
 }
 
-func (q *Queries) ListFollowers(ctx context.Context, followeeID int32) ([]ListFollowersRow, error) {
-	rows, err := q.db.QueryContext(ctx, listFollowers, followeeID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ListFollowersRow
-	for rows.Next() {
-		var i ListFollowersRow
-		if err := rows.Scan(&i.ID, &i.Name, &i.Email); err != nil {
-			return nil, err
+func (q *Queries) GetUsersByIDs(ctx context.Context, userIds []int32) ([]GetUsersByIDsRow, error) {
+	query := getUsersByIDs
+	var queryParams []interface{}
+	if len(userIds) > 0 {
+		for _, v := range userIds {
+			queryParams = append(queryParams, v)
 		}
-		items = append(items, i)
+		query = strings.Replace(query, "/*SLICE:user_ids*/?", strings.Repeat(",?", len(userIds))[1:], 1)
+	} else {
+		query = strings.Replace(query, "/*SLICE:user_ids*/?", "NULL", 1)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listFollowing = `-- name: ListFollowing :many
-SELECT u.id, u.name, u.email
-FROM followers f
-         JOIN users u ON u.id = f.followee_id
-WHERE f.follower_id = ?
-`
-
-type ListFollowingRow struct {
-	ID    int32
-	Name  string
-	Email string
-}
-
-func (q *Queries) ListFollowing(ctx context.Context, followerID int32) ([]ListFollowingRow, error) {
-	rows, err := q.db.QueryContext(ctx, listFollowing, followerID)
+	rows, err := q.db.QueryContext(ctx, query, queryParams...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListFollowingRow
+	var items []GetUsersByIDsRow
 	for rows.Next() {
-		var i ListFollowingRow
+		var i GetUsersByIDsRow
 		if err := rows.Scan(&i.ID, &i.Name, &i.Email); err != nil {
 			return nil, err
 		}
@@ -159,36 +133,6 @@ func (q *Queries) SearchUser(ctx context.Context, arg SearchUserParams) ([]Searc
 	return items, nil
 }
 
-const startFollowing = `-- name: StartFollowing :exec
-INSERT INTO followers (follower_id, followee_id)
-VALUES (?, ?)
-`
-
-type StartFollowingParams struct {
-	FollowerID int32
-	FolloweeID int32
-}
-
-func (q *Queries) StartFollowing(ctx context.Context, arg StartFollowingParams) error {
-	_, err := q.db.ExecContext(ctx, startFollowing, arg.FollowerID, arg.FolloweeID)
-	return err
-}
-
-const unfollow = `-- name: Unfollow :exec
-DELETE FROM followers
-WHERE follower_id = ? AND followee_id = ?
-`
-
-type UnfollowParams struct {
-	FollowerID int32
-	FolloweeID int32
-}
-
-func (q *Queries) Unfollow(ctx context.Context, arg UnfollowParams) error {
-	_, err := q.db.ExecContext(ctx, unfollow, arg.FollowerID, arg.FolloweeID)
-	return err
-}
-
 const updatePassword = `-- name: UpdatePassword :exec
 UPDATE users
 SET password = ?
@@ -207,14 +151,14 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users
-SET name = COALESCE(sqlc.narg('name'), name),
-    email = COALESCE(sqlc.narg('email'), email)
+SET name = COALESCE(?, name),
+    email = COALESCE(?, email)
 WHERE id = ?
 `
 
 type UpdateUserParams struct {
-	Name  *string
-	Email *string
+	Name  string
+	Email string
 	ID    int32
 }
 
