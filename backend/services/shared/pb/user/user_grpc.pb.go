@@ -19,15 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetUserByID_FullMethodName    = "/user.UserService/GetUserByID"
-	UserService_ListFollowers_FullMethodName  = "/user.UserService/ListFollowers"
-	UserService_ListFollowing_FullMethodName  = "/user.UserService/ListFollowing"
-	UserService_EditPassword_FullMethodName   = "/user.UserService/EditPassword"
-	UserService_StartFollowing_FullMethodName = "/user.UserService/StartFollowing"
-	UserService_Unfollow_FullMethodName       = "/user.UserService/Unfollow"
-	UserService_EditUser_FullMethodName       = "/user.UserService/EditUser"
-	UserService_DeleteUser_FullMethodName     = "/user.UserService/DeleteUser"
-	UserService_SearchUser_FullMethodName     = "/user.UserService/SearchUser"
+	UserService_GetUserByID_FullMethodName   = "/user.UserService/GetUserByID"
+	UserService_GetUsersByIDs_FullMethodName = "/user.UserService/GetUsersByIDs"
+	UserService_EditPassword_FullMethodName  = "/user.UserService/EditPassword"
+	UserService_EditUser_FullMethodName      = "/user.UserService/EditUser"
+	UserService_DeleteUser_FullMethodName    = "/user.UserService/DeleteUser"
+	UserService_SearchUser_FullMethodName    = "/user.UserService/SearchUser"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -35,11 +32,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	GetUserByID(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error)
-	ListFollowers(ctx context.Context, in *ListFollowersRequest, opts ...grpc.CallOption) (*ListFollowersResponse, error)
-	ListFollowing(ctx context.Context, in *ListFollowingRequest, opts ...grpc.CallOption) (*ListFollowingResponse, error)
+	GetUsersByIDs(ctx context.Context, in *GetUsersByIDsRequest, opts ...grpc.CallOption) (*GetUsersByIDsResponse, error)
 	EditPassword(ctx context.Context, in *EditPasswordRequest, opts ...grpc.CallOption) (*EditPasswordResponse, error)
-	StartFollowing(ctx context.Context, in *StartFollowingRequest, opts ...grpc.CallOption) (*StartFollowingResponse, error)
-	Unfollow(ctx context.Context, in *UnfollowRequest, opts ...grpc.CallOption) (*UnfollowResponse, error)
 	EditUser(ctx context.Context, in *EditUserRequest, opts ...grpc.CallOption) (*EditUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 	SearchUser(ctx context.Context, in *SearchUserRequest, opts ...grpc.CallOption) (*SearchUserResponse, error)
@@ -63,20 +57,10 @@ func (c *userServiceClient) GetUserByID(ctx context.Context, in *GetUserByIDRequ
 	return out, nil
 }
 
-func (c *userServiceClient) ListFollowers(ctx context.Context, in *ListFollowersRequest, opts ...grpc.CallOption) (*ListFollowersResponse, error) {
+func (c *userServiceClient) GetUsersByIDs(ctx context.Context, in *GetUsersByIDsRequest, opts ...grpc.CallOption) (*GetUsersByIDsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFollowersResponse)
-	err := c.cc.Invoke(ctx, UserService_ListFollowers_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) ListFollowing(ctx context.Context, in *ListFollowingRequest, opts ...grpc.CallOption) (*ListFollowingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFollowingResponse)
-	err := c.cc.Invoke(ctx, UserService_ListFollowing_FullMethodName, in, out, cOpts...)
+	out := new(GetUsersByIDsResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUsersByIDs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,26 +71,6 @@ func (c *userServiceClient) EditPassword(ctx context.Context, in *EditPasswordRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EditPasswordResponse)
 	err := c.cc.Invoke(ctx, UserService_EditPassword_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) StartFollowing(ctx context.Context, in *StartFollowingRequest, opts ...grpc.CallOption) (*StartFollowingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StartFollowingResponse)
-	err := c.cc.Invoke(ctx, UserService_StartFollowing_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) Unfollow(ctx context.Context, in *UnfollowRequest, opts ...grpc.CallOption) (*UnfollowResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UnfollowResponse)
-	err := c.cc.Invoke(ctx, UserService_Unfollow_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,11 +112,8 @@ func (c *userServiceClient) SearchUser(ctx context.Context, in *SearchUserReques
 // for forward compatibility.
 type UserServiceServer interface {
 	GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error)
-	ListFollowers(context.Context, *ListFollowersRequest) (*ListFollowersResponse, error)
-	ListFollowing(context.Context, *ListFollowingRequest) (*ListFollowingResponse, error)
+	GetUsersByIDs(context.Context, *GetUsersByIDsRequest) (*GetUsersByIDsResponse, error)
 	EditPassword(context.Context, *EditPasswordRequest) (*EditPasswordResponse, error)
-	StartFollowing(context.Context, *StartFollowingRequest) (*StartFollowingResponse, error)
-	Unfollow(context.Context, *UnfollowRequest) (*UnfollowResponse, error)
 	EditUser(context.Context, *EditUserRequest) (*EditUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	SearchUser(context.Context, *SearchUserRequest) (*SearchUserResponse, error)
@@ -169,20 +130,11 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserByID not implemented")
 }
-func (UnimplementedUserServiceServer) ListFollowers(context.Context, *ListFollowersRequest) (*ListFollowersResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListFollowers not implemented")
-}
-func (UnimplementedUserServiceServer) ListFollowing(context.Context, *ListFollowingRequest) (*ListFollowingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListFollowing not implemented")
+func (UnimplementedUserServiceServer) GetUsersByIDs(context.Context, *GetUsersByIDsRequest) (*GetUsersByIDsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUsersByIDs not implemented")
 }
 func (UnimplementedUserServiceServer) EditPassword(context.Context, *EditPasswordRequest) (*EditPasswordResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditPassword not implemented")
-}
-func (UnimplementedUserServiceServer) StartFollowing(context.Context, *StartFollowingRequest) (*StartFollowingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method StartFollowing not implemented")
-}
-func (UnimplementedUserServiceServer) Unfollow(context.Context, *UnfollowRequest) (*UnfollowResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Unfollow not implemented")
 }
 func (UnimplementedUserServiceServer) EditUser(context.Context, *EditUserRequest) (*EditUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditUser not implemented")
@@ -232,38 +184,20 @@ func _UserService_GetUserByID_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_ListFollowers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFollowersRequest)
+func _UserService_GetUsersByIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersByIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).ListFollowers(ctx, in)
+		return srv.(UserServiceServer).GetUsersByIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_ListFollowers_FullMethodName,
+		FullMethod: UserService_GetUsersByIDs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).ListFollowers(ctx, req.(*ListFollowersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_ListFollowing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFollowingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).ListFollowing(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_ListFollowing_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).ListFollowing(ctx, req.(*ListFollowingRequest))
+		return srv.(UserServiceServer).GetUsersByIDs(ctx, req.(*GetUsersByIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -282,42 +216,6 @@ func _UserService_EditPassword_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).EditPassword(ctx, req.(*EditPasswordRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_StartFollowing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartFollowingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).StartFollowing(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_StartFollowing_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).StartFollowing(ctx, req.(*StartFollowingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_Unfollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnfollowRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Unfollow(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_Unfollow_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Unfollow(ctx, req.(*UnfollowRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -388,24 +286,12 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_GetUserByID_Handler,
 		},
 		{
-			MethodName: "ListFollowers",
-			Handler:    _UserService_ListFollowers_Handler,
-		},
-		{
-			MethodName: "ListFollowing",
-			Handler:    _UserService_ListFollowing_Handler,
+			MethodName: "GetUsersByIDs",
+			Handler:    _UserService_GetUsersByIDs_Handler,
 		},
 		{
 			MethodName: "EditPassword",
 			Handler:    _UserService_EditPassword_Handler,
-		},
-		{
-			MethodName: "StartFollowing",
-			Handler:    _UserService_StartFollowing_Handler,
-		},
-		{
-			MethodName: "Unfollow",
-			Handler:    _UserService_Unfollow_Handler,
 		},
 		{
 			MethodName: "EditUser",

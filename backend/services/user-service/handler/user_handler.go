@@ -168,8 +168,8 @@ func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (
 
 	params := db.UpdateUserParams{
 		ID:    req.UserId,
-		Name:  req.Name,
-		Email: req.Email,
+		Name:  req.GetName(),
+		Email: req.GetEmail(),
 	}
 
 	user, err := s.userService.UpdateUser(ctx, params)
@@ -198,7 +198,7 @@ func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (
 	}, nil
 }
 
-func (s *UserHandler) StartFollowing(ctx context.Context, req *pb.StartFollowingRequest) (*pb.StartFollowingResponse, error) {
+/*func (s *UserHandler) StartFollowing(ctx context.Context, req *pb.StartFollowingRequest) (*pb.StartFollowingResponse, error) {
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
@@ -350,7 +350,7 @@ func (s *UserHandler) ListFollowing(ctx context.Context, req *pb.ListFollowingRe
 	return &pb.ListFollowingResponse{
 		Following: pbUsers,
 	}, nil
-}
+}*/
 
 func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRequest) (*pb.EditPasswordResponse, error) {
 	ctx, cancel := s.withTimeout(ctx)
@@ -391,4 +391,36 @@ func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRe
 	return &pb.EditPasswordResponse{
 		Success: true,
 	}, nil
+}
+
+func (s *UserHandler) GetUsersByIds(ctx context.Context, req *pb.GetUsersByIDsRequest) (*pb.GetUsersByIDsResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	users, err := s.userService.GetUsersByIDs(ctx, req.UserIds)
+	if err != nil {
+		s.logger.Error("error to execute GetUsersByIds method",
+			zap.Any("user_ids", req.UserIds),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	var pbUsers []*pb.User
+	for _, u := range users {
+		pbUsers = append(pbUsers, &pb.User{
+			Id:    u.ID,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
+	s.logger.Info("GetUsersByIds method was ok",
+		zap.Any("users", pbUsers),
+	)
+
+	return &pb.GetUsersByIDsResponse{
+		Users: pbUsers,
+	}, nil
+
 }

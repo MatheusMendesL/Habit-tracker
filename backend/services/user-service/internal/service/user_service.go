@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"user-service/db"
-	AppErr "user-service/internal/errors"
 	"user-service/internal/repository"
 )
 
@@ -31,7 +30,7 @@ func (s *UserService) UpdateUser(ctx context.Context, user db.UpdateUserParams) 
 	return s.repo.UpdateUser(ctx, user)
 }
 
-func (s *UserService) StartFollowing(ctx context.Context, followerId int32, followeeId int32) error {
+/*func (s *UserService) StartFollowing(ctx context.Context, followerId int32, followeeId int32) error {
 	if followerId == followeeId {
 		return AppErr.ErrInvalidArgument
 	}
@@ -49,8 +48,12 @@ func (s *UserService) ListFollowers(ctx context.Context, userId int32) ([]*db.Us
 
 func (s *UserService) ListFollowing(ctx context.Context, userId int32) ([]*db.User, error) {
 	return s.repo.ListFollowing(ctx, userId)
-}
+}*/
 
 func (s *UserService) UpdatePassword(ctx context.Context, pass *db.UpdatePasswordParams) error {
 	return s.repo.UpdatePassword(ctx, pass)
+}
+
+func (s *UserService) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.GetUsersByIDsRow, error) {
+	return s.repo.GetUsersByIDs(ctx, ids)
 }
