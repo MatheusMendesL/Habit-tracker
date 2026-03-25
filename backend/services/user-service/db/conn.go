@@ -2,13 +2,20 @@ package db
 
 import (
 	"database/sql"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 func Conn() (*sql.DB, *Queries, error) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/habit_tracker")
+	_ = godotenv.Load()
+
+	typeDB := os.Getenv("TYPEDB")
+	dbString := os.Getenv("DBSTRING")
+
+	db, err := sql.Open(typeDB, dbString)
 	if err != nil {
 		return nil, nil, err
 	}
