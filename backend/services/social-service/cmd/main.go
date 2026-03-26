@@ -1,12 +1,21 @@
 package main
 
 import (
+	"log"
+	"net"
+	"os"
+	pb "shared/pb/social"
+	pbUser "shared/pb/user"
+	"social/db"
+	"social/handler"
+	"social/internal/repository"
+	"social/internal/service"
+
 	grpcZap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"net"
-	"os"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -38,9 +47,22 @@ func startServer() {
 	}
 	defer dbConn.Close()
 
-	userRepo := repository.NewUserRepository(queries)
-	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(userService, logger)
+	socialRepo := repository.NewSocialRepository(queries)
+	socialService := service.NewSocialService(socialRepo)
+
+	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Não foi possível conectar: %v", err)
+	}
+	defer conn.Close()
+
+	// Cria o cliente do microserviço externo
+	userServiceClient := pbUser.NewUserServiceClient(conn)
+
+	// Passa o cliente para o seu handler
+	h := handler.NewSocialHandler(socialService, logger, userServiceClient)
+
+	socialHandler := handler.NewSocialHandler(socialService, logger)
 
 	/*tlsCredentials, err := loadTLCredentials()
 
@@ -55,7 +77,7 @@ func startServer() {
 		),
 	)
 
-	pb.RegisterUserServiceServer(grpcServer, userHandler)
+	pb.RegisterSocialServiceServer(grpcServer, socialHandler)
 
 	if err := grpcServer.Serve(list); err != nil {
 		logger.Fatal("The server is not running", zap.Error(err))
