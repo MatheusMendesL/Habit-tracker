@@ -58,11 +58,34 @@ func (s *SocialHandler) StartFollowing(ctx context.Context, req *pbSocial.StartF
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	_, err := s.GetUserByID(context.Background(), &pbUser.GetUserByIDRequest{UserId: 1})
+	FollowerID := req.FollowerId
+	FolloweeID := req.FolloweeId
+
+	if FollowerID == 0 || FolloweeID == 0 {
+		s.logger.Warn("Invalid Users ID",
+			zap.Int32("FollowerID", FollowerID),
+			zap.Int32("FolloweeID", FolloweeID),
+		)
+
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	err := s.socialService.StartFollowing(ctx, FollowerID, FolloweeID)
 
 	if err != nil {
-		return nil, err
+		s.logger.Error("error to execute StartFollowing method",
+			zap.Int32("FollowerID", FollowerID),
+			zap.Int32("FolloweeID", FolloweeID),
+			zap.Error(err),
+		)
+
+		return nil, ReceiveErrors(err)
 	}
+
+	s.logger.Info("StartFollowing method was ok",
+		zap.Int32("followerID", req.FollowerId),
+		zap.Int32("followeeID", req.FolloweeId),
+	)
 
 	return &pbSocial.StartFollowingResponse{
 		Success: true,
