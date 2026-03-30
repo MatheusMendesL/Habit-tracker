@@ -56,13 +56,10 @@ func startServer() {
 	}
 	defer conn.Close()
 
-	// Cria o cliente do microserviço externo
 	userServiceClient := pbUser.NewUserServiceClient(conn)
 
 	// Passa o cliente para o seu handler
-	h := handler.NewSocialHandler(socialService, logger, userServiceClient)
-
-	socialHandler := handler.NewSocialHandler(socialService, logger)
+	socialHandler := handler.NewSocialHandler(socialService, logger, userServiceClient)
 
 	/*tlsCredentials, err := loadTLCredentials()
 

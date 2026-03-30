@@ -1,6 +1,9 @@
 package repository
 
-import "social/db"
+import (
+	"context"
+	"social/db"
+)
 
 type SocialRepository struct {
 	q *db.Queries
@@ -8,4 +11,18 @@ type SocialRepository struct {
 
 func NewSocialRepository(q *db.Queries) *SocialRepository {
 	return &SocialRepository{q: q}
+}
+
+func (r *SocialRepository) StartFollowing(ctx context.Context, FollowerID, FolloweeID int32) error {
+	params := db.StartFollowingParams{
+		FollowerID: FollowerID,
+		FolloweeID: FolloweeID,
+	}
+	err := r.q.StartFollowing(ctx, params)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
