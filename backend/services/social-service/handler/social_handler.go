@@ -91,3 +91,41 @@ func (s *SocialHandler) StartFollowing(ctx context.Context, req *pbSocial.StartF
 		Success: true,
 	}, nil
 }
+
+func (s *SocialHandler) Unfollow(ctx context.Context, req *pbSocial.UnfollowRequest) (*pbSocial.UnfollowResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	FollowerID := req.FollowerId
+	FolloweeID := req.FolloweeId
+
+	if FollowerID == 0 || FolloweeID == 0 {
+		s.logger.Warn("Invalid Users ID",
+			zap.Int32("FollowerID", FollowerID),
+			zap.Int32("FolloweeID", FolloweeID),
+		)
+
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	err := s.socialService.Unfollow(ctx, FollowerID, FolloweeID)
+
+	if err != nil {
+		s.logger.Error("error to execute Unfollow method",
+			zap.Int32("FollowerID", FollowerID),
+			zap.Int32("FolloweeID", FolloweeID),
+			zap.Error(err),
+		)
+
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("Unfollow method was ok",
+		zap.Int32("followerID", req.FollowerId),
+		zap.Int32("followeeID", req.FolloweeId),
+	)
+
+	return &pbSocial.UnfollowResponse{
+		Success: true,
+	}, nil
+}

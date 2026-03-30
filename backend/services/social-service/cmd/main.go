@@ -48,7 +48,6 @@ func startServer() {
 	defer dbConn.Close()
 
 	socialRepo := repository.NewSocialRepository(queries)
-	socialService := service.NewSocialService(socialRepo)
 
 	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -57,8 +56,7 @@ func startServer() {
 	defer conn.Close()
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
-
-	// Passa o cliente para o seu handler
+	socialService := service.NewSocialService(socialRepo)
 	socialHandler := handler.NewSocialHandler(socialService, logger, userServiceClient)
 
 	/*tlsCredentials, err := loadTLCredentials()
