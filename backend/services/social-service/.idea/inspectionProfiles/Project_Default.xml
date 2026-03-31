@@ -1,6 +1,11 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="65" name="Go" />
+      </Languages>
+    </inspection_tool>
     <inspection_tool class="GoUnhandledErrorResult" enabled="true" level="WARNING" enabled_by_default="true">
       <methods>
         <method importPath="math/rand" receiver="*Rand" name="Read" />
@@ -15,6 +20,7 @@
         <method importPath="strings" receiver="*Builder" name="WriteString" />
         <method importPath="database/sql" receiver="*DB" name="Close" />
         <method importPath="go.uber.org/zap" receiver="*Logger" name="Sync" />
+        <method importPath="google.golang.org/grpc" receiver="*ClientConn" name="Close" />
       </methods>
     </inspection_tool>
   </profile>

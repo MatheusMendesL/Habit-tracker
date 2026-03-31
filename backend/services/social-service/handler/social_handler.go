@@ -121,11 +121,43 @@ func (s *SocialHandler) Unfollow(ctx context.Context, req *pbSocial.UnfollowRequ
 	}
 
 	s.logger.Info("Unfollow method was ok",
-		zap.Int32("followerID", req.FollowerId),
-		zap.Int32("followeeID", req.FolloweeId),
+		zap.Int32("FollowerID", FollowerID),
+		zap.Int32("FolloweeID", FolloweeID),
 	)
 
 	return &pbSocial.UnfollowResponse{
 		Success: true,
+	}, nil
+}
+
+func (s *SocialHandler) ListFollowers(ctx context.Context, req *pbSocial.ListFollowersRequest) (*pbSocial.ListFollowersResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	userID := req.UserId
+
+	if userID <= 0 {
+		s.logger.Warn("Invalid User ID",
+			zap.Int32("userID", userID),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	ids, err := s.socialService.ListFollowers(ctx, userID)
+
+	if err != nil {
+		s.logger.Error("error to execute ListFollowers method",
+			zap.Int32("userID", userID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("ListFollowers method was ok",
+		zap.Int32("userID", userID),
+	)
+
+	return &pbSocial.ListFollowersResponse{
+		FollowerIds: ids,
 	}, nil
 }
