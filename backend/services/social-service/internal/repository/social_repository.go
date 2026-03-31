@@ -40,3 +40,13 @@ func (r *SocialRepository) Unfollow(ctx context.Context, FollowerID, FolloweeID 
 
 	return nil
 }
+
+func (r *SocialRepository) ListFollowers(ctx context.Context, userID int32) ([]int32, error) {
+	followersIDs, err := r.q.ListFollowers(ctx, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return followersIDs, nil
+}

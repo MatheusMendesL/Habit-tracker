@@ -49,14 +49,14 @@ func startServer() {
 
 	socialRepo := repository.NewSocialRepository(queries)
 
-	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Não foi possível conectar: %v", err)
 	}
 	defer conn.Close()
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
-	socialService := service.NewSocialService(socialRepo)
+	socialService := service.NewSocialService(socialRepo, userServiceClient)
 	socialHandler := handler.NewSocialHandler(socialService, logger, userServiceClient)
 
 	/*tlsCredentials, err := loadTLCredentials()
