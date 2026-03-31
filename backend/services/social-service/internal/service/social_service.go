@@ -85,3 +85,19 @@ func (s *SocialService) ListFollowers(ctx context.Context, userID int32) ([]int3
 
 	return s.repo.ListFollowers(ctx, userID)
 }
+
+func (s *SocialService) ListFollowing(ctx context.Context, userID int32) ([]int32, error) {
+	if userID <= 0 {
+		return nil, AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return nil, AppErr.ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return s.repo.ListFollowing(ctx, userID)
+}

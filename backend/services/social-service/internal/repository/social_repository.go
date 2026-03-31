@@ -50,3 +50,12 @@ func (r *SocialRepository) ListFollowers(ctx context.Context, userID int32) ([]i
 
 	return followersIDs, nil
 }
+
+func (r *SocialRepository) ListFollowing(ctx context.Context, userID int32) ([]int32, error) {
+	followingIDs, err := r.q.ListFollowing(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	
+	return followingIDs, nil
+}
