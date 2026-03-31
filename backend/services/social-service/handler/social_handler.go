@@ -161,3 +161,34 @@ func (s *SocialHandler) ListFollowers(ctx context.Context, req *pbSocial.ListFol
 		FollowerIds: ids,
 	}, nil
 }
+
+func (s *SocialHandler) ListFollowing(ctx context.Context, req *pbSocial.ListFollowingRequest) (*pbSocial.ListFollowingResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	userID := req.UserId
+	if userID <= 0 {
+		s.logger.Warn("Invalid User ID",
+			zap.Int32("userID", userID),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	ids, err := s.socialService.ListFollowing(ctx, userID)
+
+	if err != nil {
+		s.logger.Error("error to execute ListFollowing method",
+			zap.Int32("userID", userID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("ListFollowing method was ok",
+		zap.Int32("userID", userID),
+	)
+
+	return &pbSocial.ListFollowingResponse{
+		FollowingIds: ids,
+	}, nil
+}
