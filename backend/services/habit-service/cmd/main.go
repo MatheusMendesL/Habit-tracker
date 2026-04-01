@@ -1,6 +1,5 @@
-package cmd
+package main
 
-// rodar o server e pegar as funcs
 func main() {
-
+	
 }
