@@ -30,26 +30,6 @@ func (s *UserService) UpdateUser(ctx context.Context, user db.UpdateUserParams) 
 	return s.repo.UpdateUser(ctx, user)
 }
 
-/*func (s *UserService) StartFollowing(ctx context.Context, followerId int32, followeeId int32) error {
-	if followerId == followeeId {
-		return AppErr.ErrInvalidArgument
-	}
-
-	return s.repo.StartFollowing(ctx, followerId, followeeId)
-}
-
-func (s *UserService) StopFollowing(ctx context.Context, followerId int32, followeeId int32) error {
-	return s.repo.StopFollowing(ctx, followerId, followeeId)
-}
-
-func (s *UserService) ListFollowers(ctx context.Context, userId int32) ([]*db.User, error) {
-	return s.repo.ListFollowers(ctx, userId)
-}
-
-func (s *UserService) ListFollowing(ctx context.Context, userId int32) ([]*db.User, error) {
-	return s.repo.ListFollowing(ctx, userId)
-}*/
-
 func (s *UserService) UpdatePassword(ctx context.Context, pass *db.UpdatePasswordParams) error {
 	return s.repo.UpdatePassword(ctx, pass)
 }
