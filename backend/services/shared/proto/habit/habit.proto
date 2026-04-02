@@ -79,8 +79,7 @@ message DeleteHabitResponse {
 
 message MarkHabitCompletedRequest {
     int32 habit_id = 1;
-    google.protobuf.Timestamp start_date = 2;
-    google.protobuf.Timestamp end_date = 3;
+    google.protobuf.Timestamp completed_at = 2;
 }
 
 message MarkHabitCompletedResponse {
@@ -97,7 +96,8 @@ message UnmarkHabitCompletedResponse {
 
 message GetHabitLogsRequest {
     int32 habit_id = 1;
-    google.protobuf.Timestamp completed_at = 2;
+    google.protobuf.Timestamp start_date = 2;
+    google.protobuf.Timestamp end_date = 3;
 }
 
 message GetHabitLogsResponse {
