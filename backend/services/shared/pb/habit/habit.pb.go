@@ -773,8 +773,7 @@ func (x *DeleteHabitResponse) GetSuccess() bool {
 type MarkHabitCompletedRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
-	StartDate     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
-	EndDate       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -816,16 +815,9 @@ func (x *MarkHabitCompletedRequest) GetHabitId() int32 {
 	return 0
 }
 
-func (x *MarkHabitCompletedRequest) GetStartDate() *timestamppb.Timestamp {
+func (x *MarkHabitCompletedRequest) GetCompletedAt() *timestamppb.Timestamp {
 	if x != nil {
-		return x.StartDate
-	}
-	return nil
-}
-
-func (x *MarkHabitCompletedRequest) GetEndDate() *timestamppb.Timestamp {
-	if x != nil {
-		return x.EndDate
+		return x.CompletedAt
 	}
 	return nil
 }
@@ -965,7 +957,8 @@ func (x *UnmarkHabitCompletedResponse) GetSuccess() bool {
 type GetHabitLogsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
-	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	StartDate     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	EndDate       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1007,9 +1000,16 @@ func (x *GetHabitLogsRequest) GetHabitId() int32 {
 	return 0
 }
 
-func (x *GetHabitLogsRequest) GetCompletedAt() *timestamppb.Timestamp {
+func (x *GetHabitLogsRequest) GetStartDate() *timestamppb.Timestamp {
 	if x != nil {
-		return x.CompletedAt
+		return x.StartDate
+	}
+	return nil
+}
+
+func (x *GetHabitLogsRequest) GetEndDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndDate
 	}
 	return nil
 }
@@ -1387,21 +1387,21 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\x12DeleteHabitRequest\x12\x19\n" +
 	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\"/\n" +
 	"\x13DeleteHabitResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa8\x01\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"u\n" +
 	"\x19MarkHabitCompletedRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x129\n" +
-	"\n" +
-	"start_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
-	"\bend_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\"6\n" +
+	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12=\n" +
+	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"6\n" +
 	"\x1aMarkHabitCompletedResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"8\n" +
 	"\x1bUnmarkHabitCompletedRequest\x12\x19\n" +
 	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\"8\n" +
 	"\x1cUnmarkHabitCompletedResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"o\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa2\x01\n" +
 	"\x13GetHabitLogsRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12=\n" +
-	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\";\n" +
+	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x129\n" +
+	"\n" +
+	"start_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
+	"\bend_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\";\n" +
 	"\x14GetHabitLogsResponse\x12#\n" +
 	"\x04logs\x18\x01 \x03(\v2\x0f.habit.HabitLogR\x04logs\"T\n" +
 	"\x18AddHabitToRoutineRequest\x12\x19\n" +
@@ -1486,9 +1486,9 @@ var file_proto_habit_habit_proto_depIdxs = []int32{
 	0,  // 4: habit.CreateHabitResponse.habit:type_name -> habit.Habit
 	0,  // 5: habit.GetHabitByIDResponse.habit:type_name -> habit.Habit
 	0,  // 6: habit.ListHabitsByUserResponse.habits:type_name -> habit.Habit
-	27, // 7: habit.MarkHabitCompletedRequest.start_date:type_name -> google.protobuf.Timestamp
-	27, // 8: habit.MarkHabitCompletedRequest.end_date:type_name -> google.protobuf.Timestamp
-	27, // 9: habit.GetHabitLogsRequest.completed_at:type_name -> google.protobuf.Timestamp
+	27, // 7: habit.MarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	27, // 8: habit.GetHabitLogsRequest.start_date:type_name -> google.protobuf.Timestamp
+	27, // 9: habit.GetHabitLogsRequest.end_date:type_name -> google.protobuf.Timestamp
 	2,  // 10: habit.GetHabitLogsResponse.logs:type_name -> habit.HabitLog
 	1,  // 11: habit.ListRoutinesByUserResponse.routines:type_name -> habit.Routine
 	5,  // 12: habit.HabitService.CreateHabit:input_type -> habit.CreateHabitRequest
