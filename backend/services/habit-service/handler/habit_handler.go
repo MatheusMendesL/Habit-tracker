@@ -6,6 +6,7 @@ import (
 	"errors"
 	AppErr "habit-service/internal/errors"
 	"habit-service/internal/service"
+	"habit-service/internal/utils"
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
 	"time"
@@ -18,8 +19,8 @@ import (
 type HabitHandler struct {
 	pbUser.UserServiceClient
 	pbHabit.UnimplementedHabitServiceServer
-	socialService *service.HabitService
-	logger        *zap.Logger
+	HabitService *service.HabitService
+	logger       *zap.Logger
 }
 
 const defaultTimeout = 3 * time.Second
@@ -47,8 +48,60 @@ func NewHabitHandler(
 	userClient pbUser.UserServiceClient,
 ) *HabitHandler {
 	return &HabitHandler{
-		socialService:     s,
+		HabitService:      s,
 		logger:            logger,
 		UserServiceClient: userClient,
 	}
+}
+
+func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitByIDRequest) (*pbHabit.GetHabitByIDResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	habitID := req.HabitId
+
+	if habitID == 0 {
+		s.logger.Warn("invalid habit id",
+			zap.Int32("habit_id", habitID),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	habit, err := s.HabitService.GetHabitByID(ctx, habitID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrHabitNotFound) {
+			s.logger.Warn("Habit not found",
+				zap.Int32("habit_id", habitID),
+				zap.Error(err),
+			)
+			return nil, status.Error(codes.NotFound, AppErr.ErrHabitNotFound.Error())
+		}
+		s.logger.Error("error to execute GetHabitByID method",
+			zap.Int32("habit_id", habitID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("The method GetHabitByID was ok",
+		zap.Int32("habit_id", habitID),
+	)
+
+	return &pbHabit.GetHabitByIDResponse{
+		Habit: &pbHabit.Habit{
+			Id:          habit.ID,
+			UserId:      habit.UserID,
+			Name:        habit.Name,
+			Description: utils.NullStringToString(habit.Description),
+			ImageUrl:    utils.NullStringToString(habit.ImageUrl),
+		},
+	}, nil
+}
+
+func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabitRequest) (*pbHabit.CreateHabitResponse, error) {
+	ctx, cancel := s.withTimeout(ctx)
+	defer cancel()
+
+	return nil, nil
 }

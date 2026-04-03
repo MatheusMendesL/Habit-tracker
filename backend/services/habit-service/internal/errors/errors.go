@@ -9,4 +9,6 @@ var (
 	ErrInvalidArgument   = errors.New("This method needs a valid argument")
 	ErrUserNotFound      = errors.New("User not found")
 	ErrInformedIncorrect = errors.New("You need to inform the necessary data")
+	ErrInternalError     = errors.New("Ocurred an internal error")
+	ErrHabitNotFound     = errors.New("Habit not found")
 )
