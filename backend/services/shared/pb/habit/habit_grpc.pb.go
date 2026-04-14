@@ -23,6 +23,7 @@ const (
 	HabitService_CreateRoutine_FullMethodName          = "/habit.HabitService/CreateRoutine"
 	HabitService_GetHabitByID_FullMethodName           = "/habit.HabitService/GetHabitByID"
 	HabitService_ListHabitsByUser_FullMethodName       = "/habit.HabitService/ListHabitsByUser"
+	HabitService_ListHabitsByRoutine_FullMethodName    = "/habit.HabitService/ListHabitsByRoutine"
 	HabitService_EditHabit_FullMethodName              = "/habit.HabitService/EditHabit"
 	HabitService_DeleteHabit_FullMethodName            = "/habit.HabitService/DeleteHabit"
 	HabitService_MarkHabitCompleted_FullMethodName     = "/habit.HabitService/MarkHabitCompleted"
@@ -41,6 +42,7 @@ type HabitServiceClient interface {
 	CreateRoutine(ctx context.Context, in *CreateRoutineRequest, opts ...grpc.CallOption) (*CreateRoutineResponse, error)
 	GetHabitByID(ctx context.Context, in *GetHabitByIDRequest, opts ...grpc.CallOption) (*GetHabitByIDResponse, error)
 	ListHabitsByUser(ctx context.Context, in *ListHabitsByUserRequest, opts ...grpc.CallOption) (*ListHabitsByUserResponse, error)
+	ListHabitsByRoutine(ctx context.Context, in *ListHabitsByRoutineRequest, opts ...grpc.CallOption) (*ListHabitsByRoutineResponse, error)
 	EditHabit(ctx context.Context, in *EditHabitRequest, opts ...grpc.CallOption) (*EditHabitResponse, error)
 	DeleteHabit(ctx context.Context, in *DeleteHabitRequest, opts ...grpc.CallOption) (*DeleteHabitResponse, error)
 	MarkHabitCompleted(ctx context.Context, in *MarkHabitCompletedRequest, opts ...grpc.CallOption) (*MarkHabitCompletedResponse, error)
@@ -93,6 +95,16 @@ func (c *habitServiceClient) ListHabitsByUser(ctx context.Context, in *ListHabit
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListHabitsByUserResponse)
 	err := c.cc.Invoke(ctx, HabitService_ListHabitsByUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *habitServiceClient) ListHabitsByRoutine(ctx context.Context, in *ListHabitsByRoutineRequest, opts ...grpc.CallOption) (*ListHabitsByRoutineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListHabitsByRoutineResponse)
+	err := c.cc.Invoke(ctx, HabitService_ListHabitsByRoutine_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -187,6 +199,7 @@ type HabitServiceServer interface {
 	CreateRoutine(context.Context, *CreateRoutineRequest) (*CreateRoutineResponse, error)
 	GetHabitByID(context.Context, *GetHabitByIDRequest) (*GetHabitByIDResponse, error)
 	ListHabitsByUser(context.Context, *ListHabitsByUserRequest) (*ListHabitsByUserResponse, error)
+	ListHabitsByRoutine(context.Context, *ListHabitsByRoutineRequest) (*ListHabitsByRoutineResponse, error)
 	EditHabit(context.Context, *EditHabitRequest) (*EditHabitResponse, error)
 	DeleteHabit(context.Context, *DeleteHabitRequest) (*DeleteHabitResponse, error)
 	MarkHabitCompleted(context.Context, *MarkHabitCompletedRequest) (*MarkHabitCompletedResponse, error)
@@ -216,6 +229,9 @@ func (UnimplementedHabitServiceServer) GetHabitByID(context.Context, *GetHabitBy
 }
 func (UnimplementedHabitServiceServer) ListHabitsByUser(context.Context, *ListHabitsByUserRequest) (*ListHabitsByUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListHabitsByUser not implemented")
+}
+func (UnimplementedHabitServiceServer) ListHabitsByRoutine(context.Context, *ListHabitsByRoutineRequest) (*ListHabitsByRoutineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListHabitsByRoutine not implemented")
 }
 func (UnimplementedHabitServiceServer) EditHabit(context.Context, *EditHabitRequest) (*EditHabitResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditHabit not implemented")
@@ -330,6 +346,24 @@ func _HabitService_ListHabitsByUser_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HabitServiceServer).ListHabitsByUser(ctx, req.(*ListHabitsByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HabitService_ListHabitsByRoutine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListHabitsByRoutineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HabitServiceServer).ListHabitsByRoutine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HabitService_ListHabitsByRoutine_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HabitServiceServer).ListHabitsByRoutine(ctx, req.(*ListHabitsByRoutineRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -500,6 +534,10 @@ var HabitService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListHabitsByUser",
 			Handler:    _HabitService_ListHabitsByUser_Handler,
+		},
+		{
+			MethodName: "ListHabitsByRoutine",
+			Handler:    _HabitService_ListHabitsByRoutine_Handler,
 		},
 		{
 			MethodName: "EditHabit",

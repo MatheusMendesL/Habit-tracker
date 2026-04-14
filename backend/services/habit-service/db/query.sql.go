@@ -11,6 +11,21 @@ import (
 	"time"
 )
 
+const addHabitToRoutine = `-- name: AddHabitToRoutine :exec
+INSERT INTO routine_habits (routine_id, habit_id)
+VALUES (?, ?)
+`
+
+type AddHabitToRoutineParams struct {
+	RoutineID int32
+	HabitID   int32
+}
+
+func (q *Queries) AddHabitToRoutine(ctx context.Context, arg AddHabitToRoutineParams) error {
+	_, err := q.db.ExecContext(ctx, addHabitToRoutine, arg.RoutineID, arg.HabitID)
+	return err
+}
+
 const createHabit = `-- name: CreateHabit :execresult
 INSERT INTO habits (user_id, name, description, image_url)
 VALUES (?, ?, ?, ?)
@@ -47,8 +62,7 @@ func (q *Queries) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (s
 }
 
 const deleteHabit = `-- name: DeleteHabit :exec
-DELETE
-FROM habits
+DELETE FROM habits
 WHERE id = ?
 `
 
@@ -57,29 +71,32 @@ func (q *Queries) DeleteHabit(ctx context.Context, id int32) error {
 	return err
 }
 
+const deleteRoutine = `-- name: DeleteRoutine :exec
+DELETE FROM routines
+WHERE id = ?
+`
+
+func (q *Queries) DeleteRoutine(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteRoutine, id)
+	return err
+}
+
 const getHabitByID = `-- name: GetHabitByID :one
-SELECT id, user_id, name, description, image_url
+SELECT id, user_id, name, description, image_url, created_at
 FROM habits
 WHERE id = ?
 `
 
-type GetHabitByIDRow struct {
-	ID          int32
-	UserID      int32
-	Name        string
-	Description sql.NullString
-	ImageUrl    sql.NullString
-}
-
-func (q *Queries) GetHabitByID(ctx context.Context, id int32) (GetHabitByIDRow, error) {
+func (q *Queries) GetHabitByID(ctx context.Context, id int32) (Habit, error) {
 	row := q.db.QueryRowContext(ctx, getHabitByID, id)
-	var i GetHabitByIDRow
+	var i Habit
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.Name,
 		&i.Description,
 		&i.ImageUrl,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -126,35 +143,118 @@ func (q *Queries) GetHabitLogs(ctx context.Context, arg GetHabitLogsParams) ([]G
 	return items, nil
 }
 
-const listHabitsByUser = `-- name: ListHabitsByUser :many
-SELECT id, user_id, name, description, image_url
-FROM habits
-WHERE user_id = ?
+const getRoutineByID = `-- name: GetRoutineByID :one
+SELECT id, user_id, name, created_at
+FROM routines
+WHERE id = ?
 `
 
-type ListHabitsByUserRow struct {
-	ID          int32
-	UserID      int32
-	Name        string
-	Description sql.NullString
-	ImageUrl    sql.NullString
+func (q *Queries) GetRoutineByID(ctx context.Context, id int32) (Routine, error) {
+	row := q.db.QueryRowContext(ctx, getRoutineByID, id)
+	var i Routine
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
-func (q *Queries) ListHabitsByUser(ctx context.Context, userID int32) ([]ListHabitsByUserRow, error) {
-	rows, err := q.db.QueryContext(ctx, listHabitsByUser, userID)
+const listHabitsByRoutine = `-- name: ListHabitsByRoutine :many
+SELECT h.id, h.user_id, h.name, h.description, h.image_url, h.created_at
+FROM habits h
+         JOIN routine_habits rh ON rh.habit_id = h.id
+WHERE rh.routine_id = ?
+`
+
+func (q *Queries) ListHabitsByRoutine(ctx context.Context, routineID int32) ([]Habit, error) {
+	rows, err := q.db.QueryContext(ctx, listHabitsByRoutine, routineID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListHabitsByUserRow
+	var items []Habit
 	for rows.Next() {
-		var i ListHabitsByUserRow
+		var i Habit
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
 			&i.Name,
 			&i.Description,
 			&i.ImageUrl,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listHabitsByUser = `-- name: ListHabitsByUser :many
+SELECT id, user_id, name, description, image_url, created_at
+FROM habits
+WHERE user_id = ?
+`
+
+func (q *Queries) ListHabitsByUser(ctx context.Context, userID int32) ([]Habit, error) {
+	rows, err := q.db.QueryContext(ctx, listHabitsByUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Habit
+	for rows.Next() {
+		var i Habit
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Description,
+			&i.ImageUrl,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listRoutinesByHabit = `-- name: ListRoutinesByHabit :many
+SELECT r.id, r.user_id, r.name, r.created_at
+FROM routines r
+         JOIN routine_habits rh ON rh.routine_id = r.id
+WHERE rh.habit_id = ?
+`
+
+func (q *Queries) ListRoutinesByHabit(ctx context.Context, habitID int32) ([]Routine, error) {
+	rows, err := q.db.QueryContext(ctx, listRoutinesByHabit, habitID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Routine
+	for rows.Next() {
+		var i Routine
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -170,27 +270,26 @@ func (q *Queries) ListHabitsByUser(ctx context.Context, userID int32) ([]ListHab
 }
 
 const listRoutinesByUser = `-- name: ListRoutinesByUser :many
-SELECT id, user_id, name
+SELECT id, user_id, name, created_at
 FROM routines
 WHERE user_id = ?
 `
 
-type ListRoutinesByUserRow struct {
-	ID     int32
-	UserID int32
-	Name   string
-}
-
-func (q *Queries) ListRoutinesByUser(ctx context.Context, userID int32) ([]ListRoutinesByUserRow, error) {
+func (q *Queries) ListRoutinesByUser(ctx context.Context, userID int32) ([]Routine, error) {
 	rows, err := q.db.QueryContext(ctx, listRoutinesByUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListRoutinesByUserRow
+	var items []Routine
 	for rows.Next() {
-		var i ListRoutinesByUserRow
-		if err := rows.Scan(&i.ID, &i.UserID, &i.Name); err != nil {
+		var i Routine
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.CreatedAt,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -206,8 +305,8 @@ func (q *Queries) ListRoutinesByUser(ctx context.Context, userID int32) ([]ListR
 
 const markHabitCompleted = `-- name: MarkHabitCompleted :exec
 INSERT INTO habit_logs (habit_id, completed_at)
-VALUES (?, ?) ON DUPLICATE KEY
-UPDATE completed_at = completed_at
+VALUES (?, ?)
+    ON DUPLICATE KEY UPDATE completed_at = completed_at
 `
 
 type MarkHabitCompletedParams struct {
@@ -220,10 +319,25 @@ func (q *Queries) MarkHabitCompleted(ctx context.Context, arg MarkHabitCompleted
 	return err
 }
 
+const removeHabitFromRoutine = `-- name: RemoveHabitFromRoutine :exec
+DELETE FROM routine_habits
+WHERE routine_id = ? AND habit_id = ?
+`
+
+type RemoveHabitFromRoutineParams struct {
+	RoutineID int32
+	HabitID   int32
+}
+
+func (q *Queries) RemoveHabitFromRoutine(ctx context.Context, arg RemoveHabitFromRoutineParams) error {
+	_, err := q.db.ExecContext(ctx, removeHabitFromRoutine, arg.RoutineID, arg.HabitID)
+	return err
+}
+
 const unmarkHabitCompleted = `-- name: UnmarkHabitCompleted :exec
-DELETE
-FROM habit_logs
-WHERE habit_id = ? AND DATE (completed_at) = DATE (?)
+DELETE FROM habit_logs
+WHERE habit_id = ?
+  AND DATE(completed_at) = DATE(?)
 `
 
 type UnmarkHabitCompletedParams struct {
@@ -258,5 +372,21 @@ func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) error 
 		arg.ImageUrl,
 		arg.ID,
 	)
+	return err
+}
+
+const updateRoutine = `-- name: UpdateRoutine :exec
+UPDATE routines
+SET name = COALESCE(?, name)
+WHERE id = ?
+`
+
+type UpdateRoutineParams struct {
+	Name string
+	ID   int32
+}
+
+func (q *Queries) UpdateRoutine(ctx context.Context, arg UpdateRoutineParams) error {
+	_, err := q.db.ExecContext(ctx, updateRoutine, arg.Name, arg.ID)
 	return err
 }

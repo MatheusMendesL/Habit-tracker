@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
 )
@@ -19,7 +20,7 @@ func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId int32) (db.H
 	res, err := r.q.GetHabitByID(ctx, habitId)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return db.Habit{}, AppErr.ErrUserNotFound
 		}
 		return db.Habit{}, err
@@ -62,3 +63,5 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 
 	return r.GetHabitByID(ctx, int32(id))
 }
+
+func (r *HabitRepository) CreateRoutine(ctx context.Context)
