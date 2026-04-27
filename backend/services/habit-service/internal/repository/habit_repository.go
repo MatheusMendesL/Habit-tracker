@@ -64,4 +64,15 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 	return r.GetHabitByID(ctx, int32(id))
 }
 
-func (r *HabitRepository) CreateRoutine(ctx context.Context)
+func (r *HabitRepository) GetRoutineByID(ctx context.Context, routineId int32) (db.Routine, error) {
+	return db.Routine{}, nil
+}
+
+type CreateRoutineParams struct {
+	UserID int32
+	Name   string
+}
+
+func (r *HabitRepository) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (db.Routine, error) {
+	return db.Routine{}, nil
+}
