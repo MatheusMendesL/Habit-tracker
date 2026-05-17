@@ -11,4 +11,5 @@ var (
 	ErrInformedIncorrect = errors.New("You need to inform the necessary data")
 	ErrInternalError     = errors.New("Ocurred an internal error")
 	ErrHabitNotFound     = errors.New("Habit not found")
+	ErrRoutineNotFound   = errors.New("Routine not found")
 )
