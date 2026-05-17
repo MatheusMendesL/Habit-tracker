@@ -154,8 +154,10 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	}, nil
 }
 
-func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (*pb.EditUserResponse, error) {
-
+func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*pb.EditUserResponse, error) {
+	// needs to update this method to dont change when a data is not send
+	// like I want only to change my email, but not my name, the email will continue the same
+	// its simple to do that, I can change the query or get the specificy data from the db
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
@@ -198,7 +200,7 @@ func (s *UserHandler) UpdateUser(ctx context.Context, req *pb.EditUserRequest) (
 	}, nil
 }
 
-func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRequest) (*pb.EditPasswordResponse, error) {
+func (s *UserHandler) EditPassword(ctx context.Context, req *pb.EditPasswordRequest) (*pb.EditPasswordResponse, error) {
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
@@ -239,7 +241,7 @@ func (s *UserHandler) UpdatePassword(ctx context.Context, req *pb.EditPasswordRe
 	}, nil
 }
 
-func (s *UserHandler) GetUsersByIds(ctx context.Context, req *pb.GetUsersByIDsRequest) (*pb.GetUsersByIDsResponse, error) {
+func (s *UserHandler) GetUsersByIDs(ctx context.Context, req *pb.GetUsersByIDsRequest) (*pb.GetUsersByIDsResponse, error) {
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 

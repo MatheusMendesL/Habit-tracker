@@ -21,18 +21,12 @@ func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId int32) (db.H
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return db.Habit{}, AppErr.ErrUserNotFound
+			return db.Habit{}, AppErr.ErrHabitNotFound
 		}
 		return db.Habit{}, err
 	}
 
-	return db.Habit{
-		ID:          res.ID,
-		UserID:      res.UserID,
-		Name:        res.Name,
-		Description: res.Description,
-		ImageUrl:    res.ImageUrl,
-	}, nil
+	return res, nil
 }
 
 type CreateHabitParams struct {
@@ -65,7 +59,16 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 }
 
 func (r *HabitRepository) GetRoutineByID(ctx context.Context, routineId int32) (db.Routine, error) {
-	return db.Routine{}, nil
+	res, err := r.q.GetRoutineByID(ctx, routineId)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return db.Routine{}, AppErr.ErrRoutineNotFound
+		}
+		return db.Routine{}, err
+	}
+
+	return res, nil
 }
 
 type CreateRoutineParams struct {
