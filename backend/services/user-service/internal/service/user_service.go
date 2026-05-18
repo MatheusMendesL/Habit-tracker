@@ -26,12 +26,12 @@ func (s *UserService) DeleteUser(ctx context.Context, id int32) error {
 	return s.repo.DeleteUser(ctx, id)
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, user db.UpdateUserParams) (*db.User, error) {
-	return s.repo.UpdateUser(ctx, user)
+func (s *UserService) EditUser(ctx context.Context, user db.UpdateUserParams) (*db.User, error) {
+	return s.repo.EditUser(ctx, user)
 }
 
-func (s *UserService) UpdatePassword(ctx context.Context, pass *db.UpdatePasswordParams) error {
-	return s.repo.UpdatePassword(ctx, pass)
+func (s *UserService) EditPassword(ctx context.Context, pass *db.UpdatePasswordParams) error {
+	return s.repo.EditPassword(ctx, pass)
 }
 
 func (s *UserService) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.GetUsersByIDsRow, error) {
