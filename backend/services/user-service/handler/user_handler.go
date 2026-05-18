@@ -155,9 +155,6 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 }
 
 func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*pb.EditUserResponse, error) {
-	// needs to update this method to dont change when a data is not send
-	// like I want only to change my email, but not my name, the email will continue the same
-	// its simple to do that, I can change the query or get the specificy data from the db
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
@@ -168,15 +165,31 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInformedIncorrect.Error())
 	}
 
-	params := db.UpdateUserParams{
-		ID:    req.UserId,
-		Name:  req.GetName(),
-		Email: req.GetEmail(),
+	NameUser := req.GetName()
+	EmailUser := req.GetEmail()
+
+	user, err := s.userService.GetUserByID(ctx, req.UserId)
+	if err != nil {
+		return nil, err
 	}
 
-	user, err := s.userService.UpdateUser(ctx, params)
+	if NameUser == "" {
+		NameUser = user.Name
+	}
+
+	if EmailUser == "" {
+		EmailUser = user.Email
+	}
+
+	params := db.UpdateUserParams{
+		ID:    req.UserId,
+		Name:  NameUser,
+		Email: EmailUser,
+	}
+
+	user, err = s.userService.EditUser(ctx, params)
 	if err != nil {
-		s.logger.Error("error to execute UpdateUser method",
+		s.logger.Error("error to execute EditUser method",
 			zap.Int32("user_id", req.UserId),
 			zap.String("name", req.GetName()),
 			zap.String("email", req.GetEmail()),
@@ -185,7 +198,7 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 		return nil, ReceiveErrors(err)
 	}
 
-	s.logger.Info("UpdateUser method was ok",
+	s.logger.Info("EditUser method was ok",
 		zap.Int32("user_id", req.UserId),
 		zap.String("name", req.GetName()),
 		zap.String("email", req.GetEmail()),
@@ -217,7 +230,7 @@ func (s *UserHandler) EditPassword(ctx context.Context, req *pb.EditPasswordRequ
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	err := s.userService.UpdatePassword(ctx, &db.UpdatePasswordParams{
+	err := s.userService.EditPassword(ctx, &db.UpdatePasswordParams{
 		Password: newPassword,
 		ID:       userID,
 	})
