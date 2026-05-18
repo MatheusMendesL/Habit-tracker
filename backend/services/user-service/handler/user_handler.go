@@ -170,7 +170,13 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 
 	user, err := s.userService.GetUserByID(ctx, req.UserId)
 	if err != nil {
-		return nil, err
+		s.logger.Error("error to execute EditUser method",
+			zap.Int32("user_id", req.UserId),
+			zap.String("name", req.GetName()),
+			zap.String("email", req.GetEmail()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
 	}
 
 	if NameUser == "" {
