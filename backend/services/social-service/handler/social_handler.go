@@ -42,6 +42,21 @@ func ReceiveErrors(err error) error {
 	}
 }
 
+func (s *SocialHandler) GetUsersByIDs(ctx context.Context, ids []int32) (users []*pbUser.User, err error) {
+	res, err := s.UserServiceClient.GetUsersByIDs(
+		ctx,
+		&pbUser.GetUsersByIDsRequest{
+			UserIds: ids,
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Users, nil
+}
+
 func NewSocialHandler(
 	s *service.SocialService,
 	logger *zap.Logger,
@@ -157,8 +172,24 @@ func (s *SocialHandler) ListFollowers(ctx context.Context, req *pbSocial.ListFol
 		zap.Int32("userID", userID),
 	)
 
+	users, err := s.GetUsersByIDs(ctx, ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var socialUsers []*pbSocial.User
+
+	for _, u := range users {
+		socialUsers = append(socialUsers, &pbSocial.User{
+			Id:    u.Id,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
 	return &pbSocial.ListFollowersResponse{
-		FollowerIds: ids,
+		Users: socialUsers,
 	}, nil
 }
 
@@ -188,7 +219,23 @@ func (s *SocialHandler) ListFollowing(ctx context.Context, req *pbSocial.ListFol
 		zap.Int32("userID", userID),
 	)
 
+	users, err := s.GetUsersByIDs(ctx, ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var socialUsers []*pbSocial.User
+
+	for _, u := range users {
+		socialUsers = append(socialUsers, &pbSocial.User{
+			Id:    u.Id,
+			Name:  u.Name,
+			Email: u.Email,
+		})
+	}
+
 	return &pbSocial.ListFollowingResponse{
-		FollowingIds: ids,
+		Users: socialUsers,
 	}, nil
 }
