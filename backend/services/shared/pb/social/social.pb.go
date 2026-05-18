@@ -21,6 +21,66 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type User struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *User) Reset() {
+	*x = User{}
+	mi := &file_proto_social_social_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *User) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*User) ProtoMessage() {}
+
+func (x *User) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_social_social_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use User.ProtoReflect.Descriptor instead.
+func (*User) Descriptor() ([]byte, []int) {
+	return file_proto_social_social_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *User) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *User) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *User) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
 type Follow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FollowerId    int32                  `protobuf:"varint,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
@@ -31,7 +91,7 @@ type Follow struct {
 
 func (x *Follow) Reset() {
 	*x = Follow{}
-	mi := &file_proto_social_social_proto_msgTypes[0]
+	mi := &file_proto_social_social_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +103,7 @@ func (x *Follow) String() string {
 func (*Follow) ProtoMessage() {}
 
 func (x *Follow) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[0]
+	mi := &file_proto_social_social_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +116,7 @@ func (x *Follow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Follow.ProtoReflect.Descriptor instead.
 func (*Follow) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{0}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Follow) GetFollowerId() int32 {
@@ -83,7 +143,7 @@ type StartFollowingRequest struct {
 
 func (x *StartFollowingRequest) Reset() {
 	*x = StartFollowingRequest{}
-	mi := &file_proto_social_social_proto_msgTypes[1]
+	mi := &file_proto_social_social_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +155,7 @@ func (x *StartFollowingRequest) String() string {
 func (*StartFollowingRequest) ProtoMessage() {}
 
 func (x *StartFollowingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[1]
+	mi := &file_proto_social_social_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,7 +168,7 @@ func (x *StartFollowingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartFollowingRequest.ProtoReflect.Descriptor instead.
 func (*StartFollowingRequest) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{1}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *StartFollowingRequest) GetFollowerId() int32 {
@@ -134,7 +194,7 @@ type StartFollowingResponse struct {
 
 func (x *StartFollowingResponse) Reset() {
 	*x = StartFollowingResponse{}
-	mi := &file_proto_social_social_proto_msgTypes[2]
+	mi := &file_proto_social_social_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -146,7 +206,7 @@ func (x *StartFollowingResponse) String() string {
 func (*StartFollowingResponse) ProtoMessage() {}
 
 func (x *StartFollowingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[2]
+	mi := &file_proto_social_social_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -159,7 +219,7 @@ func (x *StartFollowingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartFollowingResponse.ProtoReflect.Descriptor instead.
 func (*StartFollowingResponse) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{2}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StartFollowingResponse) GetSuccess() bool {
@@ -179,7 +239,7 @@ type UnfollowRequest struct {
 
 func (x *UnfollowRequest) Reset() {
 	*x = UnfollowRequest{}
-	mi := &file_proto_social_social_proto_msgTypes[3]
+	mi := &file_proto_social_social_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -191,7 +251,7 @@ func (x *UnfollowRequest) String() string {
 func (*UnfollowRequest) ProtoMessage() {}
 
 func (x *UnfollowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[3]
+	mi := &file_proto_social_social_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -204,7 +264,7 @@ func (x *UnfollowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnfollowRequest.ProtoReflect.Descriptor instead.
 func (*UnfollowRequest) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{3}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UnfollowRequest) GetFollowerId() int32 {
@@ -230,7 +290,7 @@ type UnfollowResponse struct {
 
 func (x *UnfollowResponse) Reset() {
 	*x = UnfollowResponse{}
-	mi := &file_proto_social_social_proto_msgTypes[4]
+	mi := &file_proto_social_social_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -242,7 +302,7 @@ func (x *UnfollowResponse) String() string {
 func (*UnfollowResponse) ProtoMessage() {}
 
 func (x *UnfollowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[4]
+	mi := &file_proto_social_social_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -255,7 +315,7 @@ func (x *UnfollowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnfollowResponse.ProtoReflect.Descriptor instead.
 func (*UnfollowResponse) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{4}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UnfollowResponse) GetSuccess() bool {
@@ -274,7 +334,7 @@ type ListFollowersRequest struct {
 
 func (x *ListFollowersRequest) Reset() {
 	*x = ListFollowersRequest{}
-	mi := &file_proto_social_social_proto_msgTypes[5]
+	mi := &file_proto_social_social_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -286,7 +346,7 @@ func (x *ListFollowersRequest) String() string {
 func (*ListFollowersRequest) ProtoMessage() {}
 
 func (x *ListFollowersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[5]
+	mi := &file_proto_social_social_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +359,7 @@ func (x *ListFollowersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowersRequest.ProtoReflect.Descriptor instead.
 func (*ListFollowersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{5}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListFollowersRequest) GetUserId() int32 {
@@ -311,14 +371,14 @@ func (x *ListFollowersRequest) GetUserId() int32 {
 
 type ListFollowersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FollowerIds   []int32                `protobuf:"varint,1,rep,packed,name=follower_ids,json=followerIds,proto3" json:"follower_ids,omitempty"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListFollowersResponse) Reset() {
 	*x = ListFollowersResponse{}
-	mi := &file_proto_social_social_proto_msgTypes[6]
+	mi := &file_proto_social_social_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +390,7 @@ func (x *ListFollowersResponse) String() string {
 func (*ListFollowersResponse) ProtoMessage() {}
 
 func (x *ListFollowersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[6]
+	mi := &file_proto_social_social_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,12 +403,12 @@ func (x *ListFollowersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowersResponse.ProtoReflect.Descriptor instead.
 func (*ListFollowersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{6}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListFollowersResponse) GetFollowerIds() []int32 {
+func (x *ListFollowersResponse) GetUsers() []*User {
 	if x != nil {
-		return x.FollowerIds
+		return x.Users
 	}
 	return nil
 }
@@ -362,7 +422,7 @@ type ListFollowingRequest struct {
 
 func (x *ListFollowingRequest) Reset() {
 	*x = ListFollowingRequest{}
-	mi := &file_proto_social_social_proto_msgTypes[7]
+	mi := &file_proto_social_social_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -374,7 +434,7 @@ func (x *ListFollowingRequest) String() string {
 func (*ListFollowingRequest) ProtoMessage() {}
 
 func (x *ListFollowingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[7]
+	mi := &file_proto_social_social_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +447,7 @@ func (x *ListFollowingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowingRequest.ProtoReflect.Descriptor instead.
 func (*ListFollowingRequest) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{7}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListFollowingRequest) GetUserId() int32 {
@@ -399,14 +459,14 @@ func (x *ListFollowingRequest) GetUserId() int32 {
 
 type ListFollowingResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FollowingIds  []int32                `protobuf:"varint,1,rep,packed,name=following_ids,json=followingIds,proto3" json:"following_ids,omitempty"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListFollowingResponse) Reset() {
 	*x = ListFollowingResponse{}
-	mi := &file_proto_social_social_proto_msgTypes[8]
+	mi := &file_proto_social_social_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -418,7 +478,7 @@ func (x *ListFollowingResponse) String() string {
 func (*ListFollowingResponse) ProtoMessage() {}
 
 func (x *ListFollowingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_social_social_proto_msgTypes[8]
+	mi := &file_proto_social_social_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -431,12 +491,12 @@ func (x *ListFollowingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowingResponse.ProtoReflect.Descriptor instead.
 func (*ListFollowingResponse) Descriptor() ([]byte, []int) {
-	return file_proto_social_social_proto_rawDescGZIP(), []int{8}
+	return file_proto_social_social_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListFollowingResponse) GetFollowingIds() []int32 {
+func (x *ListFollowingResponse) GetUsers() []*User {
 	if x != nil {
-		return x.FollowingIds
+		return x.Users
 	}
 	return nil
 }
@@ -445,7 +505,11 @@ var File_proto_social_social_proto protoreflect.FileDescriptor
 
 const file_proto_social_social_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/social/social.proto\x12\x06social\"J\n" +
+	"\x19proto/social/social.proto\x12\x06social\"@\n" +
+	"\x04User\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"J\n" +
 	"\x06Follow\x12\x1f\n" +
 	"\vfollower_id\x18\x01 \x01(\x05R\n" +
 	"followerId\x12\x1f\n" +
@@ -466,18 +530,18 @@ const file_proto_social_social_proto_rawDesc = "" +
 	"\x10UnfollowResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"/\n" +
 	"\x14ListFollowersRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\":\n" +
-	"\x15ListFollowersResponse\x12!\n" +
-	"\ffollower_ids\x18\x01 \x03(\x05R\vfollowerIds\"/\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\";\n" +
+	"\x15ListFollowersResponse\x12\"\n" +
+	"\x05users\x18\x01 \x03(\v2\f.social.UserR\x05users\"/\n" +
 	"\x14ListFollowingRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"<\n" +
-	"\x15ListFollowingResponse\x12#\n" +
-	"\rfollowing_ids\x18\x01 \x03(\x05R\ffollowingIds2\xbb\x02\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\";\n" +
+	"\x15ListFollowingResponse\x12\"\n" +
+	"\x05users\x18\x01 \x03(\v2\f.social.UserR\x05users2\xbb\x02\n" +
 	"\rSocialService\x12O\n" +
 	"\x0eStartFollowing\x12\x1d.social.StartFollowingRequest\x1a\x1e.social.StartFollowingResponse\x12=\n" +
 	"\bUnfollow\x12\x17.social.UnfollowRequest\x1a\x18.social.UnfollowResponse\x12L\n" +
 	"\rListFollowers\x12\x1c.social.ListFollowersRequest\x1a\x1d.social.ListFollowersResponse\x12L\n" +
-	"\rListFollowing\x12\x1c.social.ListFollowingRequest\x1a\x1d.social.ListFollowingResponseB\rZ\v./pb/socialb\x06proto3"
+	"\rListFollowing\x12\x1c.social.ListFollowingRequest\x1a\x1d.social.ListFollowingResponseB\vZ\tpb/socialb\x06proto3"
 
 var (
 	file_proto_social_social_proto_rawDescOnce sync.Once
@@ -491,32 +555,35 @@ func file_proto_social_social_proto_rawDescGZIP() []byte {
 	return file_proto_social_social_proto_rawDescData
 }
 
-var file_proto_social_social_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_social_social_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_social_social_proto_goTypes = []any{
-	(*Follow)(nil),                 // 0: social.Follow
-	(*StartFollowingRequest)(nil),  // 1: social.StartFollowingRequest
-	(*StartFollowingResponse)(nil), // 2: social.StartFollowingResponse
-	(*UnfollowRequest)(nil),        // 3: social.UnfollowRequest
-	(*UnfollowResponse)(nil),       // 4: social.UnfollowResponse
-	(*ListFollowersRequest)(nil),   // 5: social.ListFollowersRequest
-	(*ListFollowersResponse)(nil),  // 6: social.ListFollowersResponse
-	(*ListFollowingRequest)(nil),   // 7: social.ListFollowingRequest
-	(*ListFollowingResponse)(nil),  // 8: social.ListFollowingResponse
+	(*User)(nil),                   // 0: social.User
+	(*Follow)(nil),                 // 1: social.Follow
+	(*StartFollowingRequest)(nil),  // 2: social.StartFollowingRequest
+	(*StartFollowingResponse)(nil), // 3: social.StartFollowingResponse
+	(*UnfollowRequest)(nil),        // 4: social.UnfollowRequest
+	(*UnfollowResponse)(nil),       // 5: social.UnfollowResponse
+	(*ListFollowersRequest)(nil),   // 6: social.ListFollowersRequest
+	(*ListFollowersResponse)(nil),  // 7: social.ListFollowersResponse
+	(*ListFollowingRequest)(nil),   // 8: social.ListFollowingRequest
+	(*ListFollowingResponse)(nil),  // 9: social.ListFollowingResponse
 }
 var file_proto_social_social_proto_depIdxs = []int32{
-	1, // 0: social.SocialService.StartFollowing:input_type -> social.StartFollowingRequest
-	3, // 1: social.SocialService.Unfollow:input_type -> social.UnfollowRequest
-	5, // 2: social.SocialService.ListFollowers:input_type -> social.ListFollowersRequest
-	7, // 3: social.SocialService.ListFollowing:input_type -> social.ListFollowingRequest
-	2, // 4: social.SocialService.StartFollowing:output_type -> social.StartFollowingResponse
-	4, // 5: social.SocialService.Unfollow:output_type -> social.UnfollowResponse
-	6, // 6: social.SocialService.ListFollowers:output_type -> social.ListFollowersResponse
-	8, // 7: social.SocialService.ListFollowing:output_type -> social.ListFollowingResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: social.ListFollowersResponse.users:type_name -> social.User
+	0, // 1: social.ListFollowingResponse.users:type_name -> social.User
+	2, // 2: social.SocialService.StartFollowing:input_type -> social.StartFollowingRequest
+	4, // 3: social.SocialService.Unfollow:input_type -> social.UnfollowRequest
+	6, // 4: social.SocialService.ListFollowers:input_type -> social.ListFollowersRequest
+	8, // 5: social.SocialService.ListFollowing:input_type -> social.ListFollowingRequest
+	3, // 6: social.SocialService.StartFollowing:output_type -> social.StartFollowingResponse
+	5, // 7: social.SocialService.Unfollow:output_type -> social.UnfollowResponse
+	7, // 8: social.SocialService.ListFollowers:output_type -> social.ListFollowersResponse
+	9, // 9: social.SocialService.ListFollowing:output_type -> social.ListFollowingResponse
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_social_social_proto_init() }
@@ -530,7 +597,7 @@ func file_proto_social_social_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_social_social_proto_rawDesc), len(file_proto_social_social_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
