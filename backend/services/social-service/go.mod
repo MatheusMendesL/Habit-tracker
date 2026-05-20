@@ -5,6 +5,7 @@ go 1.25.4
 replace shared => ../shared
 
 require (
+	github.com/go-sql-driver/mysql v1.9.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/joho/godotenv v1.5.1
 	go.uber.org/zap v1.27.1
@@ -14,7 +15,6 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/net v0.48.0 // indirect
