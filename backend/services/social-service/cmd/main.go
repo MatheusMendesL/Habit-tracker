@@ -29,12 +29,12 @@ func startServer() {
 	}
 	defer logger.Sync()
 
-	err = godotenv.Load("../.env")
+	err = godotenv.Load(".env")
 	if err != nil {
 		logger.Fatal("Error loading .env file", zap.Error(err))
 	}
 
-	logger.Info("Starting server")
+	logger.Info("Starting Social service server")
 
 	typeServer := os.Getenv("TYPE")
 	portServer := os.Getenv("PORT")

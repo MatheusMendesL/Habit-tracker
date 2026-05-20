@@ -26,12 +26,12 @@ func startServer() {
 	}
 	defer logger.Sync()
 
-	err = godotenv.Load("../.env")
+	err = godotenv.Load(".env")
 	if err != nil {
 		logger.Fatal("Error loading .env file", zap.Error(err))
 	}
 
-	logger.Info("Starting server")
+	logger.Info("Starting User service server")
 
 	typeServer := os.Getenv("TYPE")
 	portServer := os.Getenv("PORT")
@@ -67,7 +67,7 @@ func startServer() {
 	pb.RegisterUserServiceServer(grpcServer, userHandler)
 
 	if err := grpcServer.Serve(list); err != nil {
-		logger.Fatal("The server is not running", zap.Error(err))
+		logger.Fatal("The User service server is not running", zap.Error(err))
 	}
 }
 
