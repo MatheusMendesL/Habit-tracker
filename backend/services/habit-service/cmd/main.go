@@ -29,7 +29,10 @@ func startServer() {
 	}
 	defer logger.Sync()
 
-	_ = godotenv.Load()
+	err = godotenv.Load(".env")
+	if err != nil {
+		logger.Fatal("Error loading .env file", zap.Error(err))
+	}
 
 	logger.Info("Starting server")
 
