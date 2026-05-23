@@ -29,3 +29,11 @@ func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 		ImageUrl:    NullStringToString(habit.ImageUrl),
 	}
 }
+
+func ToProtoRoutine(routine db.Routine) *pbHabit.Routine {
+	return &pbHabit.Routine{
+		Id:     routine.ID,
+		UserId: routine.UserID,
+		Name:   routine.Name,
+	}
+}
