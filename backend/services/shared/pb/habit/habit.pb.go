@@ -1426,6 +1426,94 @@ func (x *ListRoutinesByUserResponse) GetRoutines() []*Routine {
 	return nil
 }
 
+type GetRoutineByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoutineId     int32                  `protobuf:"varint,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoutineByIDRequest) Reset() {
+	*x = GetRoutineByIDRequest{}
+	mi := &file_proto_habit_habit_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoutineByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoutineByIDRequest) ProtoMessage() {}
+
+func (x *GetRoutineByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_habit_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoutineByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetRoutineByIDRequest) Descriptor() ([]byte, []int) {
+	return file_proto_habit_habit_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetRoutineByIDRequest) GetRoutineId() int32 {
+	if x != nil {
+		return x.RoutineId
+	}
+	return 0
+}
+
+type GetRoutineByIDResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Routine       *Routine               `protobuf:"bytes,1,opt,name=routine,proto3" json:"routine,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoutineByIDResponse) Reset() {
+	*x = GetRoutineByIDResponse{}
+	mi := &file_proto_habit_habit_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoutineByIDResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoutineByIDResponse) ProtoMessage() {}
+
+func (x *GetRoutineByIDResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_habit_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoutineByIDResponse.ProtoReflect.Descriptor instead.
+func (*GetRoutineByIDResponse) Descriptor() ([]byte, []int) {
+	return file_proto_habit_habit_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *GetRoutineByIDResponse) GetRoutine() *Routine {
+	if x != nil {
+		return x.Routine
+	}
+	return nil
+}
+
 var File_proto_habit_habit_proto protoreflect.FileDescriptor
 
 const file_proto_habit_habit_proto_rawDesc = "" +
@@ -1512,10 +1600,14 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\x19ListRoutinesByUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\"H\n" +
 	"\x1aListRoutinesByUserResponse\x12*\n" +
-	"\broutines\x18\x01 \x03(\v2\x0e.habit.RoutineR\broutines2\xc1\b\n" +
+	"\broutines\x18\x01 \x03(\v2\x0e.habit.RoutineR\broutines\"6\n" +
+	"\x15GetRoutineByIDRequest\x12\x1d\n" +
+	"\n" +
+	"routine_id\x18\x01 \x01(\x05R\troutineId\"B\n" +
+	"\x16GetRoutineByIDResponse\x12(\n" +
+	"\aroutine\x18\x01 \x01(\v2\x0e.habit.RoutineR\aroutine2\xdb\x05\n" +
 	"\fHabitService\x12D\n" +
-	"\vCreateHabit\x12\x19.habit.CreateHabitRequest\x1a\x1a.habit.CreateHabitResponse\x12J\n" +
-	"\rCreateRoutine\x12\x1b.habit.CreateRoutineRequest\x1a\x1c.habit.CreateRoutineResponse\x12G\n" +
+	"\vCreateHabit\x12\x19.habit.CreateHabitRequest\x1a\x1a.habit.CreateHabitResponse\x12G\n" +
 	"\fGetHabitByID\x12\x1a.habit.GetHabitByIDRequest\x1a\x1b.habit.GetHabitByIDResponse\x12S\n" +
 	"\x10ListHabitsByUser\x12\x1e.habit.ListHabitsByUserRequest\x1a\x1f.habit.ListHabitsByUserResponse\x12\\\n" +
 	"\x13ListHabitsByRoutine\x12!.habit.ListHabitsByRoutineRequest\x1a\".habit.ListHabitsByRoutineResponse\x12>\n" +
@@ -1523,7 +1615,10 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\vDeleteHabit\x12\x19.habit.DeleteHabitRequest\x1a\x1a.habit.DeleteHabitResponse\x12Y\n" +
 	"\x12MarkHabitCompleted\x12 .habit.MarkHabitCompletedRequest\x1a!.habit.MarkHabitCompletedResponse\x12_\n" +
 	"\x14UnmarkHabitCompleted\x12\".habit.UnmarkHabitCompletedRequest\x1a#.habit.UnmarkHabitCompletedResponse\x12G\n" +
-	"\fGetHabitLogs\x12\x1a.habit.GetHabitLogsRequest\x1a\x1b.habit.GetHabitLogsResponse\x12V\n" +
+	"\fGetHabitLogs\x12\x1a.habit.GetHabitLogsRequest\x1a\x1b.habit.GetHabitLogsResponse2\xc5\x03\n" +
+	"\x0eRoutineService\x12J\n" +
+	"\rCreateRoutine\x12\x1b.habit.CreateRoutineRequest\x1a\x1c.habit.CreateRoutineResponse\x12M\n" +
+	"\x0eGetRoutineByID\x12\x1c.habit.GetRoutineByIDRequest\x1a\x1d.habit.GetRoutineByIDResponse\x12V\n" +
 	"\x11AddHabitToRoutine\x12\x1f.habit.AddHabitToRoutineRequest\x1a .habit.AddHabitToRoutineResponse\x12e\n" +
 	"\x16RemoveHabitFromRoutine\x12$.habit.RemoveHabitFromRoutineRequest\x1a%.habit.RemoveHabitFromRoutineResponse\x12Y\n" +
 	"\x12ListRoutinesByUser\x12 .habit.ListRoutinesByUserRequest\x1a!.habit.ListRoutinesByUserResponseB\n" +
@@ -1541,7 +1636,7 @@ func file_proto_habit_habit_proto_rawDescGZIP() []byte {
 	return file_proto_habit_habit_proto_rawDescData
 }
 
-var file_proto_habit_habit_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_proto_habit_habit_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_proto_habit_habit_proto_goTypes = []any{
 	(*Habit)(nil),                          // 0: habit.Habit
 	(*Routine)(nil),                        // 1: habit.Routine
@@ -1572,10 +1667,12 @@ var file_proto_habit_habit_proto_goTypes = []any{
 	(*RemoveHabitFromRoutineResponse)(nil), // 26: habit.RemoveHabitFromRoutineResponse
 	(*ListRoutinesByUserRequest)(nil),      // 27: habit.ListRoutinesByUserRequest
 	(*ListRoutinesByUserResponse)(nil),     // 28: habit.ListRoutinesByUserResponse
-	(*timestamppb.Timestamp)(nil),          // 29: google.protobuf.Timestamp
+	(*GetRoutineByIDRequest)(nil),          // 29: habit.GetRoutineByIDRequest
+	(*GetRoutineByIDResponse)(nil),         // 30: habit.GetRoutineByIDResponse
+	(*timestamppb.Timestamp)(nil),          // 31: google.protobuf.Timestamp
 }
 var file_proto_habit_habit_proto_depIdxs = []int32{
-	29, // 0: habit.HabitLog.completed_at:type_name -> google.protobuf.Timestamp
+	31, // 0: habit.HabitLog.completed_at:type_name -> google.protobuf.Timestamp
 	1,  // 1: habit.CreateRoutineRequest.routine:type_name -> habit.Routine
 	1,  // 2: habit.CreateRoutineResponse.routine:type_name -> habit.Routine
 	0,  // 3: habit.CreateHabitRequest.habit:type_name -> habit.Habit
@@ -1583,14 +1680,14 @@ var file_proto_habit_habit_proto_depIdxs = []int32{
 	0,  // 5: habit.GetHabitByIDResponse.habit:type_name -> habit.Habit
 	0,  // 6: habit.ListHabitsByUserResponse.habits:type_name -> habit.Habit
 	0,  // 7: habit.ListHabitsByRoutineResponse.habits:type_name -> habit.Habit
-	29, // 8: habit.MarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
-	29, // 9: habit.UnmarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
-	29, // 10: habit.GetHabitLogsRequest.start_date:type_name -> google.protobuf.Timestamp
-	29, // 11: habit.GetHabitLogsRequest.end_date:type_name -> google.protobuf.Timestamp
+	31, // 8: habit.MarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	31, // 9: habit.UnmarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	31, // 10: habit.GetHabitLogsRequest.start_date:type_name -> google.protobuf.Timestamp
+	31, // 11: habit.GetHabitLogsRequest.end_date:type_name -> google.protobuf.Timestamp
 	2,  // 12: habit.GetHabitLogsResponse.logs:type_name -> habit.HabitLog
 	1,  // 13: habit.ListRoutinesByUserResponse.routines:type_name -> habit.Routine
-	5,  // 14: habit.HabitService.CreateHabit:input_type -> habit.CreateHabitRequest
-	3,  // 15: habit.HabitService.CreateRoutine:input_type -> habit.CreateRoutineRequest
+	1,  // 14: habit.GetRoutineByIDResponse.routine:type_name -> habit.Routine
+	5,  // 15: habit.HabitService.CreateHabit:input_type -> habit.CreateHabitRequest
 	7,  // 16: habit.HabitService.GetHabitByID:input_type -> habit.GetHabitByIDRequest
 	9,  // 17: habit.HabitService.ListHabitsByUser:input_type -> habit.ListHabitsByUserRequest
 	11, // 18: habit.HabitService.ListHabitsByRoutine:input_type -> habit.ListHabitsByRoutineRequest
@@ -1599,27 +1696,30 @@ var file_proto_habit_habit_proto_depIdxs = []int32{
 	17, // 21: habit.HabitService.MarkHabitCompleted:input_type -> habit.MarkHabitCompletedRequest
 	19, // 22: habit.HabitService.UnmarkHabitCompleted:input_type -> habit.UnmarkHabitCompletedRequest
 	21, // 23: habit.HabitService.GetHabitLogs:input_type -> habit.GetHabitLogsRequest
-	23, // 24: habit.HabitService.AddHabitToRoutine:input_type -> habit.AddHabitToRoutineRequest
-	25, // 25: habit.HabitService.RemoveHabitFromRoutine:input_type -> habit.RemoveHabitFromRoutineRequest
-	27, // 26: habit.HabitService.ListRoutinesByUser:input_type -> habit.ListRoutinesByUserRequest
-	6,  // 27: habit.HabitService.CreateHabit:output_type -> habit.CreateHabitResponse
-	4,  // 28: habit.HabitService.CreateRoutine:output_type -> habit.CreateRoutineResponse
-	8,  // 29: habit.HabitService.GetHabitByID:output_type -> habit.GetHabitByIDResponse
-	10, // 30: habit.HabitService.ListHabitsByUser:output_type -> habit.ListHabitsByUserResponse
-	12, // 31: habit.HabitService.ListHabitsByRoutine:output_type -> habit.ListHabitsByRoutineResponse
-	14, // 32: habit.HabitService.EditHabit:output_type -> habit.EditHabitResponse
-	16, // 33: habit.HabitService.DeleteHabit:output_type -> habit.DeleteHabitResponse
-	18, // 34: habit.HabitService.MarkHabitCompleted:output_type -> habit.MarkHabitCompletedResponse
-	20, // 35: habit.HabitService.UnmarkHabitCompleted:output_type -> habit.UnmarkHabitCompletedResponse
-	22, // 36: habit.HabitService.GetHabitLogs:output_type -> habit.GetHabitLogsResponse
-	24, // 37: habit.HabitService.AddHabitToRoutine:output_type -> habit.AddHabitToRoutineResponse
-	26, // 38: habit.HabitService.RemoveHabitFromRoutine:output_type -> habit.RemoveHabitFromRoutineResponse
-	28, // 39: habit.HabitService.ListRoutinesByUser:output_type -> habit.ListRoutinesByUserResponse
-	27, // [27:40] is the sub-list for method output_type
-	14, // [14:27] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	3,  // 24: habit.RoutineService.CreateRoutine:input_type -> habit.CreateRoutineRequest
+	29, // 25: habit.RoutineService.GetRoutineByID:input_type -> habit.GetRoutineByIDRequest
+	23, // 26: habit.RoutineService.AddHabitToRoutine:input_type -> habit.AddHabitToRoutineRequest
+	25, // 27: habit.RoutineService.RemoveHabitFromRoutine:input_type -> habit.RemoveHabitFromRoutineRequest
+	27, // 28: habit.RoutineService.ListRoutinesByUser:input_type -> habit.ListRoutinesByUserRequest
+	6,  // 29: habit.HabitService.CreateHabit:output_type -> habit.CreateHabitResponse
+	8,  // 30: habit.HabitService.GetHabitByID:output_type -> habit.GetHabitByIDResponse
+	10, // 31: habit.HabitService.ListHabitsByUser:output_type -> habit.ListHabitsByUserResponse
+	12, // 32: habit.HabitService.ListHabitsByRoutine:output_type -> habit.ListHabitsByRoutineResponse
+	14, // 33: habit.HabitService.EditHabit:output_type -> habit.EditHabitResponse
+	16, // 34: habit.HabitService.DeleteHabit:output_type -> habit.DeleteHabitResponse
+	18, // 35: habit.HabitService.MarkHabitCompleted:output_type -> habit.MarkHabitCompletedResponse
+	20, // 36: habit.HabitService.UnmarkHabitCompleted:output_type -> habit.UnmarkHabitCompletedResponse
+	22, // 37: habit.HabitService.GetHabitLogs:output_type -> habit.GetHabitLogsResponse
+	4,  // 38: habit.RoutineService.CreateRoutine:output_type -> habit.CreateRoutineResponse
+	30, // 39: habit.RoutineService.GetRoutineByID:output_type -> habit.GetRoutineByIDResponse
+	24, // 40: habit.RoutineService.AddHabitToRoutine:output_type -> habit.AddHabitToRoutineResponse
+	26, // 41: habit.RoutineService.RemoveHabitFromRoutine:output_type -> habit.RemoveHabitFromRoutineResponse
+	28, // 42: habit.RoutineService.ListRoutinesByUser:output_type -> habit.ListRoutinesByUserResponse
+	29, // [29:43] is the sub-list for method output_type
+	15, // [15:29] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_proto_habit_habit_proto_init() }
@@ -1634,9 +1734,9 @@ func file_proto_habit_habit_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_habit_habit_proto_rawDesc), len(file_proto_habit_habit_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   29,
+			NumMessages:   31,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_proto_habit_habit_proto_goTypes,
 		DependencyIndexes: file_proto_habit_habit_proto_depIdxs,

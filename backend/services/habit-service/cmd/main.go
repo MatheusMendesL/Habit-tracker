@@ -51,6 +51,7 @@ func startServer() {
 	defer dbConn.Close()
 
 	HabitRepo := repository.NewHabitRepository(queries)
+	RoutineRepo := repository.NewRoutineRepository(queries)
 
 	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -60,7 +61,9 @@ func startServer() {
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
 	habitService := service.NewHabitService(HabitRepo, userServiceClient)
+	routineService := service.NewRoutineService(RoutineRepo, userServiceClient)
 	habitHandler := handler.NewHabitHandler(habitService, logger, userServiceClient)
+	RoutineHandler := handler.NewRoutineHandler(routineService, logger, userServiceClient)
 
 	/*tlsCredentials, err := loadTLCredentials()
 
@@ -76,6 +79,7 @@ func startServer() {
 	)
 
 	pb.RegisterHabitServiceServer(grpcServer, habitHandler)
+	pb.RegisterRoutineServiceServer(grpcServer, RoutineHandler)
 
 	if err := grpcServer.Serve(list); err != nil {
 		logger.Fatal("The server is not running", zap.Error(err))

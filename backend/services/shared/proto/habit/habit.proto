@@ -138,10 +138,16 @@ message ListRoutinesByUserResponse {
     repeated Routine routines = 1;
 }
 
+message GetRoutineByIDRequest {
+    int32 routine_id = 1;
+}
+
+message GetRoutineByIDResponse {
+    Routine routine = 1;
+}
+
 service HabitService {
     rpc CreateHabit(CreateHabitRequest) returns (CreateHabitResponse);
-    rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
-
     rpc GetHabitByID(GetHabitByIDRequest) returns (GetHabitByIDResponse);
 
     rpc ListHabitsByUser(ListHabitsByUserRequest) returns (ListHabitsByUserResponse);
@@ -153,6 +159,12 @@ service HabitService {
     rpc MarkHabitCompleted(MarkHabitCompletedRequest) returns (MarkHabitCompletedResponse);
     rpc UnmarkHabitCompleted(UnmarkHabitCompletedRequest) returns (UnmarkHabitCompletedResponse);
     rpc GetHabitLogs(GetHabitLogsRequest) returns (GetHabitLogsResponse);
+}
+
+service RoutineService {
+    rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
+
+    rpc GetRoutineByID(GetRoutineByIDRequest) returns (GetRoutineByIDResponse);
 
     rpc AddHabitToRoutine(AddHabitToRoutineRequest) returns (AddHabitToRoutineResponse);
     rpc RemoveHabitFromRoutine(RemoveHabitFromRoutineRequest) returns (RemoveHabitFromRoutineResponse);
