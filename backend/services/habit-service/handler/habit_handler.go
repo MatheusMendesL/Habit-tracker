@@ -27,7 +27,7 @@ type HabitHandler struct {
 
 const defaultTimeout = 3 * time.Second
 
-func (s *HabitHandler) withTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
+func WithTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
 	return context.WithTimeout(ctx, defaultTimeout)
 }
 
@@ -56,8 +56,49 @@ func NewHabitHandler(
 	}
 }
 
+func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabitRequest) (*pbHabit.CreateHabitResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	reqHabit := req.Habit
+	if reqHabit.UserId <= 0 {
+		s.logger.Warn("invalid user id",
+			zap.Int32("user_id", reqHabit.UserId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	if reqHabit.Name == "" {
+		s.logger.Warn("invalid habit name",
+			zap.String("habit_name", reqHabit.Name),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	args := db.CreateHabitParams{
+		UserID:      reqHabit.UserId,
+		Name:        reqHabit.Name,
+		Description: utils.ToNullString(reqHabit.Description),
+		ImageUrl:    utils.ToNullString(reqHabit.ImageUrl),
+	}
+
+	habit, err := s.HabitService.CreateHabit(ctx, repository.CreateHabitParams(args))
+
+	if err != nil {
+		s.logger.Error("error to execute CreateHabit method",
+			zap.Any("habit", reqHabit),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	return &pbHabit.CreateHabitResponse{
+		Habit: utils.ToProtoHabit(habit),
+	}, nil
+}
+
 func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitByIDRequest) (*pbHabit.GetHabitByIDResponse, error) {
-	ctx, cancel := s.withTimeout(ctx)
+	ctx, cancel := WithTimeout(ctx)
 	defer cancel()
 
 	habitID := req.HabitId
@@ -94,46 +135,4 @@ func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitBy
 		Habit: utils.ToProtoHabit(habit),
 	}, nil
 
-}
-
-func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabitRequest) (*pbHabit.CreateHabitResponse, error) {
-	ctx, cancel := s.withTimeout(ctx)
-	defer cancel()
-
-	reqHabit := req.Habit
-
-	if reqHabit.UserId <= 0 {
-		s.logger.Warn("invalid user id",
-			zap.Int32("user_id", reqHabit.UserId),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
-
-	if reqHabit.Name == "" {
-		s.logger.Warn("invalid habit name",
-			zap.String("habit_name", reqHabit.Name),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
-
-	args := db.CreateHabitParams{
-		UserID:      reqHabit.UserId,
-		Name:        reqHabit.Name,
-		Description: utils.ToNullString(reqHabit.Description),
-		ImageUrl:    utils.ToNullString(reqHabit.ImageUrl),
-	}
-
-	habit, err := s.HabitService.CreateHabit(ctx, repository.CreateHabitParams(args))
-
-	if err != nil {
-		s.logger.Error("error to execute CreateHabit method",
-			zap.Any("habit", reqHabit),
-			zap.Error(err),
-		)
-		return nil, ReceiveErrors(err)
-	}
-
-	return &pbHabit.CreateHabitResponse{
-		Habit: utils.ToProtoHabit(habit),
-	}, nil
 }
