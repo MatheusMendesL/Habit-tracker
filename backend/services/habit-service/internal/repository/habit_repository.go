@@ -16,19 +16,6 @@ func NewHabitRepository(q *db.Queries) *HabitRepository {
 	return &HabitRepository{q: q}
 }
 
-func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId int32) (db.Habit, error) {
-	res, err := r.q.GetHabitByID(ctx, habitId)
-
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return db.Habit{}, AppErr.ErrHabitNotFound
-		}
-		return db.Habit{}, err
-	}
-
-	return res, nil
-}
-
 type CreateHabitParams struct {
 	UserID      int32
 	Name        string
@@ -58,25 +45,15 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 	return r.GetHabitByID(ctx, int32(id))
 }
 
-/*
-func (r *HabitRepository) GetRoutineByID(ctx context.Context, routineId int32) (db.Routine, error) {
-	res, err := r.q.GetRoutineByID(ctx, routineId)
+func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId int32) (db.Habit, error) {
+	res, err := r.q.GetHabitByID(ctx, habitId)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return db.Routine{}, AppErr.ErrRoutineNotFound
+			return db.Habit{}, AppErr.ErrHabitNotFound
 		}
-		return db.Routine{}, err
+		return db.Habit{}, err
 	}
 
 	return res, nil
-}*/
-
-type CreateRoutineParams struct {
-	UserID int32
-	Name   string
-}
-
-func (r *HabitRepository) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (db.Routine, error) {
-	return db.Routine{}, nil
 }
