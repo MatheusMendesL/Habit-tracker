@@ -44,6 +44,27 @@ func ReceiveErrors(err error) error {
 	}
 }
 
+func (s *HabitHandler) Verification(val any, name string, nameVal string) error {
+	switch v := val.(type) {
+	case string:
+		if v == "" {
+			s.logger.Warn("invalid "+name,
+				zap.String(nameVal, v),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	case int32:
+		if v <= 0 {
+			s.logger.Warn("invalid "+name,
+				zap.Int32(nameVal, v),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	}
+
+	return nil
+}
+
 func NewHabitHandler(
 	s *service.HabitService,
 	logger *zap.Logger,
@@ -61,18 +82,13 @@ func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabit
 	defer cancel()
 
 	reqHabit := req.Habit
-	if reqHabit.UserId <= 0 {
-		s.logger.Warn("invalid user id",
-			zap.Int32("user_id", reqHabit.UserId),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+
+	if err := s.Verification(reqHabit.UserId, "user id", "user_id"); err != nil {
+		return nil, err
 	}
 
-	if reqHabit.Name == "" {
-		s.logger.Warn("invalid habit name",
-			zap.String("habit_name", reqHabit.Name),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	if err := s.Verification(reqHabit.Name, "habit name", "habit_name"); err != nil {
+		return nil, err
 	}
 
 	args := db.CreateHabitParams{
@@ -103,11 +119,8 @@ func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitBy
 
 	habitID := req.HabitId
 
-	if habitID == 0 {
-		s.logger.Warn("invalid habit id",
-			zap.Int32("habit_id", habitID),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	if err := s.Verification(habitID, "habit id", "habit_id"); err != nil {
+		return nil, err
 	}
 
 	habit, err := s.HabitService.GetHabitByID(ctx, habitID)
