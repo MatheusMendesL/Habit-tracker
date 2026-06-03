@@ -35,9 +35,6 @@ func startServer() {
 	typeServer := os.Getenv("TYPE")
 	portServer := os.Getenv("PORT")
 
-	logger.Info("TYPE env var", zap.String("TYPE", typeServer))
-	logger.Info("PORT env var", zap.String("PORT", portServer))
-
 	list, err := net.Listen(typeServer, portServer)
 
 	if err != nil {
