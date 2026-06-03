@@ -10,6 +10,7 @@ import (
 	AppErr "user-service/internal/errors"
 	"user-service/internal/service"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -52,29 +53,33 @@ func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDReques
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	if req.UserId == 0 {
+	userID, err := uuid.Parse(req.UserId)
+
+	if err != nil {
 		s.logger.Warn("Invalid User id",
-			zap.Int32("user_id", req.UserId),
+			zap.Any("user_id", userID),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	user, err := s.userService.GetUserByID(ctx, req.UserId)
+	id := userID.String()
+
+	user, err := s.userService.GetUserByID(ctx, userID)
 	if err != nil {
 		s.logger.Error("error to execute GetUserByID method",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", id),
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
 	}
 
 	s.logger.Info("The method GetUserByID was ok",
-		zap.Int32("user_id", user.ID),
+		zap.String("user_id", id),
 	)
 
 	return &pb.GetUserByIDResponse{
 		User: &pb.User{
-			Id:    user.ID,
+			Id:    id,
 			Name:  user.Name,
 			Email: user.Email,
 		},
@@ -103,8 +108,11 @@ func (s *UserHandler) SearchUser(ctx context.Context, req *pb.SearchUserRequest)
 
 	var pbUsers []*pb.User
 	for _, u := range users {
+
+		id := u.ID.String()
+
 		pbUsers = append(pbUsers, &pb.User{
-			Id:    u.ID,
+			Id:    id,
 			Name:  u.Name,
 			Email: u.Email,
 		})
@@ -124,19 +132,19 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	userId := req.GetUserId()
+	userId, err := uuid.Parse(req.UserId)
 
-	if userId == 0 {
+	if err != nil {
 		s.logger.Warn("invalid user_id",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", req.UserId),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	err := s.userService.DeleteUser(ctx, req.UserId)
+	err = s.userService.DeleteUser(ctx, userId)
 	if err != nil {
 		s.logger.Error("error to execute DeleteUser method",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", req.UserId),
 			zap.Error(err),
 		)
 
@@ -146,7 +154,7 @@ func (s *UserHandler) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest)
 	}
 
 	s.logger.Info("DeleteUser method was ok",
-		zap.Int32("user_id", req.UserId),
+		zap.String("user_id", req.UserId),
 	)
 
 	return &pb.DeleteUserResponse{
@@ -160,7 +168,7 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 
 	if req.Name == nil && req.Email == nil {
 		s.logger.Warn("empty data",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", req.UserId),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInformedIncorrect.Error())
 	}
@@ -168,10 +176,19 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 	NameUser := req.GetName()
 	EmailUser := req.GetEmail()
 
-	user, err := s.userService.GetUserByID(ctx, req.UserId)
+	userId, err := uuid.Parse(req.UserId)
+
+	if err != nil {
+		s.logger.Warn("invalid user_id",
+			zap.String("user_id", req.UserId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	user, err := s.userService.GetUserByID(ctx, userId)
 	if err != nil {
 		s.logger.Error("error to execute EditUser method",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", req.UserId),
 			zap.String("name", req.GetName()),
 			zap.String("email", req.GetEmail()),
 			zap.Error(err),
@@ -188,7 +205,7 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 	}
 
 	params := db.UpdateUserParams{
-		ID:    req.UserId,
+		ID:    userId,
 		Name:  NameUser,
 		Email: EmailUser,
 	}
@@ -196,7 +213,7 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 	user, err = s.userService.EditUser(ctx, params)
 	if err != nil {
 		s.logger.Error("error to execute EditUser method",
-			zap.Int32("user_id", req.UserId),
+			zap.String("user_id", req.UserId),
 			zap.String("name", req.GetName()),
 			zap.String("email", req.GetEmail()),
 			zap.Error(err),
@@ -205,14 +222,14 @@ func (s *UserHandler) EditUser(ctx context.Context, req *pb.EditUserRequest) (*p
 	}
 
 	s.logger.Info("EditUser method was ok",
-		zap.Int32("user_id", req.UserId),
+		zap.String("user_id", req.UserId),
 		zap.String("name", req.GetName()),
 		zap.String("email", req.GetEmail()),
 	)
 
 	return &pb.EditUserResponse{
 		User: &pb.User{
-			Id:    user.ID,
+			Id:    user.ID.String(),
 			Name:  user.Name,
 			Email: user.Email,
 		},
@@ -228,22 +245,23 @@ func (s *UserHandler) EditPassword(ctx context.Context, req *pb.EditPasswordRequ
 		s.logger.Warn("newPassword is null")
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrNullField.Error())
 	}
-	userID := req.GetUserId()
-	if userID == 0 {
+
+	userID, err := uuid.Parse(req.UserId)
+	if err != nil {
 		s.logger.Warn("user_id is null",
-			zap.Int32("user_id", userID),
+			zap.String("user_id", req.UserId),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	err := s.userService.EditPassword(ctx, &db.UpdatePasswordParams{
+	err = s.userService.EditPassword(ctx, &db.UpdatePasswordParams{
 		Password: newPassword,
 		ID:       userID,
 	})
 
 	if err != nil {
 		s.logger.Error("error to execute UpdatePassword method",
-			zap.Int32("user_id", userID),
+			zap.String("user_id", req.UserId),
 			zap.Error(err),
 		)
 		return &pb.EditPasswordResponse{
@@ -252,7 +270,7 @@ func (s *UserHandler) EditPassword(ctx context.Context, req *pb.EditPasswordRequ
 	}
 
 	s.logger.Info("UpdatePassword method was ok",
-		zap.Int32("user_id", userID),
+		zap.String("user_id", req.UserId),
 	)
 
 	return &pb.EditPasswordResponse{
@@ -264,7 +282,21 @@ func (s *UserHandler) GetUsersByIDs(ctx context.Context, req *pb.GetUsersByIDsRe
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	users, err := s.userService.GetUsersByIDs(ctx, req.UserIds)
+	var userIDs []uuid.UUID
+
+	for _, id := range req.UserIds {
+		parsedID, err := uuid.Parse(id)
+		if err != nil {
+			s.logger.Warn("user_id is null",
+				zap.Any("user_id", id),
+			)
+			return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+
+		userIDs = append(userIDs, parsedID)
+	}
+
+	users, err := s.userService.GetUsersByIDs(ctx, userIDs)
 	if err != nil {
 		s.logger.Error("error to execute GetUsersByIds method",
 			zap.Any("user_ids", req.UserIds),
@@ -275,8 +307,9 @@ func (s *UserHandler) GetUsersByIDs(ctx context.Context, req *pb.GetUsersByIDsRe
 
 	var pbUsers []*pb.User
 	for _, u := range users {
+		id := u.ID.String()
 		pbUsers = append(pbUsers, &pb.User{
-			Id:    u.ID,
+			Id:    id,
 			Name:  u.Name,
 			Email: u.Email,
 		})

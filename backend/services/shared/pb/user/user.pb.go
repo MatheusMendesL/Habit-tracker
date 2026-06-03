@@ -23,7 +23,7 @@ const (
 
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -60,11 +60,11 @@ func (*User) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *User) GetId() int32 {
+func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *User) GetName() string {
@@ -83,7 +83,7 @@ func (x *User) GetEmail() string {
 
 type GetUserByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,11 +118,11 @@ func (*GetUserByIDRequest) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetUserByIDRequest) GetUserId() int32 {
+func (x *GetUserByIDRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type GetUserByIDResponse struct {
@@ -171,7 +171,7 @@ func (x *GetUserByIDResponse) GetUser() *User {
 
 type GetUsersByIDsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserIds       []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	UserIds       []string               `protobuf:"bytes,1,rep,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -206,7 +206,7 @@ func (*GetUsersByIDsRequest) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetUsersByIDsRequest) GetUserIds() []int32 {
+func (x *GetUsersByIDsRequest) GetUserIds() []string {
 	if x != nil {
 		return x.UserIds
 	}
@@ -259,7 +259,7 @@ func (x *GetUsersByIDsResponse) GetUsers() []*User {
 
 type EditUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Email         *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -296,11 +296,11 @@ func (*EditUserRequest) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *EditUserRequest) GetUserId() int32 {
+func (x *EditUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *EditUserRequest) GetName() string {
@@ -363,7 +363,7 @@ func (x *EditUserResponse) GetUser() *User {
 
 type EditPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	NewPassword   string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -399,11 +399,11 @@ func (*EditPasswordRequest) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *EditPasswordRequest) GetUserId() int32 {
+func (x *EditPasswordRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *EditPasswordRequest) GetNewPassword() string {
@@ -459,7 +459,7 @@ func (x *EditPasswordResponse) GetSuccess() bool {
 
 type DeleteUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -494,11 +494,11 @@ func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *DeleteUserRequest) GetUserId() int32 {
+func (x *DeleteUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type DeleteUserResponse struct {
@@ -647,21 +647,21 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\n" +
 	"\x15proto/user/user.proto\x12\x04user\"@\n" +
 	"\x04User\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\"-\n" +
 	"\x12GetUserByIDRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"5\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"5\n" +
 	"\x13GetUserByIDResponse\x12\x1e\n" +
 	"\x04user\x18\x01 \x01(\v2\n" +
 	".user.UserR\x04user\"1\n" +
 	"\x14GetUsersByIDsRequest\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"9\n" +
+	"\buser_ids\x18\x01 \x03(\tR\auserIds\"9\n" +
 	"\x15GetUsersByIDsResponse\x12 \n" +
 	"\x05users\x18\x01 \x03(\v2\n" +
 	".user.UserR\x05users\"q\n" +
 	"\x0fEditUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x19\n" +
 	"\x05email\x18\x03 \x01(\tH\x01R\x05email\x88\x01\x01B\a\n" +
 	"\x05_nameB\b\n" +
@@ -670,12 +670,12 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\n" +
 	".user.UserR\x04user\"Q\n" +
 	"\x13EditPasswordRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12!\n" +
 	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\"0\n" +
 	"\x14EditPasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\",\n" +
 	"\x11DeleteUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\".\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\".\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"Z\n" +
 	"\x11SearchUserRequest\x12\x17\n" +

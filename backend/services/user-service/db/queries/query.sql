@@ -1,33 +1,34 @@
 -- name: GetUserByID :one
 SELECT id, name, email
 FROM users
-WHERE id = ?;
+WHERE id = $1;
 
 -- name: SearchUser :many
 SELECT id, name, email
 FROM users
 WHERE
-    (name LIKE CONCAT('%', sqlc.arg(name), '%') OR sqlc.arg(name) = '')
+    (name ILIKE '%' || sqlc.arg(name) || '%' OR sqlc.arg(name) = '')
   AND
-    (email LIKE CONCAT('%', sqlc.arg(email), '%') OR sqlc.arg(email) = '')
+    (email ILIKE '%' || sqlc.arg(email) || '%' OR sqlc.arg(email) = '')
     LIMIT 20;
 
 -- name: UpdateUser :exec
 UPDATE users
-SET name = COALESCE(?, name),
-    email = COALESCE(?, email)
-WHERE id = ?;
+SET
+    name = COALESCE($1, name),
+    email = COALESCE($2, email)
+WHERE id = $3;
 
 -- name: UpdatePassword :exec
 UPDATE users
-SET password = ?
-WHERE id = ?;
+SET password = $1
+WHERE id = $2;
 
 -- name: DeleteUser :exec
 DELETE FROM users
-WHERE id = ?;
+WHERE id = $1;
 
 -- name: GetUsersByIDs :many
 SELECT id, name, email
 FROM users
-WHERE id IN (sqlc.slice('user_ids'));
+WHERE id = ANY($1::uuid[]);

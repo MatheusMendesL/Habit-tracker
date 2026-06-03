@@ -2,7 +2,10 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"user-service/db"
+
+	"github.com/google/uuid"
 )
 
 type UserRepository struct {
@@ -13,7 +16,14 @@ func NewUserRepository(q *db.Queries) *UserRepository {
 	return &UserRepository{q: q}
 }
 
-func (r *UserRepository) FindByID(ctx context.Context, id int32) (*db.User, error) {
+func ToNullString(param string) sql.NullString {
+	return sql.NullString{
+		String: param,
+		Valid:  true,
+	}
+}
+
+func (r *UserRepository) FindByID(ctx context.Context, id uuid.UUID) (*db.User, error) {
 	row, err := r.q.GetUserByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -28,8 +38,8 @@ func (r *UserRepository) FindByID(ctx context.Context, id int32) (*db.User, erro
 
 func (r *UserRepository) SearchUser(ctx context.Context, name string, email string) ([]*db.User, error) {
 	params := db.SearchUserParams{
-		Name:  name,
-		Email: email,
+		Name:  ToNullString(name),
+		Email: ToNullString(email),
 	}
 	rows, err := r.q.SearchUser(ctx, params)
 
@@ -48,7 +58,7 @@ func (r *UserRepository) SearchUser(ctx context.Context, name string, email stri
 	return users, nil
 }
 
-func (r *UserRepository) DeleteUser(ctx context.Context, id int32) error {
+func (r *UserRepository) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	err := r.q.DeleteUser(ctx, id)
 
 	if err != nil {
@@ -59,6 +69,7 @@ func (r *UserRepository) DeleteUser(ctx context.Context, id int32) error {
 }
 
 func (r *UserRepository) EditUser(ctx context.Context, req db.UpdateUserParams) (*db.User, error) {
+
 	err := r.q.UpdateUser(ctx, req)
 
 	if err != nil {
@@ -83,7 +94,7 @@ func (r *UserRepository) EditPassword(ctx context.Context, req *db.UpdatePasswor
 	return r.q.UpdatePassword(ctx, params)
 }
 
-func (r *UserRepository) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.GetUsersByIDsRow, error) {
+func (r *UserRepository) GetUsersByIDs(ctx context.Context, ids []uuid.UUID) ([]db.GetUsersByIDsRow, error) {
 	if len(ids) == 0 {
 		return []db.GetUsersByIDsRow{}, nil
 	}
@@ -94,7 +105,7 @@ func (r *UserRepository) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.G
 		return []db.GetUsersByIDsRow{}, err
 	}
 
-	m := make(map[int32]db.GetUsersByIDsRow, len(users))
+	m := make(map[uuid.UUID]db.GetUsersByIDsRow, len(users))
 	for _, u := range users {
 		m[u.ID] = u
 	}

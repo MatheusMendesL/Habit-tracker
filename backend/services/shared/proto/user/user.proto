@@ -5,13 +5,13 @@ package user;
 option go_package = "pb/user";
 
 message User {
-  int32 id = 1;
+  string id = 1;
   string name = 2;
   string email = 3;
 }
 
 message GetUserByIDRequest {
-  int32 user_id = 1;
+  string user_id = 1;
 }
 
 message GetUserByIDResponse {
@@ -19,7 +19,7 @@ message GetUserByIDResponse {
 }
 
 message GetUsersByIDsRequest {
-  repeated int32 user_ids = 1;
+  repeated string user_ids = 1;
 }
 
 message GetUsersByIDsResponse {
@@ -27,7 +27,7 @@ message GetUsersByIDsResponse {
 }
 
 message EditUserRequest {
-  int32 user_id = 1;
+  string user_id = 1;
   optional string name = 2;
   optional string email = 3;
 }
@@ -37,7 +37,7 @@ message EditUserResponse {
 }
 
 message EditPasswordRequest {
-  int32 user_id = 1;
+  string user_id = 1;
   string new_password = 2;
 }
 
@@ -46,7 +46,7 @@ message EditPasswordResponse {
 }
 
 message DeleteUserRequest {
-  int32 user_id = 1;
+  string user_id = 1;
 }
 
 message DeleteUserResponse {
