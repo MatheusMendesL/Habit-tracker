@@ -4,6 +4,8 @@ import (
 	"context"
 	"user-service/db"
 	"user-service/internal/repository"
+
+	"github.com/google/uuid"
 )
 
 type UserService struct {
@@ -14,7 +16,7 @@ func NewUserService(r *repository.UserRepository) *UserService {
 	return &UserService{repo: r}
 }
 
-func (s *UserService) GetUserByID(ctx context.Context, id int32) (*db.User, error) {
+func (s *UserService) GetUserByID(ctx context.Context, id uuid.UUID) (*db.User, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
@@ -22,7 +24,7 @@ func (s *UserService) SearchUser(ctx context.Context, name string, email string)
 	return s.repo.SearchUser(ctx, name, email)
 }
 
-func (s *UserService) DeleteUser(ctx context.Context, id int32) error {
+func (s *UserService) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	return s.repo.DeleteUser(ctx, id)
 }
 
@@ -34,6 +36,6 @@ func (s *UserService) EditPassword(ctx context.Context, pass *db.UpdatePasswordP
 	return s.repo.EditPassword(ctx, pass)
 }
 
-func (s *UserService) GetUsersByIDs(ctx context.Context, ids []int32) ([]db.GetUsersByIDsRow, error) {
+func (s *UserService) GetUsersByIDs(ctx context.Context, ids []uuid.UUID) ([]db.GetUsersByIDsRow, error) {
 	return s.repo.GetUsersByIDs(ctx, ids)
 }

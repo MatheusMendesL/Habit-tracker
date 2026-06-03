@@ -7,15 +7,18 @@ package db
 
 import (
 	"context"
-	"strings"
+	"database/sql"
+
+	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM users
-WHERE id = ?
+WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, id)
 	return err
 }
@@ -23,16 +26,16 @@ func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 const getUserByID = `-- name: GetUserByID :one
 SELECT id, name, email
 FROM users
-WHERE id = ?
+WHERE id = $1
 `
 
 type GetUserByIDRow struct {
-	ID    int32
+	ID    uuid.UUID
 	Name  string
 	Email string
 }
 
-func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {
+func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (GetUserByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getUserByID, id)
 	var i GetUserByIDRow
 	err := row.Scan(&i.ID, &i.Name, &i.Email)
@@ -42,27 +45,17 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, er
 const getUsersByIDs = `-- name: GetUsersByIDs :many
 SELECT id, name, email
 FROM users
-WHERE id IN (/*SLICE:user_ids*/?)
+WHERE id = ANY($1::uuid[])
 `
 
 type GetUsersByIDsRow struct {
-	ID    int32
+	ID    uuid.UUID
 	Name  string
 	Email string
 }
 
-func (q *Queries) GetUsersByIDs(ctx context.Context, userIds []int32) ([]GetUsersByIDsRow, error) {
-	query := getUsersByIDs
-	var queryParams []interface{}
-	if len(userIds) > 0 {
-		for _, v := range userIds {
-			queryParams = append(queryParams, v)
-		}
-		query = strings.Replace(query, "/*SLICE:user_ids*/?", strings.Repeat(",?", len(userIds))[1:], 1)
-	} else {
-		query = strings.Replace(query, "/*SLICE:user_ids*/?", "NULL", 1)
-	}
-	rows, err := q.db.QueryContext(ctx, query, queryParams...)
+func (q *Queries) GetUsersByIDs(ctx context.Context, dollar_1 []uuid.UUID) ([]GetUsersByIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersByIDs, pq.Array(dollar_1))
 	if err != nil {
 		return nil, err
 	}
@@ -88,30 +81,25 @@ const searchUser = `-- name: SearchUser :many
 SELECT id, name, email
 FROM users
 WHERE
-    (name LIKE CONCAT('%', ?, '%') OR ? = '')
+    (name ILIKE '%' || $1 || '%' OR $1 = '')
   AND
-    (email LIKE CONCAT('%', ?, '%') OR ? = '')
+    (email ILIKE '%' || $2 || '%' OR $2 = '')
     LIMIT 20
 `
 
 type SearchUserParams struct {
-	Name  interface{}
-	Email interface{}
+	Name  sql.NullString
+	Email sql.NullString
 }
 
 type SearchUserRow struct {
-	ID    int32
+	ID    uuid.UUID
 	Name  string
 	Email string
 }
 
 func (q *Queries) SearchUser(ctx context.Context, arg SearchUserParams) ([]SearchUserRow, error) {
-	rows, err := q.db.QueryContext(ctx, searchUser,
-		arg.Name,
-		arg.Name,
-		arg.Email,
-		arg.Email,
-	)
+	rows, err := q.db.QueryContext(ctx, searchUser, arg.Name, arg.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -135,13 +123,13 @@ func (q *Queries) SearchUser(ctx context.Context, arg SearchUserParams) ([]Searc
 
 const updatePassword = `-- name: UpdatePassword :exec
 UPDATE users
-SET password = ?
-WHERE id = ?
+SET password = $1
+WHERE id = $2
 `
 
 type UpdatePasswordParams struct {
 	Password string
-	ID       int32
+	ID       uuid.UUID
 }
 
 func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) error {
@@ -151,15 +139,16 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users
-SET name = COALESCE(?, name),
-    email = COALESCE(?, email)
-WHERE id = ?
+SET
+    name = COALESCE($1, name),
+    email = COALESCE($2, email)
+WHERE id = $3
 `
 
 type UpdateUserParams struct {
 	Name  string
 	Email string
-	ID    int32
+	ID    uuid.UUID
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
