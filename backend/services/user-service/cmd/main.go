@@ -26,9 +26,8 @@ func startServer() {
 	}
 	defer logger.Sync()
 
-	err = godotenv.Load(".env")
-	if err != nil {
-		logger.Fatal("Error loading .env file", zap.Error(err))
+	if err = godotenv.Load(".env"); err != nil {
+		logger.Warn("No .env file found, relying on environment variables", zap.Error(err))
 	}
 
 	logger.Info("Starting User service server")
