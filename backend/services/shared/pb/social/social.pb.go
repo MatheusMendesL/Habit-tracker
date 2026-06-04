@@ -23,7 +23,7 @@ const (
 
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -60,11 +60,11 @@ func (*User) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *User) GetId() int32 {
+func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *User) GetName() string {
@@ -83,8 +83,8 @@ func (x *User) GetEmail() string {
 
 type Follow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FollowerId    int32                  `protobuf:"varint,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
-	FolloweeId    int32                  `protobuf:"varint,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
+	FollowerId    string                 `protobuf:"bytes,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
+	FolloweeId    string                 `protobuf:"bytes,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -119,24 +119,24 @@ func (*Follow) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Follow) GetFollowerId() int32 {
+func (x *Follow) GetFollowerId() string {
 	if x != nil {
 		return x.FollowerId
 	}
-	return 0
+	return ""
 }
 
-func (x *Follow) GetFolloweeId() int32 {
+func (x *Follow) GetFolloweeId() string {
 	if x != nil {
 		return x.FolloweeId
 	}
-	return 0
+	return ""
 }
 
 type StartFollowingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FollowerId    int32                  `protobuf:"varint,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
-	FolloweeId    int32                  `protobuf:"varint,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
+	FollowerId    string                 `protobuf:"bytes,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
+	FolloweeId    string                 `protobuf:"bytes,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -171,18 +171,18 @@ func (*StartFollowingRequest) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *StartFollowingRequest) GetFollowerId() int32 {
+func (x *StartFollowingRequest) GetFollowerId() string {
 	if x != nil {
 		return x.FollowerId
 	}
-	return 0
+	return ""
 }
 
-func (x *StartFollowingRequest) GetFolloweeId() int32 {
+func (x *StartFollowingRequest) GetFolloweeId() string {
 	if x != nil {
 		return x.FolloweeId
 	}
-	return 0
+	return ""
 }
 
 type StartFollowingResponse struct {
@@ -231,8 +231,8 @@ func (x *StartFollowingResponse) GetSuccess() bool {
 
 type UnfollowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FollowerId    int32                  `protobuf:"varint,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
-	FolloweeId    int32                  `protobuf:"varint,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
+	FollowerId    string                 `protobuf:"bytes,1,opt,name=follower_id,json=followerId,proto3" json:"follower_id,omitempty"`
+	FolloweeId    string                 `protobuf:"bytes,2,opt,name=followee_id,json=followeeId,proto3" json:"followee_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -267,18 +267,18 @@ func (*UnfollowRequest) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UnfollowRequest) GetFollowerId() int32 {
+func (x *UnfollowRequest) GetFollowerId() string {
 	if x != nil {
 		return x.FollowerId
 	}
-	return 0
+	return ""
 }
 
-func (x *UnfollowRequest) GetFolloweeId() int32 {
+func (x *UnfollowRequest) GetFolloweeId() string {
 	if x != nil {
 		return x.FolloweeId
 	}
-	return 0
+	return ""
 }
 
 type UnfollowResponse struct {
@@ -327,7 +327,7 @@ func (x *UnfollowResponse) GetSuccess() bool {
 
 type ListFollowersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -362,11 +362,11 @@ func (*ListFollowersRequest) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListFollowersRequest) GetUserId() int32 {
+func (x *ListFollowersRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type ListFollowersResponse struct {
@@ -415,7 +415,7 @@ func (x *ListFollowersResponse) GetUsers() []*User {
 
 type ListFollowingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -450,11 +450,11 @@ func (*ListFollowingRequest) Descriptor() ([]byte, []int) {
 	return file_proto_social_social_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ListFollowingRequest) GetUserId() int32 {
+func (x *ListFollowingRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type ListFollowingResponse struct {
@@ -507,34 +507,34 @@ const file_proto_social_social_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/social/social.proto\x12\x06social\"@\n" +
 	"\x04User\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\"J\n" +
 	"\x06Follow\x12\x1f\n" +
-	"\vfollower_id\x18\x01 \x01(\x05R\n" +
+	"\vfollower_id\x18\x01 \x01(\tR\n" +
 	"followerId\x12\x1f\n" +
-	"\vfollowee_id\x18\x02 \x01(\x05R\n" +
+	"\vfollowee_id\x18\x02 \x01(\tR\n" +
 	"followeeId\"Y\n" +
 	"\x15StartFollowingRequest\x12\x1f\n" +
-	"\vfollower_id\x18\x01 \x01(\x05R\n" +
+	"\vfollower_id\x18\x01 \x01(\tR\n" +
 	"followerId\x12\x1f\n" +
-	"\vfollowee_id\x18\x02 \x01(\x05R\n" +
+	"\vfollowee_id\x18\x02 \x01(\tR\n" +
 	"followeeId\"2\n" +
 	"\x16StartFollowingResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"S\n" +
 	"\x0fUnfollowRequest\x12\x1f\n" +
-	"\vfollower_id\x18\x01 \x01(\x05R\n" +
+	"\vfollower_id\x18\x01 \x01(\tR\n" +
 	"followerId\x12\x1f\n" +
-	"\vfollowee_id\x18\x02 \x01(\x05R\n" +
+	"\vfollowee_id\x18\x02 \x01(\tR\n" +
 	"followeeId\",\n" +
 	"\x10UnfollowResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"/\n" +
 	"\x14ListFollowersRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\";\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\";\n" +
 	"\x15ListFollowersResponse\x12\"\n" +
 	"\x05users\x18\x01 \x03(\v2\f.social.UserR\x05users\"/\n" +
 	"\x14ListFollowingRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\";\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\";\n" +
 	"\x15ListFollowingResponse\x12\"\n" +
 	"\x05users\x18\x01 \x03(\v2\f.social.UserR\x05users2\xbb\x02\n" +
 	"\rSocialService\x12O\n" +

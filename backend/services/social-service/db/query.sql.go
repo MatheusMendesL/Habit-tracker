@@ -7,23 +7,25 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const listFollowers = `-- name: ListFollowers :many
 SELECT follower_id
 FROM follows
-WHERE followee_id = ?
+WHERE followee_id = $1
 `
 
-func (q *Queries) ListFollowers(ctx context.Context, followeeID int32) ([]int32, error) {
+func (q *Queries) ListFollowers(ctx context.Context, followeeID uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := q.db.QueryContext(ctx, listFollowers, followeeID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []int32
+	var items []uuid.UUID
 	for rows.Next() {
-		var follower_id int32
+		var follower_id uuid.UUID
 		if err := rows.Scan(&follower_id); err != nil {
 			return nil, err
 		}
@@ -41,18 +43,18 @@ func (q *Queries) ListFollowers(ctx context.Context, followeeID int32) ([]int32,
 const listFollowing = `-- name: ListFollowing :many
 SELECT followee_id
 FROM follows
-WHERE follower_id = ?
+WHERE follower_id = $1
 `
 
-func (q *Queries) ListFollowing(ctx context.Context, followerID int32) ([]int32, error) {
+func (q *Queries) ListFollowing(ctx context.Context, followerID uuid.UUID) ([]uuid.UUID, error) {
 	rows, err := q.db.QueryContext(ctx, listFollowing, followerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []int32
+	var items []uuid.UUID
 	for rows.Next() {
-		var followee_id int32
+		var followee_id uuid.UUID
 		if err := rows.Scan(&followee_id); err != nil {
 			return nil, err
 		}
@@ -69,12 +71,12 @@ func (q *Queries) ListFollowing(ctx context.Context, followerID int32) ([]int32,
 
 const startFollowing = `-- name: StartFollowing :exec
 INSERT INTO follows (follower_id, followee_id)
-VALUES (?, ?)
+VALUES ($1, $2)
 `
 
 type StartFollowingParams struct {
-	FollowerID int32
-	FolloweeID int32
+	FollowerID uuid.UUID
+	FolloweeID uuid.UUID
 }
 
 func (q *Queries) StartFollowing(ctx context.Context, arg StartFollowingParams) error {
@@ -84,12 +86,13 @@ func (q *Queries) StartFollowing(ctx context.Context, arg StartFollowingParams) 
 
 const unfollow = `-- name: Unfollow :exec
 DELETE FROM follows
-WHERE follower_id = ? AND followee_id = ?
+WHERE follower_id = $1
+  AND followee_id = $2
 `
 
 type UnfollowParams struct {
-	FollowerID int32
-	FolloweeID int32
+	FollowerID uuid.UUID
+	FolloweeID uuid.UUID
 }
 
 func (q *Queries) Unfollow(ctx context.Context, arg UnfollowParams) error {

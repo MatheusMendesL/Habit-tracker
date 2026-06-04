@@ -7,6 +7,7 @@ import (
 	pbSocial "shared/pb/social"
 	pbUser "shared/pb/user"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -42,7 +43,7 @@ func ReceiveErrors(err error) error {
 	}
 }
 
-func (s *SocialHandler) GetUsersByIDs(ctx context.Context, ids []int32) (users []*pbUser.User, err error) {
+func (s *SocialHandler) GetUsersByIDs(ctx context.Context, ids []string) (users []*pbUser.User, err error) {
 	res, err := s.UserServiceClient.GetUsersByIDs(
 		ctx,
 		&pbUser.GetUsersByIDsRequest{
@@ -73,24 +74,24 @@ func (s *SocialHandler) StartFollowing(ctx context.Context, req *pbSocial.StartF
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	FollowerID := req.FollowerId
-	FolloweeID := req.FolloweeId
+	FollowerID, err := uuid.Parse(req.FollowerId)
+	FolloweeID, err := uuid.Parse(req.FolloweeId)
 
-	if FollowerID == 0 || FolloweeID == 0 {
+	if FollowerID == uuid.Nil || FolloweeID == uuid.Nil {
 		s.logger.Warn("Invalid Users ID",
-			zap.Int32("FollowerID", FollowerID),
-			zap.Int32("FolloweeID", FolloweeID),
+			zap.String("FollowerID", FollowerID.String()),
+			zap.String("FolloweeID", FolloweeID.String()),
 		)
 
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	err := s.socialService.StartFollowing(ctx, FollowerID, FolloweeID)
+	err = s.socialService.StartFollowing(ctx, FollowerID, FolloweeID)
 
 	if err != nil {
 		s.logger.Error("error to execute StartFollowing method",
-			zap.Int32("FollowerID", FollowerID),
-			zap.Int32("FolloweeID", FolloweeID),
+			zap.String("FollowerID", FollowerID.String()),
+			zap.String("FolloweeID", FolloweeID.String()),
 			zap.Error(err),
 		)
 
@@ -98,8 +99,8 @@ func (s *SocialHandler) StartFollowing(ctx context.Context, req *pbSocial.StartF
 	}
 
 	s.logger.Info("StartFollowing method was ok",
-		zap.Int32("followerID", req.FollowerId),
-		zap.Int32("followeeID", req.FolloweeId),
+		zap.String("followerID", FollowerID.String()),
+		zap.String("followeeID", FolloweeID.String()),
 	)
 
 	return &pbSocial.StartFollowingResponse{
@@ -111,24 +112,24 @@ func (s *SocialHandler) Unfollow(ctx context.Context, req *pbSocial.UnfollowRequ
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	FollowerID := req.FollowerId
-	FolloweeID := req.FolloweeId
+	FollowerID, err := uuid.Parse(req.FollowerId)
+	FolloweeID, err := uuid.Parse(req.FolloweeId)
 
-	if FollowerID == 0 || FolloweeID == 0 {
+	if FollowerID == uuid.Nil || FolloweeID == uuid.Nil {
 		s.logger.Warn("Invalid Users ID",
-			zap.Int32("FollowerID", FollowerID),
-			zap.Int32("FolloweeID", FolloweeID),
+			zap.String("FollowerID", FollowerID.String()),
+			zap.String("FolloweeID", FolloweeID.String()),
 		)
 
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	err := s.socialService.Unfollow(ctx, FollowerID, FolloweeID)
+	err = s.socialService.Unfollow(ctx, FollowerID, FolloweeID)
 
 	if err != nil {
 		s.logger.Error("error to execute Unfollow method",
-			zap.Int32("FollowerID", FollowerID),
-			zap.Int32("FolloweeID", FolloweeID),
+			zap.String("FollowerID", FollowerID.String()),
+			zap.String("FolloweeID", FolloweeID.String()),
 			zap.Error(err),
 		)
 
@@ -136,8 +137,8 @@ func (s *SocialHandler) Unfollow(ctx context.Context, req *pbSocial.UnfollowRequ
 	}
 
 	s.logger.Info("Unfollow method was ok",
-		zap.Int32("FollowerID", FollowerID),
-		zap.Int32("FolloweeID", FolloweeID),
+		zap.String("FollowerID", FollowerID.String()),
+		zap.String("FolloweeID", FolloweeID.String()),
 	)
 
 	return &pbSocial.UnfollowResponse{
@@ -149,11 +150,11 @@ func (s *SocialHandler) ListFollowers(ctx context.Context, req *pbSocial.ListFol
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	userID := req.UserId
+	userID, err := uuid.Parse(req.UserId)
 
-	if userID <= 0 {
+	if err != nil {
 		s.logger.Warn("Invalid User ID",
-			zap.Int32("userID", userID),
+			zap.String("userID", userID.String()),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
@@ -162,17 +163,22 @@ func (s *SocialHandler) ListFollowers(ctx context.Context, req *pbSocial.ListFol
 
 	if err != nil {
 		s.logger.Error("error to execute ListFollowers method",
-			zap.Int32("userID", userID),
+			zap.String("userID", userID.String()),
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
 	}
 
 	s.logger.Info("ListFollowers method was ok",
-		zap.Int32("userID", userID),
+		zap.String("userID", userID.String()),
 	)
 
-	users, err := s.GetUsersByIDs(ctx, ids)
+	userIDs := make([]string, 0, len(ids))
+	for _, id := range ids {
+		userIDs = append(userIDs, id.String())
+	}
+
+	users, err := s.GetUsersByIDs(ctx, userIDs)
 
 	if err != nil {
 		return nil, err
@@ -197,10 +203,11 @@ func (s *SocialHandler) ListFollowing(ctx context.Context, req *pbSocial.ListFol
 	ctx, cancel := s.withTimeout(ctx)
 	defer cancel()
 
-	userID := req.UserId
-	if userID <= 0 {
+	userID, err := uuid.Parse(req.UserId)
+
+	if err != nil {
 		s.logger.Warn("Invalid User ID",
-			zap.Int32("userID", userID),
+			zap.String("userID", userID.String()),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
@@ -209,17 +216,22 @@ func (s *SocialHandler) ListFollowing(ctx context.Context, req *pbSocial.ListFol
 
 	if err != nil {
 		s.logger.Error("error to execute ListFollowing method",
-			zap.Int32("userID", userID),
+			zap.String("userID", userID.String()),
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
 	}
 
 	s.logger.Info("ListFollowing method was ok",
-		zap.Int32("userID", userID),
+		zap.String("userID", userID.String()),
 	)
 
-	users, err := s.GetUsersByIDs(ctx, ids)
+	userIDs := make([]string, 0, len(ids))
+	for _, id := range ids {
+		userIDs = append(userIDs, id.String())
+	}
+
+	users, err := s.GetUsersByIDs(ctx, userIDs)
 
 	if err != nil {
 		return nil, err

@@ -5,12 +5,13 @@
 package db
 
 import (
-	"database/sql"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Follow struct {
-	ID         int32
-	FollowerID int32
-	FolloweeID int32
-	CreatedAt  sql.NullTime
+	FollowerID uuid.UUID
+	FolloweeID uuid.UUID
+	CreatedAt  time.Time
 }

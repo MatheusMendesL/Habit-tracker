@@ -57,7 +57,7 @@ func (s *UserHandler) GetUserByID(ctx context.Context, req *pb.GetUserByIDReques
 
 	if err != nil {
 		s.logger.Warn("Invalid User id",
-			zap.Any("user_id", userID),
+			zap.String("user_id", userID.String()),
 		)
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
