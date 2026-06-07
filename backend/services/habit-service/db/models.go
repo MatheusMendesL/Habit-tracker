@@ -6,31 +6,34 @@ package db
 
 import (
 	"database/sql"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Habit struct {
-	ID          int32
-	UserID      int32
+	ID          uuid.UUID
+	UserID      uuid.UUID
 	Name        string
 	Description sql.NullString
 	ImageUrl    sql.NullString
-	CreatedAt   sql.NullTime
+	CreatedAt   time.Time
 }
 
 type HabitLog struct {
-	ID          int32
-	HabitID     int32
-	CompletedAt sql.NullTime
+	ID          uuid.UUID
+	HabitID     uuid.UUID
+	CompletedAt time.Time
 }
 
 type Routine struct {
-	ID        int32
-	UserID    int32
+	ID        uuid.UUID
+	UserID    uuid.UUID
 	Name      string
-	CreatedAt sql.NullTime
+	CreatedAt time.Time
 }
 
 type RoutineHabit struct {
-	RoutineID int32
-	HabitID   int32
+	RoutineID uuid.UUID
+	HabitID   uuid.UUID
 }

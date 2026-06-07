@@ -13,6 +13,7 @@ import (
 	pbUser "shared/pb/user"
 	"time"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -60,6 +61,13 @@ func (s *HabitHandler) Verification(val any, name string, nameVal string) error 
 			)
 			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 		}
+	case uuid.UUID:
+		if v == uuid.Nil {
+			s.logger.Warn("invalid "+name,
+				zap.String(nameVal, v.String()),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
 	}
 
 	return nil
@@ -91,8 +99,18 @@ func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabit
 		return nil, err
 	}
 
+	userID, err := uuid.Parse(reqHabit.UserId)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("user_id", userID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
 	args := db.CreateHabitParams{
-		UserID:      reqHabit.UserId,
+		UserID:      userID,
 		Name:        reqHabit.Name,
 		Description: utils.ToNullString(reqHabit.Description),
 		ImageUrl:    utils.ToNullString(reqHabit.ImageUrl),
@@ -123,25 +141,35 @@ func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitBy
 		return nil, err
 	}
 
-	habit, err := s.HabitService.GetHabitByID(ctx, habitID)
+	habitIDNew, err := uuid.Parse(habitID)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("user_id", habitIDNew),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	habit, err := s.HabitService.GetHabitByID(ctx, habitIDNew)
 
 	if err != nil {
 		if errors.Is(err, AppErr.ErrHabitNotFound) {
 			s.logger.Warn("Habit not found",
-				zap.Int32("habit_id", habitID),
+				zap.String("habit_id", habitIDNew.String()),
 				zap.Error(err),
 			)
 			return nil, status.Error(codes.NotFound, AppErr.ErrHabitNotFound.Error())
 		}
 		s.logger.Error("error to execute GetHabitByID method",
-			zap.Int32("habit_id", habitID),
+			zap.String("habit_id", habitIDNew.String()),
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
 	}
 
 	s.logger.Info("The method GetHabitByID was ok",
-		zap.Int32("habit_id", habitID),
+		zap.String("habit_id", habitIDNew.String()),
 	)
 
 	return &pbHabit.GetHabitByIDResponse{

@@ -11,6 +11,7 @@ import (
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -36,6 +37,13 @@ func (s *RoutineHandler) Verification(val any, name string, nameVal string) erro
 		if v <= 0 {
 			s.logger.Warn("invalid "+name,
 				zap.Int32(nameVal, v),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	case uuid.UUID:
+		if v == uuid.Nil {
+			s.logger.Warn("invalid "+name,
+				zap.String(nameVal, v.String()),
 			)
 			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 		}
@@ -70,8 +78,18 @@ func (s *RoutineHandler) CreateRoutine(ctx context.Context, req *pbHabit.CreateR
 		return nil, err
 	}
 
+	userID, err := uuid.Parse(reqRoutine.UserId)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("routine", reqRoutine),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
 	args := db.CreateRoutineParams{
-		UserID: reqRoutine.UserId,
+		UserID: userID,
 		Name:   reqRoutine.Name,
 	}
 
@@ -101,25 +119,35 @@ func (s *RoutineHandler) GetRoutineByID(ctx context.Context, req *pbHabit.GetRou
 		return nil, err
 	}
 
-	routine, err := s.RoutineService.GetRoutineByID(ctx, routineID)
+	routineIDNew, err := uuid.Parse(routineID)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("routine_id", routineIDNew),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	routine, err := s.RoutineService.GetRoutineByID(ctx, routineIDNew)
 
 	if err != nil {
 		if errors.Is(err, AppErr.ErrRoutineNotFound) {
 			s.logger.Warn("Routine not found",
-				zap.Int32("routine_id", routineID),
+				zap.String("routine_id", routineIDNew.String()),
 				zap.Error(err),
 			)
 			return nil, status.Error(codes.NotFound, AppErr.ErrRoutineNotFound.Error())
 		}
 		s.logger.Error("error to execute GetRoutineByID method",
-			zap.Int32("routine_id", routineID),
+			zap.String("routine_id", routineIDNew.String()),
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
 	}
 
 	s.logger.Info("The method GetRoutineByID was ok",
-		zap.Int32("routine_id", routineID),
+		zap.String("routine_id", routineIDNew.String()),
 	)
 
 	return &pbHabit.GetRoutineByIDResponse{

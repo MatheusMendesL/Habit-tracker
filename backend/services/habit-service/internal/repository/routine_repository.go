@@ -6,6 +6,9 @@ import (
 	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
+	"strconv"
+
+	"github.com/google/uuid"
 )
 
 type RoutineRepository struct {
@@ -17,7 +20,7 @@ func NewRoutineRepository(q *db.Queries) *RoutineRepository {
 }
 
 type CreateRoutineParams struct {
-	UserID int32
+	UserID uuid.UUID
 	Name   string
 }
 
@@ -38,10 +41,16 @@ func (r *RoutineRepository) CreateRoutine(ctx context.Context, arg CreateRoutine
 		return db.Routine{}, err
 	}
 
-	return r.GetRoutineByID(ctx, int32(id))
+	idNew, err := uuid.Parse(strconv.FormatInt(id, 10))
+
+	if err != nil {
+		return db.Routine{}, err
+	}
+
+	return r.GetRoutineByID(ctx, idNew)
 }
 
-func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId int32) (db.Routine, error) {
+func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId uuid.UUID) (db.Routine, error) {
 	res, err := r.q.GetRoutineByID(ctx, routineId)
 
 	if err != nil {
