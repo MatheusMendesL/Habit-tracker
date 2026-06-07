@@ -6,6 +6,9 @@ import (
 	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
+	"strconv"
+
+	"github.com/google/uuid"
 )
 
 type HabitRepository struct {
@@ -17,7 +20,7 @@ func NewHabitRepository(q *db.Queries) *HabitRepository {
 }
 
 type CreateHabitParams struct {
-	UserID      int32
+	UserID      uuid.UUID
 	Name        string
 	Description sql.NullString
 	ImageUrl    sql.NullString
@@ -41,11 +44,16 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 	if err != nil {
 		return db.Habit{}, err
 	}
+	idNew, err := uuid.Parse(strconv.FormatInt(id, 10))
 
-	return r.GetHabitByID(ctx, int32(id))
+	if err != nil {
+		return db.Habit{}, err
+	}
+
+	return r.GetHabitByID(ctx, idNew)
 }
 
-func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId int32) (db.Habit, error) {
+func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId uuid.UUID) (db.Habit, error) {
 	res, err := r.q.GetHabitByID(ctx, habitId)
 
 	if err != nil {

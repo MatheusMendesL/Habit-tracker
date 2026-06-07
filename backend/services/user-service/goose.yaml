@@ -1,3 +1,3 @@
-dir: db/migrations
-driver: postgres
+dir: ${GOOSE_MIGRATION_DIR}
+driver: ${GOOSE_DRIVER}
 dsn: ${DBSTRING}

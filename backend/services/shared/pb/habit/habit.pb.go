@@ -24,8 +24,8 @@ const (
 
 type Habit struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	ImageUrl      string                 `protobuf:"bytes,5,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
@@ -63,18 +63,18 @@ func (*Habit) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Habit) GetId() int32 {
+func (x *Habit) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
-func (x *Habit) GetUserId() int32 {
+func (x *Habit) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *Habit) GetName() string {
@@ -100,8 +100,8 @@ func (x *Habit) GetImageUrl() string {
 
 type Routine struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -137,18 +137,18 @@ func (*Routine) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Routine) GetId() int32 {
+func (x *Routine) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
-func (x *Routine) GetUserId() int32 {
+func (x *Routine) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *Routine) GetName() string {
@@ -160,7 +160,7 @@ func (x *Routine) GetName() string {
 
 type HabitLog struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -196,11 +196,11 @@ func (*HabitLog) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *HabitLog) GetHabitId() int32 {
+func (x *HabitLog) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 func (x *HabitLog) GetCompletedAt() *timestamppb.Timestamp {
@@ -388,7 +388,7 @@ func (x *CreateHabitResponse) GetHabit() *Habit {
 
 type GetHabitByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -423,11 +423,11 @@ func (*GetHabitByIDRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetHabitByIDRequest) GetHabitId() int32 {
+func (x *GetHabitByIDRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 type GetHabitByIDResponse struct {
@@ -476,7 +476,7 @@ func (x *GetHabitByIDResponse) GetHabit() *Habit {
 
 type ListHabitsByUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -511,11 +511,11 @@ func (*ListHabitsByUserRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListHabitsByUserRequest) GetUserId() int32 {
+func (x *ListHabitsByUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type ListHabitsByUserResponse struct {
@@ -564,7 +564,7 @@ func (x *ListHabitsByUserResponse) GetHabits() []*Habit {
 
 type ListHabitsByRoutineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoutineId     int32                  `protobuf:"varint,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -599,11 +599,11 @@ func (*ListHabitsByRoutineRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListHabitsByRoutineRequest) GetRoutineId() int32 {
+func (x *ListHabitsByRoutineRequest) GetRoutineId() string {
 	if x != nil {
 		return x.RoutineId
 	}
-	return 0
+	return ""
 }
 
 type ListHabitsByRoutineResponse struct {
@@ -652,7 +652,7 @@ func (x *ListHabitsByRoutineResponse) GetHabits() []*Habit {
 
 type EditHabitRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	ImageUrl      *string                `protobuf:"bytes,4,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
@@ -690,11 +690,11 @@ func (*EditHabitRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *EditHabitRequest) GetHabitId() int32 {
+func (x *EditHabitRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 func (x *EditHabitRequest) GetName() string {
@@ -764,7 +764,7 @@ func (x *EditHabitResponse) GetSuccess() bool {
 
 type DeleteHabitRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -799,11 +799,11 @@ func (*DeleteHabitRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *DeleteHabitRequest) GetHabitId() int32 {
+func (x *DeleteHabitRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 type DeleteHabitResponse struct {
@@ -852,7 +852,7 @@ func (x *DeleteHabitResponse) GetSuccess() bool {
 
 type MarkHabitCompletedRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -888,11 +888,11 @@ func (*MarkHabitCompletedRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *MarkHabitCompletedRequest) GetHabitId() int32 {
+func (x *MarkHabitCompletedRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 func (x *MarkHabitCompletedRequest) GetCompletedAt() *timestamppb.Timestamp {
@@ -948,7 +948,7 @@ func (x *MarkHabitCompletedResponse) GetSuccess() bool {
 
 type UnmarkHabitCompletedRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -984,11 +984,11 @@ func (*UnmarkHabitCompletedRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *UnmarkHabitCompletedRequest) GetHabitId() int32 {
+func (x *UnmarkHabitCompletedRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 func (x *UnmarkHabitCompletedRequest) GetCompletedAt() *timestamppb.Timestamp {
@@ -1044,7 +1044,7 @@ func (x *UnmarkHabitCompletedResponse) GetSuccess() bool {
 
 type GetHabitLogsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
 	StartDate     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
 	EndDate       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1081,11 +1081,11 @@ func (*GetHabitLogsRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *GetHabitLogsRequest) GetHabitId() int32 {
+func (x *GetHabitLogsRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
 func (x *GetHabitLogsRequest) GetStartDate() *timestamppb.Timestamp {
@@ -1148,8 +1148,8 @@ func (x *GetHabitLogsResponse) GetLogs() []*HabitLog {
 
 type AddHabitToRoutineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
-	RoutineId     int32                  `protobuf:"varint,2,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	RoutineId     string                 `protobuf:"bytes,2,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1184,18 +1184,18 @@ func (*AddHabitToRoutineRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *AddHabitToRoutineRequest) GetHabitId() int32 {
+func (x *AddHabitToRoutineRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
-func (x *AddHabitToRoutineRequest) GetRoutineId() int32 {
+func (x *AddHabitToRoutineRequest) GetRoutineId() string {
 	if x != nil {
 		return x.RoutineId
 	}
-	return 0
+	return ""
 }
 
 type AddHabitToRoutineResponse struct {
@@ -1244,8 +1244,8 @@ func (x *AddHabitToRoutineResponse) GetSuccess() bool {
 
 type RemoveHabitFromRoutineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	HabitId       int32                  `protobuf:"varint,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
-	RoutineId     int32                  `protobuf:"varint,2,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	HabitId       string                 `protobuf:"bytes,1,opt,name=habit_id,json=habitId,proto3" json:"habit_id,omitempty"`
+	RoutineId     string                 `protobuf:"bytes,2,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1280,18 +1280,18 @@ func (*RemoveHabitFromRoutineRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *RemoveHabitFromRoutineRequest) GetHabitId() int32 {
+func (x *RemoveHabitFromRoutineRequest) GetHabitId() string {
 	if x != nil {
 		return x.HabitId
 	}
-	return 0
+	return ""
 }
 
-func (x *RemoveHabitFromRoutineRequest) GetRoutineId() int32 {
+func (x *RemoveHabitFromRoutineRequest) GetRoutineId() string {
 	if x != nil {
 		return x.RoutineId
 	}
-	return 0
+	return ""
 }
 
 type RemoveHabitFromRoutineResponse struct {
@@ -1340,7 +1340,7 @@ func (x *RemoveHabitFromRoutineResponse) GetSuccess() bool {
 
 type ListRoutinesByUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1375,11 +1375,11 @@ func (*ListRoutinesByUserRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *ListRoutinesByUserRequest) GetUserId() int32 {
+func (x *ListRoutinesByUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 type ListRoutinesByUserResponse struct {
@@ -1428,7 +1428,7 @@ func (x *ListRoutinesByUserResponse) GetRoutines() []*Routine {
 
 type GetRoutineByIDRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoutineId     int32                  `protobuf:"varint,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1463,11 +1463,11 @@ func (*GetRoutineByIDRequest) Descriptor() ([]byte, []int) {
 	return file_proto_habit_habit_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *GetRoutineByIDRequest) GetRoutineId() int32 {
+func (x *GetRoutineByIDRequest) GetRoutineId() string {
 	if x != nil {
 		return x.RoutineId
 	}
-	return 0
+	return ""
 }
 
 type GetRoutineByIDResponse struct {
@@ -1520,17 +1520,17 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\n" +
 	"\x17proto/habit/habit.proto\x12\x05habit\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x01\n" +
 	"\x05Habit\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1b\n" +
 	"\timage_url\x18\x05 \x01(\tR\bimageUrl\"F\n" +
 	"\aRoutine\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\"d\n" +
 	"\bHabitLog\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12=\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12=\n" +
 	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"@\n" +
 	"\x14CreateRoutineRequest\x12(\n" +
 	"\aroutine\x18\x01 \x01(\v2\x0e.habit.RoutineR\aroutine\"A\n" +
@@ -1541,20 +1541,20 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\x13CreateHabitResponse\x12\"\n" +
 	"\x05habit\x18\x01 \x01(\v2\f.habit.HabitR\x05habit\"0\n" +
 	"\x13GetHabitByIDRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\":\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\":\n" +
 	"\x14GetHabitByIDResponse\x12\"\n" +
 	"\x05habit\x18\x01 \x01(\v2\f.habit.HabitR\x05habit\"2\n" +
 	"\x17ListHabitsByUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"@\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"@\n" +
 	"\x18ListHabitsByUserResponse\x12$\n" +
 	"\x06habits\x18\x01 \x03(\v2\f.habit.HabitR\x06habits\";\n" +
 	"\x1aListHabitsByRoutineRequest\x12\x1d\n" +
 	"\n" +
-	"routine_id\x18\x01 \x01(\x05R\troutineId\"C\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\"C\n" +
 	"\x1bListHabitsByRoutineResponse\x12$\n" +
 	"\x06habits\x18\x01 \x03(\v2\f.habit.HabitR\x06habits\"\xb6\x01\n" +
 	"\x10EditHabitRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12\x17\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12 \n" +
 	"\timage_url\x18\x04 \x01(\tH\x02R\bimageUrl\x88\x01\x01B\a\n" +
@@ -1565,45 +1565,45 @@ const file_proto_habit_habit_proto_rawDesc = "" +
 	"\x11EditHabitResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"/\n" +
 	"\x12DeleteHabitRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\"/\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\"/\n" +
 	"\x13DeleteHabitResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"u\n" +
 	"\x19MarkHabitCompletedRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12=\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12=\n" +
 	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"6\n" +
 	"\x1aMarkHabitCompletedResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"w\n" +
 	"\x1bUnmarkHabitCompletedRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12=\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12=\n" +
 	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"8\n" +
 	"\x1cUnmarkHabitCompletedResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa2\x01\n" +
 	"\x13GetHabitLogsRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x129\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x129\n" +
 	"\n" +
 	"start_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
 	"\bend_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\";\n" +
 	"\x14GetHabitLogsResponse\x12#\n" +
 	"\x04logs\x18\x01 \x03(\v2\x0f.habit.HabitLogR\x04logs\"T\n" +
 	"\x18AddHabitToRoutineRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12\x1d\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12\x1d\n" +
 	"\n" +
-	"routine_id\x18\x02 \x01(\x05R\troutineId\"5\n" +
+	"routine_id\x18\x02 \x01(\tR\troutineId\"5\n" +
 	"\x19AddHabitToRoutineResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"Y\n" +
 	"\x1dRemoveHabitFromRoutineRequest\x12\x19\n" +
-	"\bhabit_id\x18\x01 \x01(\x05R\ahabitId\x12\x1d\n" +
+	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12\x1d\n" +
 	"\n" +
-	"routine_id\x18\x02 \x01(\x05R\troutineId\":\n" +
+	"routine_id\x18\x02 \x01(\tR\troutineId\":\n" +
 	"\x1eRemoveHabitFromRoutineResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"4\n" +
 	"\x19ListRoutinesByUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"H\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"H\n" +
 	"\x1aListRoutinesByUserResponse\x12*\n" +
 	"\broutines\x18\x01 \x03(\v2\x0e.habit.RoutineR\broutines\"6\n" +
 	"\x15GetRoutineByIDRequest\x12\x1d\n" +
 	"\n" +
-	"routine_id\x18\x01 \x01(\x05R\troutineId\"B\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\"B\n" +
 	"\x16GetRoutineByIDResponse\x12(\n" +
 	"\aroutine\x18\x01 \x01(\v2\x0e.habit.RoutineR\aroutine2\xdb\x05\n" +
 	"\fHabitService\x12D\n" +

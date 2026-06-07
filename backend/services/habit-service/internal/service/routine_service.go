@@ -5,9 +5,9 @@ import (
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
 	"habit-service/internal/repository"
-	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -25,11 +25,11 @@ func NewRoutineService(r *repository.RoutineRepository, userClient pbUser.UserSe
 }
 
 func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.CreateRoutineParams) (db.Routine, error) {
-	if arg.UserID <= 0 || arg.Name == "" {
+	if arg.UserID == uuid.Nil || arg.Name == "" {
 		return db.Routine{}, AppErr.ErrInvalidArgument
 	}
 
-	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID})
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return db.Routine{}, AppErr.ErrUserNotFound
@@ -40,8 +40,8 @@ func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.Creat
 	return s.repo.CreateRoutine(ctx, arg)
 }
 
-func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID int32) (db.Routine, error) {
-	if routineID <= 0 {
+func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID uuid.UUID) (db.Routine, error) {
+	if routineID == uuid.Nil {
 		return db.Routine{}, AppErr.ErrInvalidArgument
 	}
 

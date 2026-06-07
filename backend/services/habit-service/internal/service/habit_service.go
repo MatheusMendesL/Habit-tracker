@@ -7,6 +7,7 @@ import (
 	"habit-service/internal/repository"
 	pbUser "shared/pb/user"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,8 +24,8 @@ func NewHabitService(r *repository.HabitRepository, userClient pbUser.UserServic
 	}
 }
 
-func (s *HabitService) GetHabitByID(ctx context.Context, habitId int32) (db.Habit, error) {
-	if habitId <= 0 {
+func (s *HabitService) GetHabitByID(ctx context.Context, habitId uuid.UUID) (db.Habit, error) {
+	if habitId == uuid.Nil {
 		return db.Habit{}, AppErr.ErrInvalidArgument
 	}
 
@@ -32,11 +33,11 @@ func (s *HabitService) GetHabitByID(ctx context.Context, habitId int32) (db.Habi
 }
 
 func (s *HabitService) CreateHabit(ctx context.Context, arg repository.CreateHabitParams) (db.Habit, error) {
-	if arg.UserID <= 0 || arg.Name == "" {
+	if arg.UserID == uuid.Nil || arg.Name == "" {
 		return db.Habit{}, AppErr.ErrInvalidArgument
 	}
 
-	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID})
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return db.Habit{}, AppErr.ErrUserNotFound

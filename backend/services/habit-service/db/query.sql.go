@@ -9,16 +9,18 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const addHabitToRoutine = `-- name: AddHabitToRoutine :exec
 INSERT INTO routine_habits (routine_id, habit_id)
-VALUES (?, ?)
+VALUES ($1, $2)
 `
 
 type AddHabitToRoutineParams struct {
-	RoutineID int32
-	HabitID   int32
+	RoutineID uuid.UUID
+	HabitID   uuid.UUID
 }
 
 func (q *Queries) AddHabitToRoutine(ctx context.Context, arg AddHabitToRoutineParams) error {
@@ -28,11 +30,11 @@ func (q *Queries) AddHabitToRoutine(ctx context.Context, arg AddHabitToRoutinePa
 
 const createHabit = `-- name: CreateHabit :execresult
 INSERT INTO habits (user_id, name, description, image_url)
-VALUES (?, ?, ?, ?)
+VALUES ($1, $2, $3, $4)
 `
 
 type CreateHabitParams struct {
-	UserID      int32
+	UserID      uuid.UUID
 	Name        string
 	Description sql.NullString
 	ImageUrl    sql.NullString
@@ -49,11 +51,11 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (sql.R
 
 const createRoutine = `-- name: CreateRoutine :execresult
 INSERT INTO routines (user_id, name)
-VALUES (?, ?)
+VALUES ($1, $2)
 `
 
 type CreateRoutineParams struct {
-	UserID int32
+	UserID uuid.UUID
 	Name   string
 }
 
@@ -63,20 +65,20 @@ func (q *Queries) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (s
 
 const deleteHabit = `-- name: DeleteHabit :exec
 DELETE FROM habits
-WHERE id = ?
+WHERE id = $1
 `
 
-func (q *Queries) DeleteHabit(ctx context.Context, id int32) error {
+func (q *Queries) DeleteHabit(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteHabit, id)
 	return err
 }
 
 const deleteRoutine = `-- name: DeleteRoutine :exec
 DELETE FROM routines
-WHERE id = ?
+WHERE id = $1
 `
 
-func (q *Queries) DeleteRoutine(ctx context.Context, id int32) error {
+func (q *Queries) DeleteRoutine(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteRoutine, id)
 	return err
 }
@@ -84,10 +86,10 @@ func (q *Queries) DeleteRoutine(ctx context.Context, id int32) error {
 const getHabitByID = `-- name: GetHabitByID :one
 SELECT id, user_id, name, description, image_url, created_at
 FROM habits
-WHERE id = ?
+WHERE id = $1
 `
 
-func (q *Queries) GetHabitByID(ctx context.Context, id int32) (Habit, error) {
+func (q *Queries) GetHabitByID(ctx context.Context, id uuid.UUID) (Habit, error) {
 	row := q.db.QueryRowContext(ctx, getHabitByID, id)
 	var i Habit
 	err := row.Scan(
@@ -104,24 +106,24 @@ func (q *Queries) GetHabitByID(ctx context.Context, id int32) (Habit, error) {
 const getHabitLogs = `-- name: GetHabitLogs :many
 SELECT habit_id, completed_at
 FROM habit_logs
-WHERE habit_id = ?
-  AND completed_at BETWEEN ? AND ?
+WHERE habit_id = $1
+  AND completed_at BETWEEN $2 AND $3
 ORDER BY completed_at DESC
 `
 
 type GetHabitLogsParams struct {
-	HabitID         int32
-	FromCompletedAt sql.NullTime
-	ToCompletedAt   sql.NullTime
+	HabitID       uuid.UUID
+	CompletedAt   time.Time
+	CompletedAt_2 time.Time
 }
 
 type GetHabitLogsRow struct {
-	HabitID     int32
-	CompletedAt sql.NullTime
+	HabitID     uuid.UUID
+	CompletedAt time.Time
 }
 
 func (q *Queries) GetHabitLogs(ctx context.Context, arg GetHabitLogsParams) ([]GetHabitLogsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getHabitLogs, arg.HabitID, arg.FromCompletedAt, arg.ToCompletedAt)
+	rows, err := q.db.QueryContext(ctx, getHabitLogs, arg.HabitID, arg.CompletedAt, arg.CompletedAt_2)
 	if err != nil {
 		return nil, err
 	}
@@ -146,10 +148,10 @@ func (q *Queries) GetHabitLogs(ctx context.Context, arg GetHabitLogsParams) ([]G
 const getRoutineByID = `-- name: GetRoutineByID :one
 SELECT id, user_id, name, created_at
 FROM routines
-WHERE id = ?
+WHERE id = $1
 `
 
-func (q *Queries) GetRoutineByID(ctx context.Context, id int32) (Routine, error) {
+func (q *Queries) GetRoutineByID(ctx context.Context, id uuid.UUID) (Routine, error) {
 	row := q.db.QueryRowContext(ctx, getRoutineByID, id)
 	var i Routine
 	err := row.Scan(
@@ -162,13 +164,18 @@ func (q *Queries) GetRoutineByID(ctx context.Context, id int32) (Routine, error)
 }
 
 const listHabitsByRoutine = `-- name: ListHabitsByRoutine :many
-SELECT h.id, h.user_id, h.name, h.description, h.image_url, h.created_at
+SELECT h.id,
+       h.user_id,
+       h.name,
+       h.description,
+       h.image_url,
+       h.created_at
 FROM habits h
          JOIN routine_habits rh ON rh.habit_id = h.id
-WHERE rh.routine_id = ?
+WHERE rh.routine_id = $1
 `
 
-func (q *Queries) ListHabitsByRoutine(ctx context.Context, routineID int32) ([]Habit, error) {
+func (q *Queries) ListHabitsByRoutine(ctx context.Context, routineID uuid.UUID) ([]Habit, error) {
 	rows, err := q.db.QueryContext(ctx, listHabitsByRoutine, routineID)
 	if err != nil {
 		return nil, err
@@ -201,10 +208,10 @@ func (q *Queries) ListHabitsByRoutine(ctx context.Context, routineID int32) ([]H
 const listHabitsByUser = `-- name: ListHabitsByUser :many
 SELECT id, user_id, name, description, image_url, created_at
 FROM habits
-WHERE user_id = ?
+WHERE user_id = $1
 `
 
-func (q *Queries) ListHabitsByUser(ctx context.Context, userID int32) ([]Habit, error) {
+func (q *Queries) ListHabitsByUser(ctx context.Context, userID uuid.UUID) ([]Habit, error) {
 	rows, err := q.db.QueryContext(ctx, listHabitsByUser, userID)
 	if err != nil {
 		return nil, err
@@ -235,13 +242,16 @@ func (q *Queries) ListHabitsByUser(ctx context.Context, userID int32) ([]Habit, 
 }
 
 const listRoutinesByHabit = `-- name: ListRoutinesByHabit :many
-SELECT r.id, r.user_id, r.name, r.created_at
+SELECT r.id,
+       r.user_id,
+       r.name,
+       r.created_at
 FROM routines r
          JOIN routine_habits rh ON rh.routine_id = r.id
-WHERE rh.habit_id = ?
+WHERE rh.habit_id = $1
 `
 
-func (q *Queries) ListRoutinesByHabit(ctx context.Context, habitID int32) ([]Routine, error) {
+func (q *Queries) ListRoutinesByHabit(ctx context.Context, habitID uuid.UUID) ([]Routine, error) {
 	rows, err := q.db.QueryContext(ctx, listRoutinesByHabit, habitID)
 	if err != nil {
 		return nil, err
@@ -272,10 +282,10 @@ func (q *Queries) ListRoutinesByHabit(ctx context.Context, habitID int32) ([]Rou
 const listRoutinesByUser = `-- name: ListRoutinesByUser :many
 SELECT id, user_id, name, created_at
 FROM routines
-WHERE user_id = ?
+WHERE user_id = $1
 `
 
-func (q *Queries) ListRoutinesByUser(ctx context.Context, userID int32) ([]Routine, error) {
+func (q *Queries) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]Routine, error) {
 	rows, err := q.db.QueryContext(ctx, listRoutinesByUser, userID)
 	if err != nil {
 		return nil, err
@@ -305,13 +315,13 @@ func (q *Queries) ListRoutinesByUser(ctx context.Context, userID int32) ([]Routi
 
 const markHabitCompleted = `-- name: MarkHabitCompleted :exec
 INSERT INTO habit_logs (habit_id, completed_at)
-VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE completed_at = completed_at
+VALUES ($1, $2)
+    ON CONFLICT (habit_id, completed_at) DO NOTHING
 `
 
 type MarkHabitCompletedParams struct {
-	HabitID     int32
-	CompletedAt sql.NullTime
+	HabitID     uuid.UUID
+	CompletedAt time.Time
 }
 
 func (q *Queries) MarkHabitCompleted(ctx context.Context, arg MarkHabitCompletedParams) error {
@@ -321,12 +331,13 @@ func (q *Queries) MarkHabitCompleted(ctx context.Context, arg MarkHabitCompleted
 
 const removeHabitFromRoutine = `-- name: RemoveHabitFromRoutine :exec
 DELETE FROM routine_habits
-WHERE routine_id = ? AND habit_id = ?
+WHERE routine_id = $1
+  AND habit_id = $2
 `
 
 type RemoveHabitFromRoutineParams struct {
-	RoutineID int32
-	HabitID   int32
+	RoutineID uuid.UUID
+	HabitID   uuid.UUID
 }
 
 func (q *Queries) RemoveHabitFromRoutine(ctx context.Context, arg RemoveHabitFromRoutineParams) error {
@@ -336,33 +347,33 @@ func (q *Queries) RemoveHabitFromRoutine(ctx context.Context, arg RemoveHabitFro
 
 const unmarkHabitCompleted = `-- name: UnmarkHabitCompleted :exec
 DELETE FROM habit_logs
-WHERE habit_id = ?
-  AND DATE(completed_at) = DATE(?)
+WHERE habit_id = $1
+  AND DATE(completed_at) = DATE($2)
 `
 
 type UnmarkHabitCompletedParams struct {
-	HabitID int32
-	DATE    time.Time
+	HabitID uuid.UUID
+	Date    interface{}
 }
 
 func (q *Queries) UnmarkHabitCompleted(ctx context.Context, arg UnmarkHabitCompletedParams) error {
-	_, err := q.db.ExecContext(ctx, unmarkHabitCompleted, arg.HabitID, arg.DATE)
+	_, err := q.db.ExecContext(ctx, unmarkHabitCompleted, arg.HabitID, arg.Date)
 	return err
 }
 
 const updateHabit = `-- name: UpdateHabit :exec
 UPDATE habits
-SET name        = COALESCE(?, name),
-    description = COALESCE(?, description),
-    image_url   = COALESCE(?, image_url)
-WHERE id = ?
+SET name        = COALESCE($1, name),
+    description = COALESCE($2, description),
+    image_url   = COALESCE($3, image_url)
+WHERE id = $4
 `
 
 type UpdateHabitParams struct {
 	Name        string
 	Description sql.NullString
 	ImageUrl    sql.NullString
-	ID          int32
+	ID          uuid.UUID
 }
 
 func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) error {
@@ -377,13 +388,13 @@ func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) error 
 
 const updateRoutine = `-- name: UpdateRoutine :exec
 UPDATE routines
-SET name = COALESCE(?, name)
-WHERE id = ?
+SET name = COALESCE($1, name)
+WHERE id = $2
 `
 
 type UpdateRoutineParams struct {
 	Name string
-	ID   int32
+	ID   uuid.UUID
 }
 
 func (q *Queries) UpdateRoutine(ctx context.Context, arg UpdateRoutineParams) error {
