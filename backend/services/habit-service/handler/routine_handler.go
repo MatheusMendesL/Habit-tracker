@@ -160,3 +160,98 @@ func (s *RoutineHandler) GetRoutineByID(ctx context.Context, req *pbHabit.GetRou
 		Routine: utils.ToProtoRoutine(routine),
 	}, nil
 }
+
+func (s *RoutineHandler) EditRoutine(ctx context.Context, req *pbHabit.EditRoutineRequest) (*pbHabit.EditRoutineResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, routineName := req.RoutineId, req.Name
+
+	if err := s.Verification(routineID, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	routineIDNew, err := uuid.Parse(routineID)
+
+	if err != nil {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	params := db.UpdateRoutineParams{
+		ID: routineIDNew,
+	}
+
+	name := ""
+
+	if routineName != nil {
+		params.Name = utils.ToNullString(*routineName)
+		name = *routineName
+	}
+
+	routine, err := s.RoutineService.EditRoutine(ctx, params)
+
+	if err != nil {
+		s.logger.Error("Error to execute EditRoutine method",
+			zap.String("Name", name),
+			zap.String("routine_id", routineID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("EditRoutine method was ok",
+		zap.String("Name", name),
+		zap.String("routine_id", routineID),
+	)
+
+	return &pbHabit.EditRoutineResponse{
+		Routine: utils.ToProtoRoutine(routine),
+	}, nil
+
+}
+
+func (s *RoutineHandler) DeleteRoutine(ctx context.Context, req *pbHabit.DeleteRoutineRequest) (*pbHabit.DeleteRoutineResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, err := uuid.Parse(req.RoutineId)
+
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(routineID, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	err = s.RoutineService.DeleteRoutine(ctx, routineID)
+	if err != nil {
+		s.logger.Error("error to execute DeleteRoutine method",
+			zap.String("routine_id", routineID.String()),
+			zap.Error(err),
+		)
+
+		return &pbHabit.DeleteRoutineResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	s.logger.Info("DeleteRoutine method was ok",
+		zap.String("routine_id", routineID.String()),
+	)
+
+	return &pbHabit.DeleteRoutineResponse{
+		Success: true,
+	}, nil
+
+}

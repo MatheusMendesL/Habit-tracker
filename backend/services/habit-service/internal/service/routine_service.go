@@ -50,7 +50,7 @@ func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID uuid.UUID
 }
 
 func (s *RoutineService) EditRoutine(ctx context.Context, routine db.UpdateRoutineParams) (db.Routine, error) {
-	if routine.ID == uuid.Nil || routine.Name == "" {
+	if routine.ID == uuid.Nil {
 		return db.Routine{}, AppErr.ErrInvalidArgument
 	}
 

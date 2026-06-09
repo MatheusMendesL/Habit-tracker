@@ -44,20 +44,7 @@ func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId uuid.U
 }
 
 func (r *RoutineRepository) EditRoutine(ctx context.Context, req db.UpdateRoutineParams) (db.Routine, error) {
-	err := r.q.UpdateRoutine(ctx, req)
-
-	if err != nil {
-		return db.Routine{}, err
-	}
-
-	routine, err := r.GetRoutineByID(ctx, req.ID)
-
-	if err != nil {
-		return db.Routine{}, err
-	}
-
-	return routine, nil
-
+	return r.q.UpdateRoutine(ctx, req)
 }
 
 func (r *RoutineRepository) DeleteRoutine(ctx context.Context, routineID uuid.UUID) error {

@@ -12,10 +12,10 @@ SELECT id, user_id, name, created_at
 FROM routines
 WHERE user_id = $1;
 
--- name: UpdateRoutine :exec
+-- name: UpdateRoutine :one
 UPDATE routines
-SET name = COALESCE($1, name)
-WHERE id = $2;
+SET name = COALESCE(sqlc.narg(name), name)
+WHERE id = sqlc.arg(id) RETURNING *;
 
 -- name: DeleteRoutine :exec
 DELETE
@@ -36,12 +36,12 @@ SELECT id, user_id, name, description, image_url, created_at
 FROM habits
 WHERE user_id = $1;
 
--- name: UpdateHabit :exec
+-- name: UpdateHabit :one
 UPDATE habits
-SET name        = COALESCE($1, name),
-    description = COALESCE($2, description),
-    image_url   = COALESCE($3, image_url)
-WHERE id = $4;
+SET name        = COALESCE(sqlc.narg(name), name),
+    description = COALESCE(sqlc.narg(description), description),
+    image_url   = COALESCE(sqlc.narg(image_url), image_url)
+WHERE id = sqlc.arg(id) RETURNING *;
 
 -- name: DeleteHabit :exec
 DELETE
