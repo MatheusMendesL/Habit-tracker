@@ -24,6 +24,12 @@ type RoutineHandler struct {
 	logger         *zap.Logger
 }
 
+/*
+UpdateRoutine
+DeleteRoutine
+ListRoutinesByUser
+*/
+
 func (s *RoutineHandler) Verification(val any, name string, nameVal string) error {
 	switch v := val.(type) {
 	case string:

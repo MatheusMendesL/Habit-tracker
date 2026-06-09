@@ -49,9 +49,9 @@ func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (sql.R
 	)
 }
 
-const createRoutine = `-- name: CreateRoutine :execresult
+const createRoutine = `-- name: CreateRoutine :one
 INSERT INTO routines (user_id, name)
-VALUES ($1, $2)
+VALUES ($1, $2) RETURNING id, user_id, name, created_at
 `
 
 type CreateRoutineParams struct {
@@ -59,12 +59,21 @@ type CreateRoutineParams struct {
 	Name   string
 }
 
-func (q *Queries) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createRoutine, arg.UserID, arg.Name)
+func (q *Queries) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (Routine, error) {
+	row := q.db.QueryRowContext(ctx, createRoutine, arg.UserID, arg.Name)
+	var i Routine
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const deleteHabit = `-- name: DeleteHabit :exec
-DELETE FROM habits
+DELETE
+FROM habits
 WHERE id = $1
 `
 
@@ -74,7 +83,8 @@ func (q *Queries) DeleteHabit(ctx context.Context, id uuid.UUID) error {
 }
 
 const deleteRoutine = `-- name: DeleteRoutine :exec
-DELETE FROM routines
+DELETE
+FROM routines
 WHERE id = $1
 `
 
@@ -315,8 +325,7 @@ func (q *Queries) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]R
 
 const markHabitCompleted = `-- name: MarkHabitCompleted :exec
 INSERT INTO habit_logs (habit_id, completed_at)
-VALUES ($1, $2)
-    ON CONFLICT (habit_id, completed_at) DO NOTHING
+VALUES ($1, $2) ON CONFLICT (habit_id, completed_at) DO NOTHING
 `
 
 type MarkHabitCompletedParams struct {
@@ -330,7 +339,8 @@ func (q *Queries) MarkHabitCompleted(ctx context.Context, arg MarkHabitCompleted
 }
 
 const removeHabitFromRoutine = `-- name: RemoveHabitFromRoutine :exec
-DELETE FROM routine_habits
+DELETE
+FROM routine_habits
 WHERE routine_id = $1
   AND habit_id = $2
 `
@@ -346,9 +356,10 @@ func (q *Queries) RemoveHabitFromRoutine(ctx context.Context, arg RemoveHabitFro
 }
 
 const unmarkHabitCompleted = `-- name: UnmarkHabitCompleted :exec
-DELETE FROM habit_logs
+DELETE
+FROM habit_logs
 WHERE habit_id = $1
-  AND DATE(completed_at) = DATE($2)
+  AND DATE (completed_at) = DATE ($2)
 `
 
 type UnmarkHabitCompletedParams struct {

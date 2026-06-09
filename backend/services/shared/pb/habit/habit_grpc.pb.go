@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.0
-// source: proto/habit/habit.proto
+// source: proto/habit/v2/habit.proto
 
 package habit
 
@@ -421,12 +421,14 @@ var HabitService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/habit/habit.proto",
+	Metadata: "proto/habit/v2/habit.proto",
 }
 
 const (
 	RoutineService_CreateRoutine_FullMethodName          = "/habit.RoutineService/CreateRoutine"
 	RoutineService_GetRoutineByID_FullMethodName         = "/habit.RoutineService/GetRoutineByID"
+	RoutineService_EditRoutine_FullMethodName            = "/habit.RoutineService/EditRoutine"
+	RoutineService_DeleteRoutine_FullMethodName          = "/habit.RoutineService/DeleteRoutine"
 	RoutineService_AddHabitToRoutine_FullMethodName      = "/habit.RoutineService/AddHabitToRoutine"
 	RoutineService_RemoveHabitFromRoutine_FullMethodName = "/habit.RoutineService/RemoveHabitFromRoutine"
 	RoutineService_ListRoutinesByUser_FullMethodName     = "/habit.RoutineService/ListRoutinesByUser"
@@ -438,6 +440,8 @@ const (
 type RoutineServiceClient interface {
 	CreateRoutine(ctx context.Context, in *CreateRoutineRequest, opts ...grpc.CallOption) (*CreateRoutineResponse, error)
 	GetRoutineByID(ctx context.Context, in *GetRoutineByIDRequest, opts ...grpc.CallOption) (*GetRoutineByIDResponse, error)
+	EditRoutine(ctx context.Context, in *EditRoutineRequest, opts ...grpc.CallOption) (*EditRoutineResponse, error)
+	DeleteRoutine(ctx context.Context, in *DeleteRoutineRequest, opts ...grpc.CallOption) (*DeleteRoutineResponse, error)
 	AddHabitToRoutine(ctx context.Context, in *AddHabitToRoutineRequest, opts ...grpc.CallOption) (*AddHabitToRoutineResponse, error)
 	RemoveHabitFromRoutine(ctx context.Context, in *RemoveHabitFromRoutineRequest, opts ...grpc.CallOption) (*RemoveHabitFromRoutineResponse, error)
 	ListRoutinesByUser(ctx context.Context, in *ListRoutinesByUserRequest, opts ...grpc.CallOption) (*ListRoutinesByUserResponse, error)
@@ -465,6 +469,26 @@ func (c *routineServiceClient) GetRoutineByID(ctx context.Context, in *GetRoutin
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRoutineByIDResponse)
 	err := c.cc.Invoke(ctx, RoutineService_GetRoutineByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routineServiceClient) EditRoutine(ctx context.Context, in *EditRoutineRequest, opts ...grpc.CallOption) (*EditRoutineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EditRoutineResponse)
+	err := c.cc.Invoke(ctx, RoutineService_EditRoutine_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routineServiceClient) DeleteRoutine(ctx context.Context, in *DeleteRoutineRequest, opts ...grpc.CallOption) (*DeleteRoutineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteRoutineResponse)
+	err := c.cc.Invoke(ctx, RoutineService_DeleteRoutine_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -507,6 +531,8 @@ func (c *routineServiceClient) ListRoutinesByUser(ctx context.Context, in *ListR
 type RoutineServiceServer interface {
 	CreateRoutine(context.Context, *CreateRoutineRequest) (*CreateRoutineResponse, error)
 	GetRoutineByID(context.Context, *GetRoutineByIDRequest) (*GetRoutineByIDResponse, error)
+	EditRoutine(context.Context, *EditRoutineRequest) (*EditRoutineResponse, error)
+	DeleteRoutine(context.Context, *DeleteRoutineRequest) (*DeleteRoutineResponse, error)
 	AddHabitToRoutine(context.Context, *AddHabitToRoutineRequest) (*AddHabitToRoutineResponse, error)
 	RemoveHabitFromRoutine(context.Context, *RemoveHabitFromRoutineRequest) (*RemoveHabitFromRoutineResponse, error)
 	ListRoutinesByUser(context.Context, *ListRoutinesByUserRequest) (*ListRoutinesByUserResponse, error)
@@ -525,6 +551,12 @@ func (UnimplementedRoutineServiceServer) CreateRoutine(context.Context, *CreateR
 }
 func (UnimplementedRoutineServiceServer) GetRoutineByID(context.Context, *GetRoutineByIDRequest) (*GetRoutineByIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRoutineByID not implemented")
+}
+func (UnimplementedRoutineServiceServer) EditRoutine(context.Context, *EditRoutineRequest) (*EditRoutineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EditRoutine not implemented")
+}
+func (UnimplementedRoutineServiceServer) DeleteRoutine(context.Context, *DeleteRoutineRequest) (*DeleteRoutineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteRoutine not implemented")
 }
 func (UnimplementedRoutineServiceServer) AddHabitToRoutine(context.Context, *AddHabitToRoutineRequest) (*AddHabitToRoutineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddHabitToRoutine not implemented")
@@ -588,6 +620,42 @@ func _RoutineService_GetRoutineByID_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoutineServiceServer).GetRoutineByID(ctx, req.(*GetRoutineByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoutineService_EditRoutine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditRoutineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoutineServiceServer).EditRoutine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoutineService_EditRoutine_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoutineServiceServer).EditRoutine(ctx, req.(*EditRoutineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoutineService_DeleteRoutine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRoutineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoutineServiceServer).DeleteRoutine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoutineService_DeleteRoutine_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoutineServiceServer).DeleteRoutine(ctx, req.(*DeleteRoutineRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -662,6 +730,14 @@ var RoutineService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RoutineService_GetRoutineByID_Handler,
 		},
 		{
+			MethodName: "EditRoutine",
+			Handler:    _RoutineService_EditRoutine_Handler,
+		},
+		{
+			MethodName: "DeleteRoutine",
+			Handler:    _RoutineService_DeleteRoutine_Handler,
+		},
+		{
 			MethodName: "AddHabitToRoutine",
 			Handler:    _RoutineService_AddHabitToRoutine_Handler,
 		},
@@ -675,5 +751,5 @@ var RoutineService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/habit/habit.proto",
+	Metadata: "proto/habit/v2/habit.proto",
 }

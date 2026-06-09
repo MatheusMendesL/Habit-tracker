@@ -1,6 +1,6 @@
--- name: CreateRoutine :execresult
+-- name: CreateRoutine :one
 INSERT INTO routines (user_id, name)
-VALUES ($1, $2);
+VALUES ($1, $2) RETURNING *;
 
 -- name: GetRoutineByID :one
 SELECT id, user_id, name, created_at
@@ -18,7 +18,8 @@ SET name = COALESCE($1, name)
 WHERE id = $2;
 
 -- name: DeleteRoutine :exec
-DELETE FROM routines
+DELETE
+FROM routines
 WHERE id = $1;
 
 -- name: CreateHabit :execresult
@@ -43,7 +44,8 @@ SET name        = COALESCE($1, name),
 WHERE id = $4;
 
 -- name: DeleteHabit :exec
-DELETE FROM habits
+DELETE
+FROM habits
 WHERE id = $1;
 
 -- name: AddHabitToRoutine :exec
@@ -51,7 +53,8 @@ INSERT INTO routine_habits (routine_id, habit_id)
 VALUES ($1, $2);
 
 -- name: RemoveHabitFromRoutine :exec
-DELETE FROM routine_habits
+DELETE
+FROM routine_habits
 WHERE routine_id = $1
   AND habit_id = $2;
 
@@ -77,13 +80,13 @@ WHERE rh.habit_id = $1;
 
 -- name: MarkHabitCompleted :exec
 INSERT INTO habit_logs (habit_id, completed_at)
-VALUES ($1, $2)
-    ON CONFLICT (habit_id, completed_at) DO NOTHING;
+VALUES ($1, $2) ON CONFLICT (habit_id, completed_at) DO NOTHING;
 
 -- name: UnmarkHabitCompleted :exec
-DELETE FROM habit_logs
+DELETE
+FROM habit_logs
 WHERE habit_id = $1
-  AND DATE(completed_at) = DATE($2);
+  AND DATE (completed_at) = DATE ($2);
 
 -- name: GetHabitLogs :many
 SELECT habit_id, completed_at

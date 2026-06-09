@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
 	"habit-service/internal/repository"
@@ -46,4 +47,54 @@ func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID uuid.UUID
 	}
 
 	return s.repo.GetRoutineByID(ctx, routineID)
+}
+
+func (s *RoutineService) EditRoutine(ctx context.Context, routine db.UpdateRoutineParams) (db.Routine, error) {
+	if routine.ID == uuid.Nil || routine.Name == "" {
+		return db.Routine{}, AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, routine.ID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrRoutineNotFound) {
+			return db.Routine{}, AppErr.ErrRoutineNotFound
+		}
+		return db.Routine{}, err
+	}
+
+	return s.repo.EditRoutine(ctx, routine)
+}
+
+func (s *RoutineService) DeleteRoutine(ctx context.Context, routineID uuid.UUID) error {
+	if routineID == uuid.Nil {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, routineID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrRoutineNotFound) {
+			return AppErr.ErrRoutineNotFound
+		}
+		return err
+	}
+
+	return s.repo.DeleteRoutine(ctx, routineID)
+}
+
+func (s *RoutineService) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]db.Routine, error) {
+	if userID == uuid.Nil {
+		return []db.Routine{}, AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return []db.Routine{}, AppErr.ErrUserNotFound
+		}
+		return []db.Routine{}, err
+	}
+
+	return s.repo.ListRoutinesByUser(ctx, userID)
 }
