@@ -1,0 +1,194 @@
+syntax = "proto3";
+
+package habit;
+
+option go_package = "pb/habit";
+
+import "google/protobuf/timestamp.proto";
+
+message Habit {
+    string id = 1;
+    string user_id = 2;
+    string name = 3;
+    string description = 4;
+    string image_url = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
+
+message Routine {
+    string id = 1;
+    string user_id = 2;
+    string name = 3;
+    google.protobuf.Timestamp created_at = 4;
+}
+
+message HabitLog {
+    string habit_id = 1;
+    google.protobuf.Timestamp completed_at = 2;
+}
+
+message CreateRoutineRequest {
+    Routine routine = 1;
+}
+
+message CreateRoutineResponse {
+    Routine routine = 1;
+}
+
+message CreateHabitRequest {
+    Habit habit = 1;
+}
+
+message CreateHabitResponse {
+    Habit habit = 1;
+}
+
+message GetHabitByIDRequest {
+    string habit_id = 1;
+}
+
+message GetHabitByIDResponse {
+    Habit habit = 1;
+}
+
+message ListHabitsByUserRequest {
+    string user_id = 1;
+}
+
+message ListHabitsByUserResponse {
+    repeated Habit habits = 1;
+}
+
+message ListHabitsByRoutineRequest {
+    string routine_id = 1;
+}
+
+message ListHabitsByRoutineResponse {
+    repeated Habit habits = 1;
+}
+
+message EditHabitRequest {
+    string habit_id = 1;
+    optional string name = 2;
+    optional string description = 3;
+    optional string image_url = 4;
+}
+
+message EditHabitResponse {
+    Habit habit = 1;
+}
+
+message DeleteHabitRequest {
+    string habit_id = 1;
+}
+
+message DeleteHabitResponse {
+    bool success = 1;
+}
+
+message MarkHabitCompletedRequest {
+    string habit_id = 1;
+    google.protobuf.Timestamp completed_at = 2;
+}
+
+message MarkHabitCompletedResponse {
+    bool success = 1;
+}
+
+message UnmarkHabitCompletedRequest {
+    string habit_id = 1;
+    google.protobuf.Timestamp completed_at = 2;
+}
+
+message UnmarkHabitCompletedResponse {
+    bool success = 1;
+}
+
+message GetHabitLogsRequest {
+    string habit_id = 1;
+    google.protobuf.Timestamp start_date = 2;
+    google.protobuf.Timestamp end_date = 3;
+}
+
+message GetHabitLogsResponse {
+    repeated HabitLog logs = 1;
+}
+
+message AddHabitToRoutineRequest {
+    string habit_id = 1;
+    string routine_id = 2;
+}
+
+message AddHabitToRoutineResponse {
+    bool success = 1;
+}
+
+message RemoveHabitFromRoutineRequest {
+    string habit_id = 1;
+    string routine_id = 2;
+}
+
+message RemoveHabitFromRoutineResponse {
+    bool success = 1;
+}
+
+message ListRoutinesByUserRequest {
+    string user_id = 1;
+}
+
+message ListRoutinesByUserResponse {
+    repeated Routine routines = 1;
+}
+
+message GetRoutineByIDRequest {
+    string routine_id = 1;
+}
+
+message GetRoutineByIDResponse {
+    Routine routine = 1;
+}
+
+message EditRoutineRequest {
+    string routine_id = 1;
+    optional string name = 2;
+}
+
+message EditRoutineResponse {
+    Routine routine = 1;
+}
+
+message DeleteRoutineRequest {
+    string routine_id = 1;
+}
+
+message DeleteRoutineResponse {
+    bool success = 1;
+}
+
+service HabitService {
+    rpc CreateHabit(CreateHabitRequest) returns (CreateHabitResponse);
+    rpc GetHabitByID(GetHabitByIDRequest) returns (GetHabitByIDResponse);
+
+    rpc ListHabitsByUser(ListHabitsByUserRequest) returns (ListHabitsByUserResponse);
+    rpc ListHabitsByRoutine(ListHabitsByRoutineRequest) returns (ListHabitsByRoutineResponse);
+
+    rpc EditHabit(EditHabitRequest) returns (EditHabitResponse);
+    rpc DeleteHabit(DeleteHabitRequest) returns (DeleteHabitResponse);
+
+    rpc MarkHabitCompleted(MarkHabitCompletedRequest) returns (MarkHabitCompletedResponse);
+    rpc UnmarkHabitCompleted(UnmarkHabitCompletedRequest) returns (UnmarkHabitCompletedResponse);
+    rpc GetHabitLogs(GetHabitLogsRequest) returns (GetHabitLogsResponse);
+}
+
+service RoutineService {
+    rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
+    rpc GetRoutineByID(GetRoutineByIDRequest) returns (GetRoutineByIDResponse);
+
+    rpc EditRoutine(EditRoutineRequest) returns (EditRoutineResponse);
+    rpc DeleteRoutine(DeleteRoutineRequest) returns (DeleteRoutineResponse);
+
+    rpc AddHabitToRoutine(AddHabitToRoutineRequest) returns (AddHabitToRoutineResponse);
+    rpc RemoveHabitFromRoutine(RemoveHabitFromRoutineRequest) returns (RemoveHabitFromRoutineResponse);
+
+    rpc ListRoutinesByUser(ListRoutinesByUserRequest) returns (ListRoutinesByUserResponse);
+}

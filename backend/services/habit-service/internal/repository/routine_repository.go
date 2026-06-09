@@ -6,7 +6,6 @@ import (
 	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
-	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -25,29 +24,10 @@ type CreateRoutineParams struct {
 }
 
 func (r *RoutineRepository) CreateRoutine(ctx context.Context, arg CreateRoutineParams) (db.Routine, error) {
-	params := db.CreateRoutineParams{
+	return r.q.CreateRoutine(ctx, db.CreateRoutineParams{
 		UserID: arg.UserID,
 		Name:   arg.Name,
-	}
-
-	res, err := r.q.CreateRoutine(ctx, params)
-
-	if err != nil {
-		return db.Routine{}, err
-	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		return db.Routine{}, err
-	}
-
-	idNew, err := uuid.Parse(strconv.FormatInt(id, 10))
-
-	if err != nil {
-		return db.Routine{}, err
-	}
-
-	return r.GetRoutineByID(ctx, idNew)
+	})
 }
 
 func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId uuid.UUID) (db.Routine, error) {
@@ -61,4 +41,29 @@ func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId uuid.U
 	}
 
 	return res, nil
+}
+
+func (r *RoutineRepository) EditRoutine(ctx context.Context, req db.UpdateRoutineParams) (db.Routine, error) {
+	err := r.q.UpdateRoutine(ctx, req)
+
+	if err != nil {
+		return db.Routine{}, err
+	}
+
+	routine, err := r.GetRoutineByID(ctx, req.ID)
+
+	if err != nil {
+		return db.Routine{}, err
+	}
+
+	return routine, nil
+
+}
+
+func (r *RoutineRepository) DeleteRoutine(ctx context.Context, routineID uuid.UUID) error {
+	return r.q.DeleteRoutine(ctx, routineID)
+}
+
+func (r *RoutineRepository) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]db.Routine, error) {
+	return r.q.ListRoutinesByUser(ctx, userID)
 }
