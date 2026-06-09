@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: user-service
+    runtime: go
+    rootDir: backend/services/user-service
+    buildCommand: go build -o app ./cmd/main.go
+    startCommand: ./app
+
+  - type: web
+    name: habit-service
+    runtime: go
+    rootDir: backend/services/habit-service
+    buildCommand: go build -o app ./cmd/main.go
+    startCommand: ./app
+
+  - type: web
+    name: social-service
+    runtime: go
+    rootDir: backend/services/social-service
+    buildCommand: go build -o app ./cmd/main.go
+    startCommand: ./app
