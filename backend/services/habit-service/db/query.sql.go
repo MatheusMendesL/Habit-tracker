@@ -372,43 +372,59 @@ func (q *Queries) UnmarkHabitCompleted(ctx context.Context, arg UnmarkHabitCompl
 	return err
 }
 
-const updateHabit = `-- name: UpdateHabit :exec
+const updateHabit = `-- name: UpdateHabit :one
 UPDATE habits
 SET name        = COALESCE($1, name),
     description = COALESCE($2, description),
     image_url   = COALESCE($3, image_url)
-WHERE id = $4
+WHERE id = $4 RETURNING id, user_id, name, description, image_url, created_at
 `
 
 type UpdateHabitParams struct {
-	Name        string
+	Name        sql.NullString
 	Description sql.NullString
 	ImageUrl    sql.NullString
 	ID          uuid.UUID
 }
 
-func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) error {
-	_, err := q.db.ExecContext(ctx, updateHabit,
+func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error) {
+	row := q.db.QueryRowContext(ctx, updateHabit,
 		arg.Name,
 		arg.Description,
 		arg.ImageUrl,
 		arg.ID,
 	)
-	return err
+	var i Habit
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.Description,
+		&i.ImageUrl,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
-const updateRoutine = `-- name: UpdateRoutine :exec
+const updateRoutine = `-- name: UpdateRoutine :one
 UPDATE routines
 SET name = COALESCE($1, name)
-WHERE id = $2
+WHERE id = $2 RETURNING id, user_id, name, created_at
 `
 
 type UpdateRoutineParams struct {
-	Name string
+	Name sql.NullString
 	ID   uuid.UUID
 }
 
-func (q *Queries) UpdateRoutine(ctx context.Context, arg UpdateRoutineParams) error {
-	_, err := q.db.ExecContext(ctx, updateRoutine, arg.Name, arg.ID)
-	return err
+func (q *Queries) UpdateRoutine(ctx context.Context, arg UpdateRoutineParams) (Routine, error) {
+	row := q.db.QueryRowContext(ctx, updateRoutine, arg.Name, arg.ID)
+	var i Routine
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.CreatedAt,
+	)
+	return i, err
 }
