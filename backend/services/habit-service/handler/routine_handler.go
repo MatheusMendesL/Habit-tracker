@@ -24,12 +24,6 @@ type RoutineHandler struct {
 	logger         *zap.Logger
 }
 
-/*
-UpdateRoutine
-DeleteRoutine
-ListRoutinesByUser
-*/
-
 func (s *RoutineHandler) Verification(val any, name string, nameVal string) error {
 	switch v := val.(type) {
 	case string:
@@ -252,6 +246,56 @@ func (s *RoutineHandler) DeleteRoutine(ctx context.Context, req *pbHabit.DeleteR
 
 	return &pbHabit.DeleteRoutineResponse{
 		Success: true,
+	}, nil
+
+}
+
+func (s *RoutineHandler) ListRoutinesByUser(ctx context.Context, req *pbHabit.ListRoutinesByUserRequest) (*pbHabit.ListRoutinesByUserResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userID, err := uuid.Parse(req.UserId)
+
+	if err != nil {
+		s.logger.Warn("invalid user id",
+			zap.String("user_id", req.UserId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(userID, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+
+	routines, err := s.RoutineService.ListRoutinesByUser(ctx, userID)
+
+	if err != nil {
+		s.logger.Error("error to execute ListRoutinesByUser method",
+			zap.String("user_id", req.UserId),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	pbRoutines := make([]*pbHabit.Routine, 0, len(routines))
+
+	for _, routine := range routines {
+		pbRoutines = append(pbRoutines, utils.ToProtoRoutine(routine))
+	}
+
+	// use this func to all returns that is necessary an array
+
+	s.logger.Info("ListRoutinesByUser method was ok",
+		zap.String("user_id", userID.String()),
+		zap.Int("total", len(routines)),
+	)
+
+	return &pbHabit.ListRoutinesByUserResponse{
+		Routines: pbRoutines,
 	}, nil
 
 }
