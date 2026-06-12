@@ -22,8 +22,8 @@ func NullStringToString(ns sql.NullString) string {
 
 func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 	return &pbHabit.Habit{
-		Id:          habit.ID,
-		UserId:      habit.UserID,
+		Id:          habit.ID.String(),
+		UserId:      habit.UserID.String(),
 		Name:        habit.Name,
 		Description: NullStringToString(habit.Description),
 		ImageUrl:    NullStringToString(habit.ImageUrl),
@@ -32,8 +32,8 @@ func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 
 func ToProtoRoutine(routine db.Routine) *pbHabit.Routine {
 	return &pbHabit.Routine{
-		Id:     routine.ID,
-		UserId: routine.UserID,
+		Id:     routine.ID.String(),
+		UserId: routine.UserID.String(),
 		Name:   routine.Name,
 	}
 }
