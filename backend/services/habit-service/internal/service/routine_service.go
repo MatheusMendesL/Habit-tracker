@@ -9,6 +9,8 @@ import (
 	pbUser "shared/pb/user"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type RoutineService struct {
@@ -32,9 +34,10 @@ func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.Creat
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
 	if err != nil {
-		if errors.Is(err, AppErr.ErrUserNotFound) {
+		if status.Code(err) == codes.NotFound {
 			return db.Routine{}, AppErr.ErrUserNotFound
 		}
+
 		return db.Routine{}, err
 	}
 
@@ -132,4 +135,30 @@ func (s *RoutineService) AddHabitToRoutine(ctx context.Context, params db.AddHab
 	}
 
 	return s.repo.AddHabitToRoutine(ctx, params)
+}
+
+func (s *RoutineService) RemoveHabitFromRoutine(ctx context.Context, params db.RemoveHabitFromRoutineParams) error {
+	if params.RoutineID == uuid.Nil || params.HabitID == uuid.Nil {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, params.RoutineID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrRoutineNotFound) {
+			return AppErr.ErrRoutineNotFound
+		}
+		return err
+	}
+
+	_, err = s.habitService.GetHabitByID(ctx, params.HabitID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrHabitNotFound) {
+			return AppErr.ErrHabitNotFound
+		}
+		return err
+	}
+
+	return s.repo.RemoveHabitFromRoutine(ctx, params)
 }
