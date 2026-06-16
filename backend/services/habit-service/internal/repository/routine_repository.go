@@ -50,6 +50,7 @@ func (r *RoutineRepository) EditRoutine(ctx context.Context, req db.UpdateRoutin
 		if errors.Is(err, sql.ErrNoRows) {
 			return db.Routine{}, AppErr.ErrRoutineNotFound
 		}
+
 		return db.Routine{}, err
 	}
 
