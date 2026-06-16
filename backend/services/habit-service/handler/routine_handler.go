@@ -17,6 +17,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+/*
+AddHabitToRoutine
+RemoveHabitFromRoutine
+*/
+
 type RoutineHandler struct {
 	pbUser.UserServiceClient
 	pbHabit.UnimplementedRoutineServiceServer

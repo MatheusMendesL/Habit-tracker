@@ -9,19 +9,19 @@ import (
 	pbUser "shared/pb/user"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type RoutineService struct {
 	pbUser.UserServiceClient
-	repo *repository.RoutineRepository
+	repo         *repository.RoutineRepository
+	habitService *HabitService
 }
 
-func NewRoutineService(r *repository.RoutineRepository, userClient pbUser.UserServiceClient) *RoutineService {
+func NewRoutineService(r *repository.RoutineRepository, userClient pbUser.UserServiceClient, habitService *HabitService) *RoutineService {
 	return &RoutineService{
 		repo:              r,
 		UserServiceClient: userClient,
+		habitService:      habitService,
 	}
 }
 
@@ -32,7 +32,7 @@ func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.Creat
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
 	if err != nil {
-		if status.Code(err) == codes.NotFound {
+		if errors.Is(err, AppErr.ErrUserNotFound) {
 			return db.Routine{}, AppErr.ErrUserNotFound
 		}
 		return db.Routine{}, err
@@ -46,7 +46,16 @@ func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID uuid.UUID
 		return db.Routine{}, AppErr.ErrInvalidArgument
 	}
 
-	return s.repo.GetRoutineByID(ctx, routineID)
+	routine, err := s.repo.GetRoutineByID(ctx, routineID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrRoutineNotFound) {
+			return db.Routine{}, AppErr.ErrRoutineNotFound
+		}
+		return db.Routine{}, err
+	}
+
+	return routine, nil
 }
 
 func (s *RoutineService) EditRoutine(ctx context.Context, routine db.UpdateRoutineParams) (db.Routine, error) {
@@ -90,11 +99,37 @@ func (s *RoutineService) ListRoutinesByUser(ctx context.Context, userID uuid.UUI
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
 	if err != nil {
-		if status.Code(err) == codes.NotFound {
+		if errors.Is(err, AppErr.ErrUserNotFound) {
 			return []db.Routine{}, AppErr.ErrUserNotFound
 		}
 		return []db.Routine{}, err
 	}
 
 	return s.repo.ListRoutinesByUser(ctx, userID)
+}
+
+func (s *RoutineService) AddHabitToRoutine(ctx context.Context, params db.AddHabitToRoutineParams) error {
+	if params.RoutineID == uuid.Nil || params.HabitID == uuid.Nil {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, params.RoutineID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrRoutineNotFound) {
+			return AppErr.ErrRoutineNotFound
+		}
+		return err
+	}
+
+	_, err = s.habitService.GetHabitByID(ctx, params.HabitID)
+
+	if err != nil {
+		if errors.Is(err, AppErr.ErrHabitNotFound) {
+			return AppErr.ErrHabitNotFound
+		}
+		return err
+	}
+
+	return s.repo.AddHabitToRoutine(ctx, params)
 }

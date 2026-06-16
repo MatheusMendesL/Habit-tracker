@@ -44,7 +44,17 @@ func (r *RoutineRepository) GetRoutineByID(ctx context.Context, routineId uuid.U
 }
 
 func (r *RoutineRepository) EditRoutine(ctx context.Context, req db.UpdateRoutineParams) (db.Routine, error) {
-	return r.q.UpdateRoutine(ctx, req)
+	routine, err := r.q.UpdateRoutine(ctx, req)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return db.Routine{}, AppErr.ErrRoutineNotFound
+		}
+		return db.Routine{}, err
+	}
+
+	return routine, nil
+
 }
 
 func (r *RoutineRepository) DeleteRoutine(ctx context.Context, routineID uuid.UUID) error {
@@ -53,4 +63,12 @@ func (r *RoutineRepository) DeleteRoutine(ctx context.Context, routineID uuid.UU
 
 func (r *RoutineRepository) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]db.Routine, error) {
 	return r.q.ListRoutinesByUser(ctx, userID)
+}
+
+func (r *RoutineRepository) AddHabitToRoutine(ctx context.Context, arg db.AddHabitToRoutineParams) error {
+	return r.q.AddHabitToRoutine(ctx, arg)
+}
+
+func (r *RoutineRepository) RemoveHabitFromRoutine(ctx context.Context, arg db.RemoveHabitFromRoutineParams) error {
+	return r.q.RemoveHabitFromRoutine(ctx, arg)
 }

@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"habit-service/db"
 	pbHabit "shared/pb/habit"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func ToNullString(param string) sql.NullString {
@@ -32,8 +34,9 @@ func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 
 func ToProtoRoutine(routine db.Routine) *pbHabit.Routine {
 	return &pbHabit.Routine{
-		Id:     routine.ID.String(),
-		UserId: routine.UserID.String(),
-		Name:   routine.Name,
+		Id:        routine.ID.String(),
+		UserId:    routine.UserID.String(),
+		Name:      routine.Name,
+		CreatedAt: timestamppb.New(routine.CreatedAt),
 	}
 }
