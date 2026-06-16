@@ -60,7 +60,7 @@ func startServer() {
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
 	habitService := service.NewHabitService(HabitRepo, userServiceClient)
-	routineService := service.NewRoutineService(RoutineRepo, userServiceClient)
+	routineService := service.NewRoutineService(RoutineRepo, userServiceClient, habitService)
 	habitHandler := handler.NewHabitHandler(habitService, logger, userServiceClient)
 	RoutineHandler := handler.NewRoutineHandler(routineService, logger, userServiceClient)
 
