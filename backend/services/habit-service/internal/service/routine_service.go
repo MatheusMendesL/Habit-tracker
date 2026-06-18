@@ -9,9 +9,19 @@ import (
 	pbUser "shared/pb/user"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
+
+func ReturnError(err error, target error) error {
+	if err == nil {
+		return nil
+	}
+
+	if errors.Is(err, target) {
+		return target
+	}
+
+	return err
+}
 
 type RoutineService struct {
 	pbUser.UserServiceClient
@@ -33,11 +43,8 @@ func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.Creat
 	}
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
-	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return db.Routine{}, AppErr.ErrUserNotFound
-		}
 
+	if err = ReturnError(err, AppErr.ErrUserNotFound); err != nil {
 		return db.Routine{}, err
 	}
 
@@ -51,14 +58,7 @@ func (s *RoutineService) GetRoutineByID(ctx context.Context, routineID uuid.UUID
 
 	routine, err := s.repo.GetRoutineByID(ctx, routineID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrRoutineNotFound) {
-			return db.Routine{}, AppErr.ErrRoutineNotFound
-		}
-		return db.Routine{}, err
-	}
-
-	return routine, nil
+	return routine, ReturnError(err, AppErr.ErrRoutineNotFound)
 }
 
 func (s *RoutineService) EditRoutine(ctx context.Context, routine db.UpdateRoutineParams) (db.Routine, error) {
@@ -68,10 +68,7 @@ func (s *RoutineService) EditRoutine(ctx context.Context, routine db.UpdateRouti
 
 	_, err := s.GetRoutineByID(ctx, routine.ID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrRoutineNotFound) {
-			return db.Routine{}, AppErr.ErrRoutineNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
 		return db.Routine{}, err
 	}
 
@@ -101,10 +98,8 @@ func (s *RoutineService) ListRoutinesByUser(ctx context.Context, userID uuid.UUI
 	}
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
-	if err != nil {
-		if errors.Is(err, AppErr.ErrUserNotFound) {
-			return []db.Routine{}, AppErr.ErrUserNotFound
-		}
+
+	if err = ReturnError(err, AppErr.ErrUserNotFound); err != nil {
 		return []db.Routine{}, err
 	}
 
@@ -118,19 +113,13 @@ func (s *RoutineService) AddHabitToRoutine(ctx context.Context, params db.AddHab
 
 	_, err := s.GetRoutineByID(ctx, params.RoutineID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrRoutineNotFound) {
-			return AppErr.ErrRoutineNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
 		return err
 	}
 
 	_, err = s.habitService.GetHabitByID(ctx, params.HabitID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrHabitNotFound) {
-			return AppErr.ErrHabitNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrHabitNotFound); err != nil {
 		return err
 	}
 
@@ -144,19 +133,13 @@ func (s *RoutineService) RemoveHabitFromRoutine(ctx context.Context, params db.R
 
 	_, err := s.GetRoutineByID(ctx, params.RoutineID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrRoutineNotFound) {
-			return AppErr.ErrRoutineNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
 		return err
 	}
 
 	_, err = s.habitService.GetHabitByID(ctx, params.HabitID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrHabitNotFound) {
-			return AppErr.ErrHabitNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrHabitNotFound); err != nil {
 		return err
 	}
 
