@@ -36,10 +36,22 @@ func ReceiveErrors(err error) error {
 	switch {
 	case errors.Is(err, AppErr.ErrInvalidArgument):
 		return status.Error(codes.InvalidArgument, err.Error())
+
 	case errors.Is(err, AppErr.ErrNullField):
 		return status.Error(codes.InvalidArgument, err.Error())
+
+	case errors.Is(err, AppErr.ErrUserNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, AppErr.ErrRoutineNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, AppErr.ErrHabitNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
 	case errors.Is(err, sql.ErrNoRows):
-		return status.Error(codes.NotFound, AppErr.ErrUserNotFound.Error())
+		return status.Error(codes.NotFound, err.Error())
+
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}
