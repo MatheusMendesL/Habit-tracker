@@ -17,11 +17,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-/*
-AddHabitToRoutine
-RemoveHabitFromRoutine
-*/
-
 type RoutineHandler struct {
 	pbUser.UserServiceClient
 	pbHabit.UnimplementedRoutineServiceServer
@@ -303,4 +298,129 @@ func (s *RoutineHandler) ListRoutinesByUser(ctx context.Context, req *pbHabit.Li
 		Routines: pbRoutines,
 	}, nil
 
+}
+
+/*
+AddHabitToRoutine
+RemoveHabitFromRoutine
+*/
+
+func (s *RoutineHandler) AddHabitToRoutine(ctx context.Context, req *pbHabit.AddHabitToRoutineRequest) (*pbHabit.AddHabitToRoutineResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, err := uuid.Parse(req.HabitId)
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(habitID, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	routineID, err := uuid.Parse(req.RoutineId)
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(routineID, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	err = s.RoutineService.AddHabitToRoutine(ctx, db.AddHabitToRoutineParams{
+		RoutineID: routineID,
+		HabitID:   habitID,
+	})
+
+	if err != nil {
+		s.logger.Error("error to execute AddHabitToRoutine method",
+			zap.String("habit_id", habitID.String()),
+			zap.String("routine_id", routineID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("AddHabitToRoutine method was ok",
+		zap.String("habit_id", habitID.String()),
+		zap.String("routine_id", routineID.String()),
+	)
+
+	return &pbHabit.AddHabitToRoutineResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *RoutineHandler) RemoveHabitFromRoutine(ctx context.Context, req *pbHabit.RemoveHabitFromRoutineRequest) (*pbHabit.RemoveHabitFromRoutineResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, err := uuid.Parse(req.HabitId)
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(habitID, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	routineID, err := uuid.Parse(req.RoutineId)
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(routineID, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	err = s.RoutineService.RemoveHabitFromRoutine(ctx, db.RemoveHabitFromRoutineParams{
+		RoutineID: routineID,
+		HabitID:   habitID,
+	})
+
+	if err != nil {
+		s.logger.Error("error to execute RemoveHabitFromRoutine method",
+			zap.String("habit_id", habitID.String()),
+			zap.String("routine_id", routineID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("RemoveHabitFromRoutine method was ok",
+		zap.String("habit_id", habitID.String()),
+		zap.String("routine_id", routineID.String()),
+	)
+
+	return &pbHabit.RemoveHabitFromRoutineResponse{
+		Success: true,
+	}, nil
 }
