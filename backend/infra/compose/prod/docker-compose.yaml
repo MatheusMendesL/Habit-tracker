@@ -3,16 +3,15 @@ version: "3.9"
 services:
   redis:
     image: redis:7
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
 
   auth-service:
     restart: unless-stopped
+    build:
+      context: ../../../auth-services-node
+      dockerfile: Dockerfile
     env_file:
       - ../../../auth-services-node/.env
-    build: ../../../auth-services-node
-    ports:
-      - "3000:3000"
     depends_on:
       - redis
 
@@ -22,13 +21,7 @@ services:
       - ../../../services/user-service/.env
     build:
       context: ../../../services/user-service
-      dockerfile: Dockerfile.dev
-
-    volumes:
-      - ../../../services/user-service:/app
-
-    ports:
-      - "8080:8080"
+      dockerfile: Dockerfile
 
   social-service:
     restart: unless-stopped
@@ -37,15 +30,34 @@ services:
 
     build:
       context: ../../../services/social-service
-      dockerfile: Dockerfile.dev
-
-    volumes:
-      - ../../../services/social-service:/app
-
-    ports:
-      - "8081:8081"
+      dockerfile: Dockerfile
 
     depends_on:
       - user-service
 
+  habit-service:
+    restart: unless-stopped
+    env_file:
+      - ../../../services/habit-service/.env
 
+    build:
+      context: ../../../services/habit-service
+      dockerfile: Dockerfile
+
+    depends_on:
+      - user-service
+
+  nginx:
+    build:
+      context: ../../nginx
+
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - auth-service
+      - user-service
+      - social-service
+      - habit-service
