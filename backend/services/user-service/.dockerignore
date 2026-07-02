@@ -1,0 +1,7 @@
+.air.toml
+.idea
+.git
+.gitignore
+.env
+app
+tmp
