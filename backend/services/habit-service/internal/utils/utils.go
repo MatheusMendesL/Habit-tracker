@@ -29,6 +29,7 @@ func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 		Name:        habit.Name,
 		Description: NullStringToString(habit.Description),
 		ImageUrl:    NullStringToString(habit.ImageUrl),
+		CreatedAt:   timestamppb.New(habit.CreatedAt),
 	}
 }
 

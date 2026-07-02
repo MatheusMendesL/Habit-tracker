@@ -28,9 +28,17 @@ func (q *Queries) AddHabitToRoutine(ctx context.Context, arg AddHabitToRoutinePa
 	return err
 }
 
-const createHabit = `-- name: CreateHabit :execresult
-INSERT INTO habits (user_id, name, description, image_url)
-VALUES ($1, $2, $3, $4)
+const createHabit = `-- name: CreateHabit :one
+INSERT INTO habits (user_id,
+                    name,
+                    description,
+                    image_url,
+                    created_at)
+VALUES ($1,
+        $2,
+        $3,
+        $4,
+        NOW()) RETURNING id, user_id, name, description, image_url, created_at
 `
 
 type CreateHabitParams struct {
@@ -40,13 +48,23 @@ type CreateHabitParams struct {
 	ImageUrl    sql.NullString
 }
 
-func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createHabit,
+func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit, error) {
+	row := q.db.QueryRowContext(ctx, createHabit,
 		arg.UserID,
 		arg.Name,
 		arg.Description,
 		arg.ImageUrl,
 	)
+	var i Habit
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.Description,
+		&i.ImageUrl,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const createRoutine = `-- name: CreateRoutine :one

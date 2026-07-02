@@ -33,7 +33,7 @@ func startServer() {
 		logger.Warn("No .env file found, relying on environment variables", zap.Error(err))
 	}
 
-	logger.Info("Starting server")
+	logger.Info("Starting Habit service server")
 
 	typeServer := os.Getenv("TYPE")
 	portServer := os.Getenv("PORT")

@@ -7,21 +7,23 @@ option go_package = "pb/habit";
 import "google/protobuf/timestamp.proto";
 
 message Habit {
-    int32 id = 1;
-    int32 user_id = 2;
+    string id = 1;
+    string user_id = 2;
     string name = 3;
     string description = 4;
     string image_url = 5;
+    google.protobuf.Timestamp created_at = 6;
 }
 
 message Routine {
-    int32 id = 1;
-    int32 user_id = 2;
+    string id = 1;
+    string user_id = 2;
     string name = 3;
+    google.protobuf.Timestamp created_at = 4;
 }
 
 message HabitLog {
-    int32 habit_id = 1;
+    string habit_id = 1;
     google.protobuf.Timestamp completed_at = 2;
 }
 
@@ -42,7 +44,7 @@ message CreateHabitResponse {
 }
 
 message GetHabitByIDRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
 }
 
 message GetHabitByIDResponse {
@@ -50,7 +52,7 @@ message GetHabitByIDResponse {
 }
 
 message ListHabitsByUserRequest {
-    int32 user_id = 1;
+    string user_id = 1;
 }
 
 message ListHabitsByUserResponse {
@@ -58,7 +60,7 @@ message ListHabitsByUserResponse {
 }
 
 message ListHabitsByRoutineRequest {
-    int32 routine_id = 1;
+    string routine_id = 1;
 }
 
 message ListHabitsByRoutineResponse {
@@ -66,18 +68,18 @@ message ListHabitsByRoutineResponse {
 }
 
 message EditHabitRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
     optional string name = 2;
     optional string description = 3;
     optional string image_url = 4;
 }
 
 message EditHabitResponse {
-    bool success = 1;
+    Habit habit = 1;
 }
 
 message DeleteHabitRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
 }
 
 message DeleteHabitResponse {
@@ -85,7 +87,7 @@ message DeleteHabitResponse {
 }
 
 message MarkHabitCompletedRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
     google.protobuf.Timestamp completed_at = 2;
 }
 
@@ -94,7 +96,7 @@ message MarkHabitCompletedResponse {
 }
 
 message UnmarkHabitCompletedRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
     google.protobuf.Timestamp completed_at = 2;
 }
 
@@ -103,7 +105,7 @@ message UnmarkHabitCompletedResponse {
 }
 
 message GetHabitLogsRequest {
-    int32 habit_id = 1;
+    string habit_id = 1;
     google.protobuf.Timestamp start_date = 2;
     google.protobuf.Timestamp end_date = 3;
 }
@@ -113,8 +115,8 @@ message GetHabitLogsResponse {
 }
 
 message AddHabitToRoutineRequest {
-    int32 habit_id = 1;
-    int32 routine_id = 2;
+    string habit_id = 1;
+    string routine_id = 2;
 }
 
 message AddHabitToRoutineResponse {
@@ -122,8 +124,8 @@ message AddHabitToRoutineResponse {
 }
 
 message RemoveHabitFromRoutineRequest {
-    int32 habit_id = 1;
-    int32 routine_id = 2;
+    string habit_id = 1;
+    string routine_id = 2;
 }
 
 message RemoveHabitFromRoutineResponse {
@@ -131,17 +133,40 @@ message RemoveHabitFromRoutineResponse {
 }
 
 message ListRoutinesByUserRequest {
-    int32 user_id = 1;
+    string user_id = 1;
 }
 
 message ListRoutinesByUserResponse {
     repeated Routine routines = 1;
 }
 
+message GetRoutineByIDRequest {
+    string routine_id = 1;
+}
+
+message GetRoutineByIDResponse {
+    Routine routine = 1;
+}
+
+message EditRoutineRequest {
+    string routine_id = 1;
+    optional string name = 2;
+}
+
+message EditRoutineResponse {
+    Routine routine = 1;
+}
+
+message DeleteRoutineRequest {
+    string routine_id = 1;
+}
+
+message DeleteRoutineResponse {
+    bool success = 1;
+}
+
 service HabitService {
     rpc CreateHabit(CreateHabitRequest) returns (CreateHabitResponse);
-    rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
-
     rpc GetHabitByID(GetHabitByIDRequest) returns (GetHabitByIDResponse);
 
     rpc ListHabitsByUser(ListHabitsByUserRequest) returns (ListHabitsByUserResponse);
@@ -153,6 +178,14 @@ service HabitService {
     rpc MarkHabitCompleted(MarkHabitCompletedRequest) returns (MarkHabitCompletedResponse);
     rpc UnmarkHabitCompleted(UnmarkHabitCompletedRequest) returns (UnmarkHabitCompletedResponse);
     rpc GetHabitLogs(GetHabitLogsRequest) returns (GetHabitLogsResponse);
+}
+
+service RoutineService {
+    rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
+    rpc GetRoutineByID(GetRoutineByIDRequest) returns (GetRoutineByIDResponse);
+
+    rpc EditRoutine(EditRoutineRequest) returns (EditRoutineResponse);
+    rpc DeleteRoutine(DeleteRoutineRequest) returns (DeleteRoutineResponse);
 
     rpc AddHabitToRoutine(AddHabitToRoutineRequest) returns (AddHabitToRoutineResponse);
     rpc RemoveHabitFromRoutine(RemoveHabitFromRoutineRequest) returns (RemoveHabitFromRoutineResponse);

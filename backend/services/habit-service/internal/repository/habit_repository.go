@@ -6,7 +6,6 @@ import (
 	"errors"
 	"habit-service/db"
 	AppErr "habit-service/internal/errors"
-	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -34,23 +33,12 @@ func (r *HabitRepository) CreateHabit(ctx context.Context, arg CreateHabitParams
 		ImageUrl:    arg.ImageUrl,
 	}
 
-	res, err := r.q.CreateHabit(ctx, params)
-
+	habit, err := r.q.CreateHabit(ctx, params)
 	if err != nil {
 		return db.Habit{}, err
 	}
 
-	id, err := res.LastInsertId()
-	if err != nil {
-		return db.Habit{}, err
-	}
-	idNew, err := uuid.Parse(strconv.FormatInt(id, 10))
-
-	if err != nil {
-		return db.Habit{}, err
-	}
-
-	return r.GetHabitByID(ctx, idNew)
+	return habit, nil
 }
 
 func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId uuid.UUID) (db.Habit, error) {

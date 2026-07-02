@@ -12,14 +12,12 @@ message Habit {
     string name = 3;
     string description = 4;
     string image_url = 5;
-    google.protobuf.Timestamp created_at = 6;
 }
 
 message Routine {
     string id = 1;
     string user_id = 2;
     string name = 3;
-    google.protobuf.Timestamp created_at = 4;
 }
 
 message HabitLog {
@@ -75,7 +73,7 @@ message EditHabitRequest {
 }
 
 message EditHabitResponse {
-    Habit habit = 1;
+    bool success = 1;
 }
 
 message DeleteHabitRequest {
@@ -148,23 +146,6 @@ message GetRoutineByIDResponse {
     Routine routine = 1;
 }
 
-message EditRoutineRequest {
-    string routine_id = 1;
-    optional string name = 2;
-}
-
-message EditRoutineResponse {
-    Routine routine = 1;
-}
-
-message DeleteRoutineRequest {
-    string routine_id = 1;
-}
-
-message DeleteRoutineResponse {
-    bool success = 1;
-}
-
 service HabitService {
     rpc CreateHabit(CreateHabitRequest) returns (CreateHabitResponse);
     rpc GetHabitByID(GetHabitByIDRequest) returns (GetHabitByIDResponse);
@@ -182,10 +163,8 @@ service HabitService {
 
 service RoutineService {
     rpc CreateRoutine(CreateRoutineRequest) returns (CreateRoutineResponse);
-    rpc GetRoutineByID(GetRoutineByIDRequest) returns (GetRoutineByIDResponse);
 
-    rpc EditRoutine(EditRoutineRequest) returns (EditRoutineResponse);
-    rpc DeleteRoutine(DeleteRoutineRequest) returns (DeleteRoutineResponse);
+    rpc GetRoutineByID(GetRoutineByIDRequest) returns (GetRoutineByIDResponse);
 
     rpc AddHabitToRoutine(AddHabitToRoutineRequest) returns (AddHabitToRoutineResponse);
     rpc RemoveHabitFromRoutine(RemoveHabitFromRoutineRequest) returns (RemoveHabitFromRoutineResponse);
