@@ -7,11 +7,20 @@ services:
       - "6379:6379"
 
   auth-service:
+    build:
+      context: ../../../auth-services-node
+      dockerfile: Dockerfile
+
     env_file:
       - ../../../auth-services-node/.env
-    build: ../../../auth-services-node
+
+    volumes:
+      - ../../../auth-services-node:/app
+      - /app/node_modules
+
     ports:
       - "3000:3000"
+
     depends_on:
       - redis
 
