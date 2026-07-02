@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-# entra no serviço
 WORKDIR /app/user-service
 
 RUN go mod tidy
