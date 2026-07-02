@@ -11,4 +11,3 @@ backend/services/**/.env
 **/.air/
 **/.dist/
 **/node_modules/
-**/.env

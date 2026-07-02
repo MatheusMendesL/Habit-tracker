@@ -61,3 +61,18 @@ services:
 
     depends_on:
       - user-service
+
+  # por os serviços que faltam dps aqui e no nginx
+
+  nginx:
+    build:
+      context: ../../nginx
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - auth-service
+      - user-service
+      - social-service
+      - habit-service
