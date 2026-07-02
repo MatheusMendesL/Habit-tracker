@@ -22,9 +22,17 @@ DELETE
 FROM routines
 WHERE id = $1;
 
--- name: CreateHabit :execresult
-INSERT INTO habits (user_id, name, description, image_url)
-VALUES ($1, $2, $3, $4);
+-- name: CreateHabit :one
+INSERT INTO habits (user_id,
+                    name,
+                    description,
+                    image_url,
+                    created_at)
+VALUES ($1,
+        $2,
+        $3,
+        $4,
+        NOW()) RETURNING *;
 
 -- name: GetHabitByID :one
 SELECT id, user_id, name, description, image_url, created_at
