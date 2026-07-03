@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/user-service
+WORKDIR /app/services/user-service
 
 RUN go mod tidy
 RUN go build -o app ./cmd/main.go
@@ -13,7 +13,7 @@ FROM debian:bookworm-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/user-service/app .
+COPY --from=builder /app/services/user-service/app .
 
 EXPOSE 8080
 

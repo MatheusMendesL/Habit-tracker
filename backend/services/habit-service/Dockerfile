@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/habit-service
+WORKDIR /app/services/habit-service
 
 RUN go mod tidy
 RUN go build -o app ./cmd/main.go
@@ -13,7 +13,7 @@ FROM debian:bookworm-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/habit-service/app .
+COPY --from=builder /app/services/habit-service/app .
 
 EXPOSE 8082
 
