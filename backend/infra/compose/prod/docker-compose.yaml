@@ -20,8 +20,8 @@ services:
     env_file:
       - ../../../services/user-service/.env
     build:
-      context: ../../../services/user-service
-      dockerfile: Dockerfile
+      context: ../../../
+      dockerfile: services/user-service/Dockerfile
 
   social-service:
     restart: unless-stopped
@@ -29,8 +29,8 @@ services:
       - ../../../services/social-service/.env
 
     build:
-      context: ../../../services/social-service
-      dockerfile: Dockerfile
+      context: ../../../
+      dockerfile: services/social-service/Dockerfile
 
     depends_on:
       - user-service
@@ -41,8 +41,8 @@ services:
       - ../../../services/habit-service/.env
 
     build:
-      context: ../../../services/habit-service
-      dockerfile: Dockerfile
+      context: ../../../
+      dockerfile: services/habit-service/Dockerfile
 
     depends_on:
       - user-service
