@@ -1,69 +1,51 @@
-const conn = require("../config/database")
+const pool = require("../config/database")
 const { hashPass } = require("../utils/functions")
 
-function get_user_data(data) {
-    return new Promise((resolve, reject) => {
-        if (!data) return reject(new Error("You need an id"));
+async function get_user_data(data) {
+    if (!data) throw new Error("You need an id");
 
-        const query_sql = "SELECT * FROM users WHERE id = ?";
+    const query_sql = "SELECT * FROM users WHERE id = $1";
+    const results = await pool.query(query_sql, [data.id]);
 
-        conn.query(query_sql, [data.id], (error, results) => {
-            if (error) return reject(error);
-            resolve({
-                query_sql,
-                affectedRows: results.length,
-                data: results,
-            });
-        });
-    });
+    return {
+        query_sql,
+        affectedRows: results.rowCount,
+        data: results.rows,
+    };
 }
 
 async function signup(data) {
-    return new Promise(async (resolve, reject)  => {
-        if (!data) return reject(new Error("You need to put data"));
+    if (!data) throw new Error("You need to put data");
 
-        var password = await hashPass(data.password)
+    const password = await hashPass(data.password);
 
-        const query_sql =
-            "INSERT INTO users(name, email, tel, password, created_at ) VALUES (?, ?, ?, ?, NOW())";
-        conn.query(
-            query_sql,
-            [data.name, data.email, data.tel, password],
-            async (error, results) => {
-                if (error) return reject(error);
-                try {
-                    const data_id = {
-                        id: results.insertId,
-                    };
-                    const data_user = await get_user_data(data_id);
-                    resolve({
-                        query_sql,
-                        affectedRows: results.affectedRows,
-                        data: data_user.data[0],
-                        insertId: results.insertId,
-                    });
-                } catch (error) {
-                    reject(error);
-                }
-            }
-        );
-    });
+    const query_sql =
+        "INSERT INTO users(name, email, tel, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id";
+    const results = await pool.query(query_sql, [data.name, data.email, data.tel, password]);
+
+    const insertId = results.rows[0].id;
+    const data_id = { id: insertId };
+    const data_user = await get_user_data(data_id);
+
+    return {
+        query_sql,
+        affectedRows: results.rowCount,
+        data: data_user.data[0],
+        insertId: insertId,
+    };
 }
 
-function findByEmail(email) {
-    return new Promise((resolve, reject) => {
-        if (!email) return reject(new Error("You need to put an email"));
+async function findByEmail(email) {
+    if (!email) throw new Error("You need to put an email");
 
-        const query_sql = "SELECT * FROM users WHERE email = ?"
-        conn.query(query_sql, [email], (error, results) => {
-            if (error) return reject(error)
-            resolve({
-                query_sql,
-                affectedRows: results.length,
-                data: results,
-            })
-        })
-    })
+    const query_sql = "SELECT * FROM users WHERE email = $1";
+    const results = await pool.query(query_sql, [email]);
+
+    return {
+        query_sql,
+        affectedRows: results.rowCount,
+        data: results.rows,
+    };
 }
 
 module.exports = {

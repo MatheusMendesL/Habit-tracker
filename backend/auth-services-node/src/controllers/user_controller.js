@@ -4,7 +4,6 @@ const AuthService = require("../services/auth_service");
 const jwt = require("jsonwebtoken");
 
 async function signup(req, res) {
-
     const { name, email, tel, password } = req.body
 
     const data_signup = {
@@ -15,7 +14,6 @@ async function signup(req, res) {
     };
 
     try {
-
         const searchEmail = await functionsModel.findByEmail(email);
 
         if (searchEmail.data.length > 0) {
@@ -31,7 +29,6 @@ async function signup(req, res) {
             return res
                 .status(500)
                 .json({ status: "error", message: "Erro ao criar usuário" });
-
 
         const accessToken = jwt.sign(
             { id: insertId },
@@ -49,7 +46,7 @@ async function signup(req, res) {
             id: insertId,
             refreshToken
         });
-        
+
         res.json(
             response("success", "User added successfully", query_sql, affectedRows, {
                 data,
@@ -58,7 +55,6 @@ async function signup(req, res) {
                 refreshToken
             })
         )
-
 
     } catch (error) {
         res.status(500).json(
@@ -72,20 +68,22 @@ async function login(req, res) {
         const { email, password } = req.body;
 
         const user = await functionsModel.findByEmail(email);
-        if (!user) {
+        if (!user || user.data.length === 0) {
             return res.status(401).json(
-                response("error", "Credenciais inválidas", user, 0, null)
+                response("error", "Credenciais inválidas", null, 0, null)
             );
         }
 
-        const valid = await comparePass(password, user.data[0].password);
+        const user_data = user.data[0];
+
+        const valid = await comparePass(password, user_data.password);
         if (!valid) {
             return res.status(401).json(
                 response("error", "Credenciais inválidas", null, 0, null)
             );
         }
 
-        const id = user.data[0].id
+        const id = user_data.id
         const accessToken = jwt.sign(
             { id: id },
             process.env.JWT_SECRET,
@@ -103,7 +101,6 @@ async function login(req, res) {
             refreshToken
         });
 
-        const user_data = user.data[0]
         res.json(
             response("success", "Login realizado", null, 1, {
                 user_data,
@@ -120,7 +117,6 @@ async function login(req, res) {
 }
 
 async function get_user_data(req, res) {
-
     const userId = req.userId;
 
     try {
