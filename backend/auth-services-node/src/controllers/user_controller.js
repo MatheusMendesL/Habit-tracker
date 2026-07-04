@@ -153,9 +153,33 @@ async function logout(req, res) {
     }
 }
 
+async function get_user_data_test(req, res) {
+    const userId = req.params.id;
+
+    try {
+        const { query_sql, affectedRows, data } =
+            await functionsModel.get_user_data(userId);
+
+        res.json(
+            response(
+                "success",
+                "Got user data successfully",
+                query_sql,
+                affectedRows,
+                { data, token: 123 }
+            )
+        );
+    } catch (error) {
+        res.status(500).json(
+            response("error", error.message, null, 0, null)
+        );
+    }
+}
+
 module.exports = {
     login,
     signup,
     get_user_data,
-    logout
+    logout,
+    get_user_data_test
 }
