@@ -1,12 +1,13 @@
 const pool = require("../config/database")
 const { hashPass } = require("../utils/functions")
 
-async function get_user_data(data) {
-    if (!data) throw new Error("You need an id");
-    console.log(data.id);
+async function get_user_data(userId) {
+    if (!userId) throw new Error("You need an id");
+
+    console.log(userId);
 
     const query_sql = "SELECT * FROM users WHERE id = $1";
-    const results = await pool.query(query_sql, [data.id]);
+    const results = await pool.query(query_sql, [userId]);
 
     return {
         query_sql,
