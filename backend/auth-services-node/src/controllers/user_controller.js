@@ -128,7 +128,7 @@ async function get_user_data(req, res) {
                 "Got user data successfully",
                 query_sql,
                 affectedRows,
-                { "data": data, "token": 123 }
+                data
             )
         )
     } catch (error) {
@@ -155,7 +155,6 @@ async function logout(req, res) {
 
 async function get_user_data_test(req, res) {
     const userId = req.params.id;
-    console.log(userId)
 
     try {
         const { query_sql, affectedRows, data } =
@@ -167,7 +166,7 @@ async function get_user_data_test(req, res) {
                 "Got user data successfully",
                 query_sql,
                 affectedRows,
-                { data, token: 123 }
+                data
             )
         );
     } catch (error) {
