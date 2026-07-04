@@ -155,6 +155,7 @@ async function logout(req, res) {
 
 async function get_user_data_test(req, res) {
     const userId = req.params.id;
+    console.log(userId)
 
     try {
         const { query_sql, affectedRows, data } =

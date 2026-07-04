@@ -3,6 +3,7 @@ const { hashPass } = require("../utils/functions")
 
 async function get_user_data(data) {
     if (!data) throw new Error("You need an id");
+    console.log(data.id);
 
     const query_sql = "SELECT * FROM users WHERE id = $1";
     const results = await pool.query(query_sql, [data.id]);
