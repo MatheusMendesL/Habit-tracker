@@ -4,8 +4,6 @@ const { hashPass } = require("../utils/functions")
 async function get_user_data(userId) {
     if (!userId) throw new Error("You need an id");
 
-    console.log(userId);
-
     const query_sql = "SELECT * FROM users WHERE id = $1";
     const results = await pool.query(query_sql, [userId]);
 
@@ -26,8 +24,7 @@ async function signup(data) {
     const results = await pool.query(query_sql, [data.name, data.email, data.tel, password]);
 
     const insertId = results.rows[0].id;
-    const data_id = { id: insertId };
-    const data_user = await get_user_data(data_id);
+    const data_user = await get_user_data(insertId);
 
     return {
         query_sql,
