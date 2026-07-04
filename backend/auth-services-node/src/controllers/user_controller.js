@@ -42,10 +42,10 @@ async function signup(req, res) {
             { expiresIn: "7d" }
         );
 
-        /*await AuthService.signup({
+        await AuthService.signup({
             id: insertId,
             refreshToken
-        });*/
+        });
 
         res.json(
             response("success", "User added successfully", query_sql, affectedRows, {
