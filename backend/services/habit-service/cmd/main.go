@@ -66,6 +66,7 @@ func startServer() {
 
 	/*tlsCredentials, err := loadTLCredentials()
 
+
 	if err != nil {
 		logger.Fatal("failed to load TLS credentials", zap.Error(err))
 	}*/
