@@ -47,3 +47,10 @@ func (s *HabitService) CreateHabit(ctx context.Context, arg repository.CreateHab
 
 	return s.repo.CreateHabit(ctx, arg)
 }
+
+/*
+EditHabit
+DeleteHabit
+ListHabitsByUser
+ListHabitsByRoutine
+*/

@@ -53,3 +53,29 @@ func (r *HabitRepository) GetHabitByID(ctx context.Context, habitId uuid.UUID) (
 
 	return res, nil
 }
+
+func (r *HabitRepository) EditHabit(ctx context.Context, req db.UpdateHabitParams) (db.Habit, error) {
+	habit, err := r.q.UpdateHabit(ctx, req)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return db.Habit{}, AppErr.ErrHabitNotFound
+		}
+
+		return db.Habit{}, err
+	}
+
+	return habit, nil
+}
+
+func (r *HabitRepository) DeleteRoutine(ctx context.Context, habitID uuid.UUID) error {
+	return r.q.DeleteRoutine(ctx, habitID)
+}
+
+func (r *HabitRepository) ListHabitsByUser(ctx context.Context, userID uuid.UUID) ([]db.Habit, error) {
+	return r.q.ListHabitsByUser(ctx, userID)
+}
+
+func (r *HabitRepository) ListHabitsByRoutine(ctx context.Context, routineID uuid.UUID) ([]db.Habit, error) {
+	return r.q.ListHabitsByRoutine(ctx, routineID)
+}
