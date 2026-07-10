@@ -68,8 +68,8 @@ func (r *HabitRepository) EditHabit(ctx context.Context, req db.UpdateHabitParam
 	return habit, nil
 }
 
-func (r *HabitRepository) DeleteRoutine(ctx context.Context, habitID uuid.UUID) error {
-	return r.q.DeleteRoutine(ctx, habitID)
+func (r *HabitRepository) DeleteHabit(ctx context.Context, habitID uuid.UUID) error {
+	return r.q.DeleteHabit(ctx, habitID)
 }
 
 func (r *HabitRepository) ListHabitsByUser(ctx context.Context, userID uuid.UUID) ([]db.Habit, error) {
