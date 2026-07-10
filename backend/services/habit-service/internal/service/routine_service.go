@@ -82,10 +82,7 @@ func (s *RoutineService) DeleteRoutine(ctx context.Context, routineID uuid.UUID)
 
 	_, err := s.GetRoutineByID(ctx, routineID)
 
-	if err != nil {
-		if errors.Is(err, AppErr.ErrRoutineNotFound) {
-			return AppErr.ErrRoutineNotFound
-		}
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
 		return err
 	}
 
