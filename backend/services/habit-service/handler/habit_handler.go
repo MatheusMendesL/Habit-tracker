@@ -189,3 +189,16 @@ func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitBy
 	}, nil
 
 }
+
+/*
+
+what to do in this order:
+
+EditHabit
+DeleteHabit
+ListHabitsByUser
+ListHabitsByRoutine
+MarkHabitCompleted
+UnmarkHabitCompleted
+GetHabitLogs
+*/
