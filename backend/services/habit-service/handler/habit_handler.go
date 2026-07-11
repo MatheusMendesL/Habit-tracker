@@ -257,6 +257,48 @@ func (s *HabitHandler) EditHabit(ctx context.Context, req *pbHabit.EditHabitRequ
 	}, nil
 }
 
+func (s *HabitHandler) DeleteHabit(ctx context.Context, req *pbHabit.DeleteHabitRequest) (*pbHabit.DeleteHabitResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, err := uuid.Parse(req.HabitId)
+
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	if err = s.Verification(habitID, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	err = s.HabitService.DeleteHabit(ctx, habitID)
+	if err != nil {
+		s.logger.Error("error to execute DeleteHabit method",
+			zap.String("habit_id", habitID.String()),
+			zap.Error(err),
+		)
+
+		return &pbHabit.DeleteHabitResponse{
+			Success: false,
+		}, ReceiveErrors(err)
+	}
+
+	s.logger.Info("DeleteHabit method was ok",
+		zap.String("habit_id", habitID.String()),
+	)
+
+	return &pbHabit.DeleteHabitResponse{
+		Success: true,
+	}, nil
+}
+
 /*
 
 what to do in this order:
