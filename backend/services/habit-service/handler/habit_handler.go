@@ -303,7 +303,6 @@ func (s *HabitHandler) DeleteHabit(ctx context.Context, req *pbHabit.DeleteHabit
 
 what to do in this order:
 
-DeleteHabit
 ListHabitsByUser
 ListHabitsByRoutine
 MarkHabitCompleted
