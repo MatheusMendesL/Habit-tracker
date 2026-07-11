@@ -190,11 +190,77 @@ func (s *HabitHandler) GetHabitByID(ctx context.Context, req *pbHabit.GetHabitBy
 
 }
 
+func (s *HabitHandler) EditHabit(ctx context.Context, req *pbHabit.EditHabitRequest) (*pbHabit.EditHabitResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, HabitName, HabitDesc, HabitimgURL := req.HabitId, req.Name, req.Description, req.ImageUrl
+
+	if err := s.Verification(habitID, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	habitUUID, err := uuid.Parse(habitID)
+
+	if err != nil {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+
+	params := db.UpdateHabitParams{
+		ID: habitUUID,
+	}
+
+	name := ""
+
+	if HabitName != nil {
+		params.Name = utils.ToNullString(*HabitName)
+		name = *HabitName
+	}
+
+	desc := ""
+
+	if HabitDesc != nil {
+		params.Description = utils.ToNullString(*HabitDesc)
+		desc = *HabitDesc
+	}
+
+	imgURL := ""
+	if HabitimgURL != nil {
+		params.ImageUrl = utils.ToNullString(*HabitimgURL)
+		desc = *HabitimgURL
+	}
+
+	habit, err := s.HabitService.EditHabit(ctx, params)
+	if err != nil {
+		s.logger.Error("Error to execute EditHabit method",
+			zap.String("Name", name),
+			zap.String("description", desc),
+			zap.String("imageURL", imgURL),
+			zap.String("Habit_id", habitID),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("EditHabit method was ok",
+		zap.String("Name", name),
+		zap.String("description", desc),
+		zap.String("imageURL", imgURL),
+		zap.String("Habit_id", habitID),
+	)
+
+	return &pbHabit.EditHabitResponse{
+		Habit: utils.ToProtoHabit(habit),
+	}, nil
+}
+
 /*
 
 what to do in this order:
 
-EditHabit
 DeleteHabit
 ListHabitsByUser
 ListHabitsByRoutine
