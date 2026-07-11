@@ -300,11 +300,6 @@ func (s *RoutineHandler) ListRoutinesByUser(ctx context.Context, req *pbHabit.Li
 
 }
 
-/*
-AddHabitToRoutine
-RemoveHabitFromRoutine
-*/
-
 func (s *RoutineHandler) AddHabitToRoutine(ctx context.Context, req *pbHabit.AddHabitToRoutineRequest) (*pbHabit.AddHabitToRoutineResponse, error) {
 	ctx, cancel := WithTimeout(ctx)
 	defer cancel()
