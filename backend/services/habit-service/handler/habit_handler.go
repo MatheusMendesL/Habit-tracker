@@ -345,11 +345,56 @@ func (s *HabitHandler) ListHabitsByUser(ctx context.Context, req *pbHabit.ListHa
 	}, nil
 }
 
+func (s *HabitHandler) ListHabitsByRoutine(ctx context.Context, req *pbHabit.ListHabitsByRoutineRequest) (*pbHabit.ListHabitsByRoutineResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, err := uuid.Parse(req.RoutineId)
+
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+
+		return nil, status.Error(
+			codes.InvalidArgument,
+			AppErr.ErrInvalidArgument.Error(),
+		)
+	}
+	if err = s.Verification(routineID, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	habits, err := s.HabitService.ListHabitsByRoutine(ctx, routineID)
+
+	if err != nil {
+		s.logger.Error("error to execute ListHabitsByRoutine method",
+			zap.String("routine_id", req.RoutineId),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	pbHabits := make([]*pbHabit.Habit, 0, len(habits))
+
+	for _, habit := range habits {
+		pbHabits = append(pbHabits, utils.ToProtoHabit(habit))
+	}
+
+	s.logger.Info("ListHabitsByRoutine method was ok",
+		zap.String("routine_id", routineID.String()),
+		zap.Int("total", len(habits)),
+	)
+
+	return &pbHabit.ListHabitsByRoutineResponse{
+		Habits: pbHabits,
+	}, nil
+}
+
 /*
 
 what to do in this order:
 
-ListHabitsByRoutine
 MarkHabitCompleted
 UnmarkHabitCompleted
 GetHabitLogs
