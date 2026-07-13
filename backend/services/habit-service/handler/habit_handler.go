@@ -352,7 +352,6 @@ func (s *HabitHandler) ListHabitsByRoutine(ctx context.Context, req *pbHabit.Lis
 	routineID, err := uuid.Parse(req.RoutineId)
 
 	if err != nil {
-
 		s.logger.Warn("invalid routine id",
 			zap.String("routine_id", req.RoutineId),
 		)
