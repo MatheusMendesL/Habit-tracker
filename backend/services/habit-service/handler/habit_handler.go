@@ -389,6 +389,7 @@ func (s *HabitHandler) ListHabitsByRoutine(ctx context.Context, req *pbHabit.Lis
 	return &pbHabit.ListHabitsByRoutineResponse{
 		Habits: pbHabits,
 	}, nil
+
 }
 
 /*
