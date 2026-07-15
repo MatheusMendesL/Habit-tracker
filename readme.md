@@ -4,28 +4,12 @@
 
 - Groups
 - Shared routines
-- Challenges
-- Achievements
-- XP & Level system
 - Feed
 - Leaderboards
-- Group chat
-- Business workspaces
-- Team dashboard
-- Custom achievements
-- Role & permission system
-- Calendar view
-- Recurring challenges
-- File attachments
-
-## Future Microservices
-
+- Challenges
+- XP rewards
+- Level rewards
 - Challenge Service
 - Achievement Service
-- Notification Service
-- Group Service
-- Dashboard Service
-- Workspace Service
-- Feed Service
-- File Service
-- Routine Service (split from Habit Service)
+- Notification Service (thinking about) 
+- create a separated routine service
