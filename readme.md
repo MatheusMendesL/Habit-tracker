@@ -6,7 +6,7 @@
 - Shared routines
 - Challenges
 - Achievements
-- XP & Level system (internal progression)
+- Internal progression system
 - Feed
 - Leaderboards
 - Group chat
@@ -19,6 +19,14 @@
 - Recurring challenges
 - File attachments
 - AI habit suggestions (future)
+
+## Future Architecture
+
+- Event-driven communication (RabbitMQ)
+- Circuit Breaker
+- Observability (Prometheus & Grafana)
+- Centralized logging
+- Rate limiting
 
 ## Future Microservices
 
