@@ -10,6 +10,7 @@ import (
 	"habit-service/internal/utils"
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
+	"time"
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"
@@ -418,4 +419,155 @@ func (s *RoutineHandler) RemoveHabitFromRoutine(ctx context.Context, req *pbHabi
 	return &pbHabit.RemoveHabitFromRoutineResponse{
 		Success: true,
 	}, nil
+}
+
+func (s *RoutineHandler) MarkRoutineCompleted(ctx context.Context, req *pbHabit.MarkRoutineCompletedRequest) (*pbHabit.MarkRoutineCompletedResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, err := uuid.Parse(req.RoutineId)
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var completedAt time.Time
+	if req.CompletedAt != nil {
+		completedAt = req.CompletedAt.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid completed_at date",
+			zap.Any("completedAt", req.CompletedAt),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.MarkRoutineCompletedParams{
+		RoutineID:   routineID,
+		CompletedAt: completedAt,
+	}
+
+	err = s.RoutineService.MarkRoutineCompleted(ctx, params)
+	if err != nil {
+		s.logger.Error("error to execute MarkRoutineCompleted method",
+			zap.String("routine_id", routineID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("MarkRoutineCompleted method was ok",
+		zap.String("routine_id", routineID.String()),
+	)
+
+	return &pbHabit.MarkRoutineCompletedResponse{Success: true}, nil
+}
+
+func (s *RoutineHandler) UnmarkRoutineCompleted(ctx context.Context, req *pbHabit.UnmarkRoutineCompletedRequest) (*pbHabit.UnmarkRoutineCompletedResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, err := uuid.Parse(req.RoutineId)
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var completedAt time.Time
+	if req.CompletedAt != nil {
+		completedAt = req.CompletedAt.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid completed_at date",
+			zap.Any("completedAt", req.CompletedAt),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.UnmarkRoutineCompletedParams{
+		RoutineID:   routineID,
+		CompletedAt: completedAt,
+	}
+
+	err = s.RoutineService.UnmarkRoutineCompleted(ctx, params)
+	if err != nil {
+		s.logger.Error("error to execute UnmarkRoutineCompleted method",
+			zap.String("routine_id", routineID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("UnmarkRoutineCompleted method was ok",
+		zap.String("routine_id", routineID.String()),
+	)
+
+	return &pbHabit.UnmarkRoutineCompletedResponse{Success: true}, nil
+}
+
+func (s *RoutineHandler) GetRoutineLogs(ctx context.Context, req *pbHabit.GetRoutineLogsRequest) (*pbHabit.GetRoutineLogsResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	routineID, err := uuid.Parse(req.RoutineId)
+	if err != nil {
+		s.logger.Warn("invalid routine id",
+			zap.String("routine_id", req.RoutineId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var startDate time.Time
+	if req.StartDate != nil {
+		startDate = req.StartDate.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid started_at date",
+			zap.Any("startDate", req.StartDate),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var endDate time.Time
+	if req.EndDate != nil {
+		endDate = req.EndDate.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid ended_at date",
+			zap.Any("endedDate", req.EndDate),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.GetRoutineLogsParams{
+		RoutineID: routineID,
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	dbLogs, err := s.RoutineService.GetRoutineLogs(ctx, params)
+
+	if err != nil {
+		s.logger.Error("error to execute GetRoutineLogs method",
+			zap.String("routine_id", routineID.String()),
+			zap.Any("startDate", req.StartDate),
+			zap.Any("endedDate", req.EndDate),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	pbLogs := make([]*pbHabit.RoutineLog, 0, len(dbLogs))
+
+	for _, l := range dbLogs {
+		pbLogs = append(pbLogs, utils.ToProtoRoutineLog(l))
+	}
+
+	s.logger.Info("GetRoutineLogs method was ok",
+		zap.String("routine_id", routineID.String()),
+		zap.Any("startDate", req.StartDate),
+		zap.Any("endedDate", req.EndDate),
+	)
+
+	return &pbHabit.GetRoutineLogsResponse{Logs: pbLogs}, nil
 }
