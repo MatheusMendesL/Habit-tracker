@@ -1,4 +1,14 @@
-# Habit tracker
+# Habit Tracker
 
+## Future Features
 
-# vou alterar
+- Groups
+- Shared routines
+- Feed
+- Leaderboards
+- Challenges
+- XP rewards
+- Level rewards
+- Challenge Service
+- Achievement Service
+- Notification Service (thinking about) 
