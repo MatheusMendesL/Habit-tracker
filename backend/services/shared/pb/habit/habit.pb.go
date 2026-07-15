@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.34.0
-// source: proto/habit/v2/habit.proto
+// source: proto/habit/v4/habit.proto
 
 package habit
 
@@ -36,7 +36,7 @@ type Habit struct {
 
 func (x *Habit) Reset() {
 	*x = Habit{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[0]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +48,7 @@ func (x *Habit) String() string {
 func (*Habit) ProtoMessage() {}
 
 func (x *Habit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[0]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +61,7 @@ func (x *Habit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Habit.ProtoReflect.Descriptor instead.
 func (*Habit) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{0}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Habit) GetId() string {
@@ -118,7 +118,7 @@ type Routine struct {
 
 func (x *Routine) Reset() {
 	*x = Routine{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[1]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +130,7 @@ func (x *Routine) String() string {
 func (*Routine) ProtoMessage() {}
 
 func (x *Routine) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[1]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +143,7 @@ func (x *Routine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Routine.ProtoReflect.Descriptor instead.
 func (*Routine) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{1}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Routine) GetId() string {
@@ -184,7 +184,7 @@ type HabitLog struct {
 
 func (x *HabitLog) Reset() {
 	*x = HabitLog{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[2]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -196,7 +196,7 @@ func (x *HabitLog) String() string {
 func (*HabitLog) ProtoMessage() {}
 
 func (x *HabitLog) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[2]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -209,7 +209,7 @@ func (x *HabitLog) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HabitLog.ProtoReflect.Descriptor instead.
 func (*HabitLog) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{2}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *HabitLog) GetHabitId() string {
@@ -226,6 +226,58 @@ func (x *HabitLog) GetCompletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type RoutineLog struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoutineLog) Reset() {
+	*x = RoutineLog{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoutineLog) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoutineLog) ProtoMessage() {}
+
+func (x *RoutineLog) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoutineLog.ProtoReflect.Descriptor instead.
+func (*RoutineLog) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RoutineLog) GetRoutineId() string {
+	if x != nil {
+		return x.RoutineId
+	}
+	return ""
+}
+
+func (x *RoutineLog) GetCompletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
 type CreateRoutineRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Routine       *Routine               `protobuf:"bytes,1,opt,name=routine,proto3" json:"routine,omitempty"`
@@ -235,7 +287,7 @@ type CreateRoutineRequest struct {
 
 func (x *CreateRoutineRequest) Reset() {
 	*x = CreateRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[3]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -247,7 +299,7 @@ func (x *CreateRoutineRequest) String() string {
 func (*CreateRoutineRequest) ProtoMessage() {}
 
 func (x *CreateRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[3]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -260,7 +312,7 @@ func (x *CreateRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoutineRequest.ProtoReflect.Descriptor instead.
 func (*CreateRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{3}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateRoutineRequest) GetRoutine() *Routine {
@@ -279,7 +331,7 @@ type CreateRoutineResponse struct {
 
 func (x *CreateRoutineResponse) Reset() {
 	*x = CreateRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[4]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -291,7 +343,7 @@ func (x *CreateRoutineResponse) String() string {
 func (*CreateRoutineResponse) ProtoMessage() {}
 
 func (x *CreateRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[4]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -304,7 +356,7 @@ func (x *CreateRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoutineResponse.ProtoReflect.Descriptor instead.
 func (*CreateRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{4}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateRoutineResponse) GetRoutine() *Routine {
@@ -323,7 +375,7 @@ type CreateHabitRequest struct {
 
 func (x *CreateHabitRequest) Reset() {
 	*x = CreateHabitRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[5]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -335,7 +387,7 @@ func (x *CreateHabitRequest) String() string {
 func (*CreateHabitRequest) ProtoMessage() {}
 
 func (x *CreateHabitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[5]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -348,7 +400,7 @@ func (x *CreateHabitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateHabitRequest.ProtoReflect.Descriptor instead.
 func (*CreateHabitRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{5}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateHabitRequest) GetHabit() *Habit {
@@ -367,7 +419,7 @@ type CreateHabitResponse struct {
 
 func (x *CreateHabitResponse) Reset() {
 	*x = CreateHabitResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[6]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +431,7 @@ func (x *CreateHabitResponse) String() string {
 func (*CreateHabitResponse) ProtoMessage() {}
 
 func (x *CreateHabitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[6]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +444,7 @@ func (x *CreateHabitResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateHabitResponse.ProtoReflect.Descriptor instead.
 func (*CreateHabitResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{6}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateHabitResponse) GetHabit() *Habit {
@@ -411,7 +463,7 @@ type GetHabitByIDRequest struct {
 
 func (x *GetHabitByIDRequest) Reset() {
 	*x = GetHabitByIDRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[7]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -423,7 +475,7 @@ func (x *GetHabitByIDRequest) String() string {
 func (*GetHabitByIDRequest) ProtoMessage() {}
 
 func (x *GetHabitByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[7]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -436,7 +488,7 @@ func (x *GetHabitByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHabitByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetHabitByIDRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{7}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetHabitByIDRequest) GetHabitId() string {
@@ -455,7 +507,7 @@ type GetHabitByIDResponse struct {
 
 func (x *GetHabitByIDResponse) Reset() {
 	*x = GetHabitByIDResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[8]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -467,7 +519,7 @@ func (x *GetHabitByIDResponse) String() string {
 func (*GetHabitByIDResponse) ProtoMessage() {}
 
 func (x *GetHabitByIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[8]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -480,7 +532,7 @@ func (x *GetHabitByIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHabitByIDResponse.ProtoReflect.Descriptor instead.
 func (*GetHabitByIDResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{8}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetHabitByIDResponse) GetHabit() *Habit {
@@ -499,7 +551,7 @@ type ListHabitsByUserRequest struct {
 
 func (x *ListHabitsByUserRequest) Reset() {
 	*x = ListHabitsByUserRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[9]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -511,7 +563,7 @@ func (x *ListHabitsByUserRequest) String() string {
 func (*ListHabitsByUserRequest) ProtoMessage() {}
 
 func (x *ListHabitsByUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[9]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -524,7 +576,7 @@ func (x *ListHabitsByUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHabitsByUserRequest.ProtoReflect.Descriptor instead.
 func (*ListHabitsByUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{9}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListHabitsByUserRequest) GetUserId() string {
@@ -543,7 +595,7 @@ type ListHabitsByUserResponse struct {
 
 func (x *ListHabitsByUserResponse) Reset() {
 	*x = ListHabitsByUserResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[10]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -555,7 +607,7 @@ func (x *ListHabitsByUserResponse) String() string {
 func (*ListHabitsByUserResponse) ProtoMessage() {}
 
 func (x *ListHabitsByUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[10]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,7 +620,7 @@ func (x *ListHabitsByUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHabitsByUserResponse.ProtoReflect.Descriptor instead.
 func (*ListHabitsByUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{10}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListHabitsByUserResponse) GetHabits() []*Habit {
@@ -587,7 +639,7 @@ type ListHabitsByRoutineRequest struct {
 
 func (x *ListHabitsByRoutineRequest) Reset() {
 	*x = ListHabitsByRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[11]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -599,7 +651,7 @@ func (x *ListHabitsByRoutineRequest) String() string {
 func (*ListHabitsByRoutineRequest) ProtoMessage() {}
 
 func (x *ListHabitsByRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[11]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -612,7 +664,7 @@ func (x *ListHabitsByRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHabitsByRoutineRequest.ProtoReflect.Descriptor instead.
 func (*ListHabitsByRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{11}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListHabitsByRoutineRequest) GetRoutineId() string {
@@ -631,7 +683,7 @@ type ListHabitsByRoutineResponse struct {
 
 func (x *ListHabitsByRoutineResponse) Reset() {
 	*x = ListHabitsByRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[12]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +695,7 @@ func (x *ListHabitsByRoutineResponse) String() string {
 func (*ListHabitsByRoutineResponse) ProtoMessage() {}
 
 func (x *ListHabitsByRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[12]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -656,7 +708,7 @@ func (x *ListHabitsByRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHabitsByRoutineResponse.ProtoReflect.Descriptor instead.
 func (*ListHabitsByRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{12}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListHabitsByRoutineResponse) GetHabits() []*Habit {
@@ -678,7 +730,7 @@ type EditHabitRequest struct {
 
 func (x *EditHabitRequest) Reset() {
 	*x = EditHabitRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[13]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -690,7 +742,7 @@ func (x *EditHabitRequest) String() string {
 func (*EditHabitRequest) ProtoMessage() {}
 
 func (x *EditHabitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[13]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -703,7 +755,7 @@ func (x *EditHabitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditHabitRequest.ProtoReflect.Descriptor instead.
 func (*EditHabitRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{13}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *EditHabitRequest) GetHabitId() string {
@@ -743,7 +795,7 @@ type EditHabitResponse struct {
 
 func (x *EditHabitResponse) Reset() {
 	*x = EditHabitResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[14]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -755,7 +807,7 @@ func (x *EditHabitResponse) String() string {
 func (*EditHabitResponse) ProtoMessage() {}
 
 func (x *EditHabitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[14]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -768,7 +820,7 @@ func (x *EditHabitResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditHabitResponse.ProtoReflect.Descriptor instead.
 func (*EditHabitResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{14}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *EditHabitResponse) GetHabit() *Habit {
@@ -787,7 +839,7 @@ type DeleteHabitRequest struct {
 
 func (x *DeleteHabitRequest) Reset() {
 	*x = DeleteHabitRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[15]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -799,7 +851,7 @@ func (x *DeleteHabitRequest) String() string {
 func (*DeleteHabitRequest) ProtoMessage() {}
 
 func (x *DeleteHabitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[15]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +864,7 @@ func (x *DeleteHabitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteHabitRequest.ProtoReflect.Descriptor instead.
 func (*DeleteHabitRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{15}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DeleteHabitRequest) GetHabitId() string {
@@ -831,7 +883,7 @@ type DeleteHabitResponse struct {
 
 func (x *DeleteHabitResponse) Reset() {
 	*x = DeleteHabitResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[16]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -843,7 +895,7 @@ func (x *DeleteHabitResponse) String() string {
 func (*DeleteHabitResponse) ProtoMessage() {}
 
 func (x *DeleteHabitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[16]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -856,7 +908,7 @@ func (x *DeleteHabitResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteHabitResponse.ProtoReflect.Descriptor instead.
 func (*DeleteHabitResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{16}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DeleteHabitResponse) GetSuccess() bool {
@@ -876,7 +928,7 @@ type MarkHabitCompletedRequest struct {
 
 func (x *MarkHabitCompletedRequest) Reset() {
 	*x = MarkHabitCompletedRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[17]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -888,7 +940,7 @@ func (x *MarkHabitCompletedRequest) String() string {
 func (*MarkHabitCompletedRequest) ProtoMessage() {}
 
 func (x *MarkHabitCompletedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[17]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -901,7 +953,7 @@ func (x *MarkHabitCompletedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkHabitCompletedRequest.ProtoReflect.Descriptor instead.
 func (*MarkHabitCompletedRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{17}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *MarkHabitCompletedRequest) GetHabitId() string {
@@ -927,7 +979,7 @@ type MarkHabitCompletedResponse struct {
 
 func (x *MarkHabitCompletedResponse) Reset() {
 	*x = MarkHabitCompletedResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[18]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -939,7 +991,7 @@ func (x *MarkHabitCompletedResponse) String() string {
 func (*MarkHabitCompletedResponse) ProtoMessage() {}
 
 func (x *MarkHabitCompletedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[18]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -952,7 +1004,7 @@ func (x *MarkHabitCompletedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkHabitCompletedResponse.ProtoReflect.Descriptor instead.
 func (*MarkHabitCompletedResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{18}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *MarkHabitCompletedResponse) GetSuccess() bool {
@@ -972,7 +1024,7 @@ type UnmarkHabitCompletedRequest struct {
 
 func (x *UnmarkHabitCompletedRequest) Reset() {
 	*x = UnmarkHabitCompletedRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[19]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -984,7 +1036,7 @@ func (x *UnmarkHabitCompletedRequest) String() string {
 func (*UnmarkHabitCompletedRequest) ProtoMessage() {}
 
 func (x *UnmarkHabitCompletedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[19]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -997,7 +1049,7 @@ func (x *UnmarkHabitCompletedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnmarkHabitCompletedRequest.ProtoReflect.Descriptor instead.
 func (*UnmarkHabitCompletedRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{19}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *UnmarkHabitCompletedRequest) GetHabitId() string {
@@ -1023,7 +1075,7 @@ type UnmarkHabitCompletedResponse struct {
 
 func (x *UnmarkHabitCompletedResponse) Reset() {
 	*x = UnmarkHabitCompletedResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[20]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1035,7 +1087,7 @@ func (x *UnmarkHabitCompletedResponse) String() string {
 func (*UnmarkHabitCompletedResponse) ProtoMessage() {}
 
 func (x *UnmarkHabitCompletedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[20]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1048,7 +1100,7 @@ func (x *UnmarkHabitCompletedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnmarkHabitCompletedResponse.ProtoReflect.Descriptor instead.
 func (*UnmarkHabitCompletedResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{20}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *UnmarkHabitCompletedResponse) GetSuccess() bool {
@@ -1069,7 +1121,7 @@ type GetHabitLogsRequest struct {
 
 func (x *GetHabitLogsRequest) Reset() {
 	*x = GetHabitLogsRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[21]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1081,7 +1133,7 @@ func (x *GetHabitLogsRequest) String() string {
 func (*GetHabitLogsRequest) ProtoMessage() {}
 
 func (x *GetHabitLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[21]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1094,7 +1146,7 @@ func (x *GetHabitLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHabitLogsRequest.ProtoReflect.Descriptor instead.
 func (*GetHabitLogsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{21}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetHabitLogsRequest) GetHabitId() string {
@@ -1127,7 +1179,7 @@ type GetHabitLogsResponse struct {
 
 func (x *GetHabitLogsResponse) Reset() {
 	*x = GetHabitLogsResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[22]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1139,7 +1191,7 @@ func (x *GetHabitLogsResponse) String() string {
 func (*GetHabitLogsResponse) ProtoMessage() {}
 
 func (x *GetHabitLogsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[22]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1152,10 +1204,306 @@ func (x *GetHabitLogsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHabitLogsResponse.ProtoReflect.Descriptor instead.
 func (*GetHabitLogsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{22}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetHabitLogsResponse) GetLogs() []*HabitLog {
+	if x != nil {
+		return x.Logs
+	}
+	return nil
+}
+
+type MarkRoutineCompletedRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkRoutineCompletedRequest) Reset() {
+	*x = MarkRoutineCompletedRequest{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkRoutineCompletedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkRoutineCompletedRequest) ProtoMessage() {}
+
+func (x *MarkRoutineCompletedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkRoutineCompletedRequest.ProtoReflect.Descriptor instead.
+func (*MarkRoutineCompletedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *MarkRoutineCompletedRequest) GetRoutineId() string {
+	if x != nil {
+		return x.RoutineId
+	}
+	return ""
+}
+
+func (x *MarkRoutineCompletedRequest) GetCompletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
+type MarkRoutineCompletedResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkRoutineCompletedResponse) Reset() {
+	*x = MarkRoutineCompletedResponse{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkRoutineCompletedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkRoutineCompletedResponse) ProtoMessage() {}
+
+func (x *MarkRoutineCompletedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkRoutineCompletedResponse.ProtoReflect.Descriptor instead.
+func (*MarkRoutineCompletedResponse) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *MarkRoutineCompletedResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type UnmarkRoutineCompletedRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnmarkRoutineCompletedRequest) Reset() {
+	*x = UnmarkRoutineCompletedRequest{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnmarkRoutineCompletedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnmarkRoutineCompletedRequest) ProtoMessage() {}
+
+func (x *UnmarkRoutineCompletedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnmarkRoutineCompletedRequest.ProtoReflect.Descriptor instead.
+func (*UnmarkRoutineCompletedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *UnmarkRoutineCompletedRequest) GetRoutineId() string {
+	if x != nil {
+		return x.RoutineId
+	}
+	return ""
+}
+
+func (x *UnmarkRoutineCompletedRequest) GetCompletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
+type UnmarkRoutineCompletedResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnmarkRoutineCompletedResponse) Reset() {
+	*x = UnmarkRoutineCompletedResponse{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnmarkRoutineCompletedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnmarkRoutineCompletedResponse) ProtoMessage() {}
+
+func (x *UnmarkRoutineCompletedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnmarkRoutineCompletedResponse.ProtoReflect.Descriptor instead.
+func (*UnmarkRoutineCompletedResponse) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *UnmarkRoutineCompletedResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type GetRoutineLogsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoutineId     string                 `protobuf:"bytes,1,opt,name=routine_id,json=routineId,proto3" json:"routine_id,omitempty"`
+	StartDate     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	EndDate       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoutineLogsRequest) Reset() {
+	*x = GetRoutineLogsRequest{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoutineLogsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoutineLogsRequest) ProtoMessage() {}
+
+func (x *GetRoutineLogsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoutineLogsRequest.ProtoReflect.Descriptor instead.
+func (*GetRoutineLogsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetRoutineLogsRequest) GetRoutineId() string {
+	if x != nil {
+		return x.RoutineId
+	}
+	return ""
+}
+
+func (x *GetRoutineLogsRequest) GetStartDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartDate
+	}
+	return nil
+}
+
+func (x *GetRoutineLogsRequest) GetEndDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndDate
+	}
+	return nil
+}
+
+type GetRoutineLogsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Logs          []*RoutineLog          `protobuf:"bytes,1,rep,name=logs,proto3" json:"logs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoutineLogsResponse) Reset() {
+	*x = GetRoutineLogsResponse{}
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoutineLogsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoutineLogsResponse) ProtoMessage() {}
+
+func (x *GetRoutineLogsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoutineLogsResponse.ProtoReflect.Descriptor instead.
+func (*GetRoutineLogsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetRoutineLogsResponse) GetLogs() []*RoutineLog {
 	if x != nil {
 		return x.Logs
 	}
@@ -1172,7 +1520,7 @@ type AddHabitToRoutineRequest struct {
 
 func (x *AddHabitToRoutineRequest) Reset() {
 	*x = AddHabitToRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[23]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1184,7 +1532,7 @@ func (x *AddHabitToRoutineRequest) String() string {
 func (*AddHabitToRoutineRequest) ProtoMessage() {}
 
 func (x *AddHabitToRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[23]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1197,7 +1545,7 @@ func (x *AddHabitToRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddHabitToRoutineRequest.ProtoReflect.Descriptor instead.
 func (*AddHabitToRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{23}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *AddHabitToRoutineRequest) GetHabitId() string {
@@ -1223,7 +1571,7 @@ type AddHabitToRoutineResponse struct {
 
 func (x *AddHabitToRoutineResponse) Reset() {
 	*x = AddHabitToRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[24]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1235,7 +1583,7 @@ func (x *AddHabitToRoutineResponse) String() string {
 func (*AddHabitToRoutineResponse) ProtoMessage() {}
 
 func (x *AddHabitToRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[24]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1248,7 +1596,7 @@ func (x *AddHabitToRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddHabitToRoutineResponse.ProtoReflect.Descriptor instead.
 func (*AddHabitToRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{24}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *AddHabitToRoutineResponse) GetSuccess() bool {
@@ -1268,7 +1616,7 @@ type RemoveHabitFromRoutineRequest struct {
 
 func (x *RemoveHabitFromRoutineRequest) Reset() {
 	*x = RemoveHabitFromRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[25]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1280,7 +1628,7 @@ func (x *RemoveHabitFromRoutineRequest) String() string {
 func (*RemoveHabitFromRoutineRequest) ProtoMessage() {}
 
 func (x *RemoveHabitFromRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[25]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1293,7 +1641,7 @@ func (x *RemoveHabitFromRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveHabitFromRoutineRequest.ProtoReflect.Descriptor instead.
 func (*RemoveHabitFromRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{25}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *RemoveHabitFromRoutineRequest) GetHabitId() string {
@@ -1319,7 +1667,7 @@ type RemoveHabitFromRoutineResponse struct {
 
 func (x *RemoveHabitFromRoutineResponse) Reset() {
 	*x = RemoveHabitFromRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[26]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1331,7 +1679,7 @@ func (x *RemoveHabitFromRoutineResponse) String() string {
 func (*RemoveHabitFromRoutineResponse) ProtoMessage() {}
 
 func (x *RemoveHabitFromRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[26]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1344,7 +1692,7 @@ func (x *RemoveHabitFromRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveHabitFromRoutineResponse.ProtoReflect.Descriptor instead.
 func (*RemoveHabitFromRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{26}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *RemoveHabitFromRoutineResponse) GetSuccess() bool {
@@ -1363,7 +1711,7 @@ type ListRoutinesByUserRequest struct {
 
 func (x *ListRoutinesByUserRequest) Reset() {
 	*x = ListRoutinesByUserRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[27]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1375,7 +1723,7 @@ func (x *ListRoutinesByUserRequest) String() string {
 func (*ListRoutinesByUserRequest) ProtoMessage() {}
 
 func (x *ListRoutinesByUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[27]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1388,7 +1736,7 @@ func (x *ListRoutinesByUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoutinesByUserRequest.ProtoReflect.Descriptor instead.
 func (*ListRoutinesByUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{27}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ListRoutinesByUserRequest) GetUserId() string {
@@ -1407,7 +1755,7 @@ type ListRoutinesByUserResponse struct {
 
 func (x *ListRoutinesByUserResponse) Reset() {
 	*x = ListRoutinesByUserResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[28]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1419,7 +1767,7 @@ func (x *ListRoutinesByUserResponse) String() string {
 func (*ListRoutinesByUserResponse) ProtoMessage() {}
 
 func (x *ListRoutinesByUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[28]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1432,7 +1780,7 @@ func (x *ListRoutinesByUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoutinesByUserResponse.ProtoReflect.Descriptor instead.
 func (*ListRoutinesByUserResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{28}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ListRoutinesByUserResponse) GetRoutines() []*Routine {
@@ -1451,7 +1799,7 @@ type GetRoutineByIDRequest struct {
 
 func (x *GetRoutineByIDRequest) Reset() {
 	*x = GetRoutineByIDRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[29]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1463,7 +1811,7 @@ func (x *GetRoutineByIDRequest) String() string {
 func (*GetRoutineByIDRequest) ProtoMessage() {}
 
 func (x *GetRoutineByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[29]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1476,7 +1824,7 @@ func (x *GetRoutineByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoutineByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetRoutineByIDRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{29}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetRoutineByIDRequest) GetRoutineId() string {
@@ -1495,7 +1843,7 @@ type GetRoutineByIDResponse struct {
 
 func (x *GetRoutineByIDResponse) Reset() {
 	*x = GetRoutineByIDResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[30]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1507,7 +1855,7 @@ func (x *GetRoutineByIDResponse) String() string {
 func (*GetRoutineByIDResponse) ProtoMessage() {}
 
 func (x *GetRoutineByIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[30]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1520,7 +1868,7 @@ func (x *GetRoutineByIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoutineByIDResponse.ProtoReflect.Descriptor instead.
 func (*GetRoutineByIDResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{30}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetRoutineByIDResponse) GetRoutine() *Routine {
@@ -1540,7 +1888,7 @@ type EditRoutineRequest struct {
 
 func (x *EditRoutineRequest) Reset() {
 	*x = EditRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[31]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1552,7 +1900,7 @@ func (x *EditRoutineRequest) String() string {
 func (*EditRoutineRequest) ProtoMessage() {}
 
 func (x *EditRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[31]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1565,7 +1913,7 @@ func (x *EditRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditRoutineRequest.ProtoReflect.Descriptor instead.
 func (*EditRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{31}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *EditRoutineRequest) GetRoutineId() string {
@@ -1591,7 +1939,7 @@ type EditRoutineResponse struct {
 
 func (x *EditRoutineResponse) Reset() {
 	*x = EditRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[32]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1603,7 +1951,7 @@ func (x *EditRoutineResponse) String() string {
 func (*EditRoutineResponse) ProtoMessage() {}
 
 func (x *EditRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[32]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1616,7 +1964,7 @@ func (x *EditRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditRoutineResponse.ProtoReflect.Descriptor instead.
 func (*EditRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{32}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *EditRoutineResponse) GetRoutine() *Routine {
@@ -1635,7 +1983,7 @@ type DeleteRoutineRequest struct {
 
 func (x *DeleteRoutineRequest) Reset() {
 	*x = DeleteRoutineRequest{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[33]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1647,7 +1995,7 @@ func (x *DeleteRoutineRequest) String() string {
 func (*DeleteRoutineRequest) ProtoMessage() {}
 
 func (x *DeleteRoutineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[33]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1660,7 +2008,7 @@ func (x *DeleteRoutineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRoutineRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRoutineRequest) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{33}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *DeleteRoutineRequest) GetRoutineId() string {
@@ -1679,7 +2027,7 @@ type DeleteRoutineResponse struct {
 
 func (x *DeleteRoutineResponse) Reset() {
 	*x = DeleteRoutineResponse{}
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[34]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1691,7 +2039,7 @@ func (x *DeleteRoutineResponse) String() string {
 func (*DeleteRoutineResponse) ProtoMessage() {}
 
 func (x *DeleteRoutineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_habit_v2_habit_proto_msgTypes[34]
+	mi := &file_proto_habit_v4_habit_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1704,7 +2052,7 @@ func (x *DeleteRoutineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRoutineResponse.ProtoReflect.Descriptor instead.
 func (*DeleteRoutineResponse) Descriptor() ([]byte, []int) {
-	return file_proto_habit_v2_habit_proto_rawDescGZIP(), []int{34}
+	return file_proto_habit_v4_habit_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *DeleteRoutineResponse) GetSuccess() bool {
@@ -1714,11 +2062,11 @@ func (x *DeleteRoutineResponse) GetSuccess() bool {
 	return false
 }
 
-var File_proto_habit_v2_habit_proto protoreflect.FileDescriptor
+var File_proto_habit_v4_habit_proto protoreflect.FileDescriptor
 
-const file_proto_habit_v2_habit_proto_rawDesc = "" +
+const file_proto_habit_v4_habit_proto_rawDesc = "" +
 	"\n" +
-	"\x1aproto/habit/v2/habit.proto\x12\x05habit\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbe\x01\n" +
+	"\x1aproto/habit/v4/habit.proto\x12\x05habit\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbe\x01\n" +
 	"\x05Habit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -1735,6 +2083,11 @@ const file_proto_habit_v2_habit_proto_rawDesc = "" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"d\n" +
 	"\bHabitLog\x12\x19\n" +
 	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12=\n" +
+	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"j\n" +
+	"\n" +
+	"RoutineLog\x12\x1d\n" +
+	"\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\x12=\n" +
 	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"@\n" +
 	"\x14CreateRoutineRequest\x12(\n" +
 	"\aroutine\x18\x01 \x01(\v2\x0e.habit.RoutineR\aroutine\"A\n" +
@@ -1788,7 +2141,27 @@ const file_proto_habit_v2_habit_proto_rawDesc = "" +
 	"start_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
 	"\bend_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\";\n" +
 	"\x14GetHabitLogsResponse\x12#\n" +
-	"\x04logs\x18\x01 \x03(\v2\x0f.habit.HabitLogR\x04logs\"T\n" +
+	"\x04logs\x18\x01 \x03(\v2\x0f.habit.HabitLogR\x04logs\"{\n" +
+	"\x1bMarkRoutineCompletedRequest\x12\x1d\n" +
+	"\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\x12=\n" +
+	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\"8\n" +
+	"\x1cMarkRoutineCompletedResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"}\n" +
+	"\x1dUnmarkRoutineCompletedRequest\x12\x1d\n" +
+	"\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\x12=\n" +
+	"\fcompleted_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vcompletedAt\":\n" +
+	"\x1eUnmarkRoutineCompletedResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa8\x01\n" +
+	"\x15GetRoutineLogsRequest\x12\x1d\n" +
+	"\n" +
+	"routine_id\x18\x01 \x01(\tR\troutineId\x129\n" +
+	"\n" +
+	"start_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
+	"\bend_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\"?\n" +
+	"\x16GetRoutineLogsResponse\x12%\n" +
+	"\x04logs\x18\x01 \x03(\v2\x11.habit.RoutineLogR\x04logs\"T\n" +
 	"\x18AddHabitToRoutineRequest\x12\x19\n" +
 	"\bhabit_id\x18\x01 \x01(\tR\ahabitId\x12\x1d\n" +
 	"\n" +
@@ -1831,7 +2204,7 @@ const file_proto_habit_v2_habit_proto_rawDesc = "" +
 	"\vDeleteHabit\x12\x19.habit.DeleteHabitRequest\x1a\x1a.habit.DeleteHabitResponse\x12Y\n" +
 	"\x12MarkHabitCompleted\x12 .habit.MarkHabitCompletedRequest\x1a!.habit.MarkHabitCompletedResponse\x12_\n" +
 	"\x14UnmarkHabitCompleted\x12\".habit.UnmarkHabitCompletedRequest\x1a#.habit.UnmarkHabitCompletedResponse\x12G\n" +
-	"\fGetHabitLogs\x12\x1a.habit.GetHabitLogsRequest\x1a\x1b.habit.GetHabitLogsResponse2\xd7\x04\n" +
+	"\fGetHabitLogs\x12\x1a.habit.GetHabitLogsRequest\x1a\x1b.habit.GetHabitLogsResponse2\xee\x06\n" +
 	"\x0eRoutineService\x12J\n" +
 	"\rCreateRoutine\x12\x1b.habit.CreateRoutineRequest\x1a\x1c.habit.CreateRoutineResponse\x12M\n" +
 	"\x0eGetRoutineByID\x12\x1c.habit.GetRoutineByIDRequest\x1a\x1d.habit.GetRoutineByIDResponse\x12D\n" +
@@ -1839,141 +2212,163 @@ const file_proto_habit_v2_habit_proto_rawDesc = "" +
 	"\rDeleteRoutine\x12\x1b.habit.DeleteRoutineRequest\x1a\x1c.habit.DeleteRoutineResponse\x12V\n" +
 	"\x11AddHabitToRoutine\x12\x1f.habit.AddHabitToRoutineRequest\x1a .habit.AddHabitToRoutineResponse\x12e\n" +
 	"\x16RemoveHabitFromRoutine\x12$.habit.RemoveHabitFromRoutineRequest\x1a%.habit.RemoveHabitFromRoutineResponse\x12Y\n" +
-	"\x12ListRoutinesByUser\x12 .habit.ListRoutinesByUserRequest\x1a!.habit.ListRoutinesByUserResponseB\n" +
+	"\x12ListRoutinesByUser\x12 .habit.ListRoutinesByUserRequest\x1a!.habit.ListRoutinesByUserResponse\x12_\n" +
+	"\x14MarkRoutineCompleted\x12\".habit.MarkRoutineCompletedRequest\x1a#.habit.MarkRoutineCompletedResponse\x12e\n" +
+	"\x16UnmarkRoutineCompleted\x12$.habit.UnmarkRoutineCompletedRequest\x1a%.habit.UnmarkRoutineCompletedResponse\x12M\n" +
+	"\x0eGetRoutineLogs\x12\x1c.habit.GetRoutineLogsRequest\x1a\x1d.habit.GetRoutineLogsResponseB\n" +
 	"Z\bpb/habitb\x06proto3"
 
 var (
-	file_proto_habit_v2_habit_proto_rawDescOnce sync.Once
-	file_proto_habit_v2_habit_proto_rawDescData []byte
+	file_proto_habit_v4_habit_proto_rawDescOnce sync.Once
+	file_proto_habit_v4_habit_proto_rawDescData []byte
 )
 
-func file_proto_habit_v2_habit_proto_rawDescGZIP() []byte {
-	file_proto_habit_v2_habit_proto_rawDescOnce.Do(func() {
-		file_proto_habit_v2_habit_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_habit_v2_habit_proto_rawDesc), len(file_proto_habit_v2_habit_proto_rawDesc)))
+func file_proto_habit_v4_habit_proto_rawDescGZIP() []byte {
+	file_proto_habit_v4_habit_proto_rawDescOnce.Do(func() {
+		file_proto_habit_v4_habit_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_habit_v4_habit_proto_rawDesc), len(file_proto_habit_v4_habit_proto_rawDesc)))
 	})
-	return file_proto_habit_v2_habit_proto_rawDescData
+	return file_proto_habit_v4_habit_proto_rawDescData
 }
 
-var file_proto_habit_v2_habit_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
-var file_proto_habit_v2_habit_proto_goTypes = []any{
+var file_proto_habit_v4_habit_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
+var file_proto_habit_v4_habit_proto_goTypes = []any{
 	(*Habit)(nil),                          // 0: habit.Habit
 	(*Routine)(nil),                        // 1: habit.Routine
 	(*HabitLog)(nil),                       // 2: habit.HabitLog
-	(*CreateRoutineRequest)(nil),           // 3: habit.CreateRoutineRequest
-	(*CreateRoutineResponse)(nil),          // 4: habit.CreateRoutineResponse
-	(*CreateHabitRequest)(nil),             // 5: habit.CreateHabitRequest
-	(*CreateHabitResponse)(nil),            // 6: habit.CreateHabitResponse
-	(*GetHabitByIDRequest)(nil),            // 7: habit.GetHabitByIDRequest
-	(*GetHabitByIDResponse)(nil),           // 8: habit.GetHabitByIDResponse
-	(*ListHabitsByUserRequest)(nil),        // 9: habit.ListHabitsByUserRequest
-	(*ListHabitsByUserResponse)(nil),       // 10: habit.ListHabitsByUserResponse
-	(*ListHabitsByRoutineRequest)(nil),     // 11: habit.ListHabitsByRoutineRequest
-	(*ListHabitsByRoutineResponse)(nil),    // 12: habit.ListHabitsByRoutineResponse
-	(*EditHabitRequest)(nil),               // 13: habit.EditHabitRequest
-	(*EditHabitResponse)(nil),              // 14: habit.EditHabitResponse
-	(*DeleteHabitRequest)(nil),             // 15: habit.DeleteHabitRequest
-	(*DeleteHabitResponse)(nil),            // 16: habit.DeleteHabitResponse
-	(*MarkHabitCompletedRequest)(nil),      // 17: habit.MarkHabitCompletedRequest
-	(*MarkHabitCompletedResponse)(nil),     // 18: habit.MarkHabitCompletedResponse
-	(*UnmarkHabitCompletedRequest)(nil),    // 19: habit.UnmarkHabitCompletedRequest
-	(*UnmarkHabitCompletedResponse)(nil),   // 20: habit.UnmarkHabitCompletedResponse
-	(*GetHabitLogsRequest)(nil),            // 21: habit.GetHabitLogsRequest
-	(*GetHabitLogsResponse)(nil),           // 22: habit.GetHabitLogsResponse
-	(*AddHabitToRoutineRequest)(nil),       // 23: habit.AddHabitToRoutineRequest
-	(*AddHabitToRoutineResponse)(nil),      // 24: habit.AddHabitToRoutineResponse
-	(*RemoveHabitFromRoutineRequest)(nil),  // 25: habit.RemoveHabitFromRoutineRequest
-	(*RemoveHabitFromRoutineResponse)(nil), // 26: habit.RemoveHabitFromRoutineResponse
-	(*ListRoutinesByUserRequest)(nil),      // 27: habit.ListRoutinesByUserRequest
-	(*ListRoutinesByUserResponse)(nil),     // 28: habit.ListRoutinesByUserResponse
-	(*GetRoutineByIDRequest)(nil),          // 29: habit.GetRoutineByIDRequest
-	(*GetRoutineByIDResponse)(nil),         // 30: habit.GetRoutineByIDResponse
-	(*EditRoutineRequest)(nil),             // 31: habit.EditRoutineRequest
-	(*EditRoutineResponse)(nil),            // 32: habit.EditRoutineResponse
-	(*DeleteRoutineRequest)(nil),           // 33: habit.DeleteRoutineRequest
-	(*DeleteRoutineResponse)(nil),          // 34: habit.DeleteRoutineResponse
-	(*timestamppb.Timestamp)(nil),          // 35: google.protobuf.Timestamp
+	(*RoutineLog)(nil),                     // 3: habit.RoutineLog
+	(*CreateRoutineRequest)(nil),           // 4: habit.CreateRoutineRequest
+	(*CreateRoutineResponse)(nil),          // 5: habit.CreateRoutineResponse
+	(*CreateHabitRequest)(nil),             // 6: habit.CreateHabitRequest
+	(*CreateHabitResponse)(nil),            // 7: habit.CreateHabitResponse
+	(*GetHabitByIDRequest)(nil),            // 8: habit.GetHabitByIDRequest
+	(*GetHabitByIDResponse)(nil),           // 9: habit.GetHabitByIDResponse
+	(*ListHabitsByUserRequest)(nil),        // 10: habit.ListHabitsByUserRequest
+	(*ListHabitsByUserResponse)(nil),       // 11: habit.ListHabitsByUserResponse
+	(*ListHabitsByRoutineRequest)(nil),     // 12: habit.ListHabitsByRoutineRequest
+	(*ListHabitsByRoutineResponse)(nil),    // 13: habit.ListHabitsByRoutineResponse
+	(*EditHabitRequest)(nil),               // 14: habit.EditHabitRequest
+	(*EditHabitResponse)(nil),              // 15: habit.EditHabitResponse
+	(*DeleteHabitRequest)(nil),             // 16: habit.DeleteHabitRequest
+	(*DeleteHabitResponse)(nil),            // 17: habit.DeleteHabitResponse
+	(*MarkHabitCompletedRequest)(nil),      // 18: habit.MarkHabitCompletedRequest
+	(*MarkHabitCompletedResponse)(nil),     // 19: habit.MarkHabitCompletedResponse
+	(*UnmarkHabitCompletedRequest)(nil),    // 20: habit.UnmarkHabitCompletedRequest
+	(*UnmarkHabitCompletedResponse)(nil),   // 21: habit.UnmarkHabitCompletedResponse
+	(*GetHabitLogsRequest)(nil),            // 22: habit.GetHabitLogsRequest
+	(*GetHabitLogsResponse)(nil),           // 23: habit.GetHabitLogsResponse
+	(*MarkRoutineCompletedRequest)(nil),    // 24: habit.MarkRoutineCompletedRequest
+	(*MarkRoutineCompletedResponse)(nil),   // 25: habit.MarkRoutineCompletedResponse
+	(*UnmarkRoutineCompletedRequest)(nil),  // 26: habit.UnmarkRoutineCompletedRequest
+	(*UnmarkRoutineCompletedResponse)(nil), // 27: habit.UnmarkRoutineCompletedResponse
+	(*GetRoutineLogsRequest)(nil),          // 28: habit.GetRoutineLogsRequest
+	(*GetRoutineLogsResponse)(nil),         // 29: habit.GetRoutineLogsResponse
+	(*AddHabitToRoutineRequest)(nil),       // 30: habit.AddHabitToRoutineRequest
+	(*AddHabitToRoutineResponse)(nil),      // 31: habit.AddHabitToRoutineResponse
+	(*RemoveHabitFromRoutineRequest)(nil),  // 32: habit.RemoveHabitFromRoutineRequest
+	(*RemoveHabitFromRoutineResponse)(nil), // 33: habit.RemoveHabitFromRoutineResponse
+	(*ListRoutinesByUserRequest)(nil),      // 34: habit.ListRoutinesByUserRequest
+	(*ListRoutinesByUserResponse)(nil),     // 35: habit.ListRoutinesByUserResponse
+	(*GetRoutineByIDRequest)(nil),          // 36: habit.GetRoutineByIDRequest
+	(*GetRoutineByIDResponse)(nil),         // 37: habit.GetRoutineByIDResponse
+	(*EditRoutineRequest)(nil),             // 38: habit.EditRoutineRequest
+	(*EditRoutineResponse)(nil),            // 39: habit.EditRoutineResponse
+	(*DeleteRoutineRequest)(nil),           // 40: habit.DeleteRoutineRequest
+	(*DeleteRoutineResponse)(nil),          // 41: habit.DeleteRoutineResponse
+	(*timestamppb.Timestamp)(nil),          // 42: google.protobuf.Timestamp
 }
-var file_proto_habit_v2_habit_proto_depIdxs = []int32{
-	35, // 0: habit.Habit.created_at:type_name -> google.protobuf.Timestamp
-	35, // 1: habit.Routine.created_at:type_name -> google.protobuf.Timestamp
-	35, // 2: habit.HabitLog.completed_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: habit.CreateRoutineRequest.routine:type_name -> habit.Routine
-	1,  // 4: habit.CreateRoutineResponse.routine:type_name -> habit.Routine
-	0,  // 5: habit.CreateHabitRequest.habit:type_name -> habit.Habit
-	0,  // 6: habit.CreateHabitResponse.habit:type_name -> habit.Habit
-	0,  // 7: habit.GetHabitByIDResponse.habit:type_name -> habit.Habit
-	0,  // 8: habit.ListHabitsByUserResponse.habits:type_name -> habit.Habit
-	0,  // 9: habit.ListHabitsByRoutineResponse.habits:type_name -> habit.Habit
-	0,  // 10: habit.EditHabitResponse.habit:type_name -> habit.Habit
-	35, // 11: habit.MarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
-	35, // 12: habit.UnmarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
-	35, // 13: habit.GetHabitLogsRequest.start_date:type_name -> google.protobuf.Timestamp
-	35, // 14: habit.GetHabitLogsRequest.end_date:type_name -> google.protobuf.Timestamp
-	2,  // 15: habit.GetHabitLogsResponse.logs:type_name -> habit.HabitLog
-	1,  // 16: habit.ListRoutinesByUserResponse.routines:type_name -> habit.Routine
-	1,  // 17: habit.GetRoutineByIDResponse.routine:type_name -> habit.Routine
-	1,  // 18: habit.EditRoutineResponse.routine:type_name -> habit.Routine
-	5,  // 19: habit.HabitService.CreateHabit:input_type -> habit.CreateHabitRequest
-	7,  // 20: habit.HabitService.GetHabitByID:input_type -> habit.GetHabitByIDRequest
-	9,  // 21: habit.HabitService.ListHabitsByUser:input_type -> habit.ListHabitsByUserRequest
-	11, // 22: habit.HabitService.ListHabitsByRoutine:input_type -> habit.ListHabitsByRoutineRequest
-	13, // 23: habit.HabitService.EditHabit:input_type -> habit.EditHabitRequest
-	15, // 24: habit.HabitService.DeleteHabit:input_type -> habit.DeleteHabitRequest
-	17, // 25: habit.HabitService.MarkHabitCompleted:input_type -> habit.MarkHabitCompletedRequest
-	19, // 26: habit.HabitService.UnmarkHabitCompleted:input_type -> habit.UnmarkHabitCompletedRequest
-	21, // 27: habit.HabitService.GetHabitLogs:input_type -> habit.GetHabitLogsRequest
-	3,  // 28: habit.RoutineService.CreateRoutine:input_type -> habit.CreateRoutineRequest
-	29, // 29: habit.RoutineService.GetRoutineByID:input_type -> habit.GetRoutineByIDRequest
-	31, // 30: habit.RoutineService.EditRoutine:input_type -> habit.EditRoutineRequest
-	33, // 31: habit.RoutineService.DeleteRoutine:input_type -> habit.DeleteRoutineRequest
-	23, // 32: habit.RoutineService.AddHabitToRoutine:input_type -> habit.AddHabitToRoutineRequest
-	25, // 33: habit.RoutineService.RemoveHabitFromRoutine:input_type -> habit.RemoveHabitFromRoutineRequest
-	27, // 34: habit.RoutineService.ListRoutinesByUser:input_type -> habit.ListRoutinesByUserRequest
-	6,  // 35: habit.HabitService.CreateHabit:output_type -> habit.CreateHabitResponse
-	8,  // 36: habit.HabitService.GetHabitByID:output_type -> habit.GetHabitByIDResponse
-	10, // 37: habit.HabitService.ListHabitsByUser:output_type -> habit.ListHabitsByUserResponse
-	12, // 38: habit.HabitService.ListHabitsByRoutine:output_type -> habit.ListHabitsByRoutineResponse
-	14, // 39: habit.HabitService.EditHabit:output_type -> habit.EditHabitResponse
-	16, // 40: habit.HabitService.DeleteHabit:output_type -> habit.DeleteHabitResponse
-	18, // 41: habit.HabitService.MarkHabitCompleted:output_type -> habit.MarkHabitCompletedResponse
-	20, // 42: habit.HabitService.UnmarkHabitCompleted:output_type -> habit.UnmarkHabitCompletedResponse
-	22, // 43: habit.HabitService.GetHabitLogs:output_type -> habit.GetHabitLogsResponse
-	4,  // 44: habit.RoutineService.CreateRoutine:output_type -> habit.CreateRoutineResponse
-	30, // 45: habit.RoutineService.GetRoutineByID:output_type -> habit.GetRoutineByIDResponse
-	32, // 46: habit.RoutineService.EditRoutine:output_type -> habit.EditRoutineResponse
-	34, // 47: habit.RoutineService.DeleteRoutine:output_type -> habit.DeleteRoutineResponse
-	24, // 48: habit.RoutineService.AddHabitToRoutine:output_type -> habit.AddHabitToRoutineResponse
-	26, // 49: habit.RoutineService.RemoveHabitFromRoutine:output_type -> habit.RemoveHabitFromRoutineResponse
-	28, // 50: habit.RoutineService.ListRoutinesByUser:output_type -> habit.ListRoutinesByUserResponse
-	35, // [35:51] is the sub-list for method output_type
-	19, // [19:35] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+var file_proto_habit_v4_habit_proto_depIdxs = []int32{
+	42, // 0: habit.Habit.created_at:type_name -> google.protobuf.Timestamp
+	42, // 1: habit.Routine.created_at:type_name -> google.protobuf.Timestamp
+	42, // 2: habit.HabitLog.completed_at:type_name -> google.protobuf.Timestamp
+	42, // 3: habit.RoutineLog.completed_at:type_name -> google.protobuf.Timestamp
+	1,  // 4: habit.CreateRoutineRequest.routine:type_name -> habit.Routine
+	1,  // 5: habit.CreateRoutineResponse.routine:type_name -> habit.Routine
+	0,  // 6: habit.CreateHabitRequest.habit:type_name -> habit.Habit
+	0,  // 7: habit.CreateHabitResponse.habit:type_name -> habit.Habit
+	0,  // 8: habit.GetHabitByIDResponse.habit:type_name -> habit.Habit
+	0,  // 9: habit.ListHabitsByUserResponse.habits:type_name -> habit.Habit
+	0,  // 10: habit.ListHabitsByRoutineResponse.habits:type_name -> habit.Habit
+	0,  // 11: habit.EditHabitResponse.habit:type_name -> habit.Habit
+	42, // 12: habit.MarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	42, // 13: habit.UnmarkHabitCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	42, // 14: habit.GetHabitLogsRequest.start_date:type_name -> google.protobuf.Timestamp
+	42, // 15: habit.GetHabitLogsRequest.end_date:type_name -> google.protobuf.Timestamp
+	2,  // 16: habit.GetHabitLogsResponse.logs:type_name -> habit.HabitLog
+	42, // 17: habit.MarkRoutineCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	42, // 18: habit.UnmarkRoutineCompletedRequest.completed_at:type_name -> google.protobuf.Timestamp
+	42, // 19: habit.GetRoutineLogsRequest.start_date:type_name -> google.protobuf.Timestamp
+	42, // 20: habit.GetRoutineLogsRequest.end_date:type_name -> google.protobuf.Timestamp
+	3,  // 21: habit.GetRoutineLogsResponse.logs:type_name -> habit.RoutineLog
+	1,  // 22: habit.ListRoutinesByUserResponse.routines:type_name -> habit.Routine
+	1,  // 23: habit.GetRoutineByIDResponse.routine:type_name -> habit.Routine
+	1,  // 24: habit.EditRoutineResponse.routine:type_name -> habit.Routine
+	6,  // 25: habit.HabitService.CreateHabit:input_type -> habit.CreateHabitRequest
+	8,  // 26: habit.HabitService.GetHabitByID:input_type -> habit.GetHabitByIDRequest
+	10, // 27: habit.HabitService.ListHabitsByUser:input_type -> habit.ListHabitsByUserRequest
+	12, // 28: habit.HabitService.ListHabitsByRoutine:input_type -> habit.ListHabitsByRoutineRequest
+	14, // 29: habit.HabitService.EditHabit:input_type -> habit.EditHabitRequest
+	16, // 30: habit.HabitService.DeleteHabit:input_type -> habit.DeleteHabitRequest
+	18, // 31: habit.HabitService.MarkHabitCompleted:input_type -> habit.MarkHabitCompletedRequest
+	20, // 32: habit.HabitService.UnmarkHabitCompleted:input_type -> habit.UnmarkHabitCompletedRequest
+	22, // 33: habit.HabitService.GetHabitLogs:input_type -> habit.GetHabitLogsRequest
+	4,  // 34: habit.RoutineService.CreateRoutine:input_type -> habit.CreateRoutineRequest
+	36, // 35: habit.RoutineService.GetRoutineByID:input_type -> habit.GetRoutineByIDRequest
+	38, // 36: habit.RoutineService.EditRoutine:input_type -> habit.EditRoutineRequest
+	40, // 37: habit.RoutineService.DeleteRoutine:input_type -> habit.DeleteRoutineRequest
+	30, // 38: habit.RoutineService.AddHabitToRoutine:input_type -> habit.AddHabitToRoutineRequest
+	32, // 39: habit.RoutineService.RemoveHabitFromRoutine:input_type -> habit.RemoveHabitFromRoutineRequest
+	34, // 40: habit.RoutineService.ListRoutinesByUser:input_type -> habit.ListRoutinesByUserRequest
+	24, // 41: habit.RoutineService.MarkRoutineCompleted:input_type -> habit.MarkRoutineCompletedRequest
+	26, // 42: habit.RoutineService.UnmarkRoutineCompleted:input_type -> habit.UnmarkRoutineCompletedRequest
+	28, // 43: habit.RoutineService.GetRoutineLogs:input_type -> habit.GetRoutineLogsRequest
+	7,  // 44: habit.HabitService.CreateHabit:output_type -> habit.CreateHabitResponse
+	9,  // 45: habit.HabitService.GetHabitByID:output_type -> habit.GetHabitByIDResponse
+	11, // 46: habit.HabitService.ListHabitsByUser:output_type -> habit.ListHabitsByUserResponse
+	13, // 47: habit.HabitService.ListHabitsByRoutine:output_type -> habit.ListHabitsByRoutineResponse
+	15, // 48: habit.HabitService.EditHabit:output_type -> habit.EditHabitResponse
+	17, // 49: habit.HabitService.DeleteHabit:output_type -> habit.DeleteHabitResponse
+	19, // 50: habit.HabitService.MarkHabitCompleted:output_type -> habit.MarkHabitCompletedResponse
+	21, // 51: habit.HabitService.UnmarkHabitCompleted:output_type -> habit.UnmarkHabitCompletedResponse
+	23, // 52: habit.HabitService.GetHabitLogs:output_type -> habit.GetHabitLogsResponse
+	5,  // 53: habit.RoutineService.CreateRoutine:output_type -> habit.CreateRoutineResponse
+	37, // 54: habit.RoutineService.GetRoutineByID:output_type -> habit.GetRoutineByIDResponse
+	39, // 55: habit.RoutineService.EditRoutine:output_type -> habit.EditRoutineResponse
+	41, // 56: habit.RoutineService.DeleteRoutine:output_type -> habit.DeleteRoutineResponse
+	31, // 57: habit.RoutineService.AddHabitToRoutine:output_type -> habit.AddHabitToRoutineResponse
+	33, // 58: habit.RoutineService.RemoveHabitFromRoutine:output_type -> habit.RemoveHabitFromRoutineResponse
+	35, // 59: habit.RoutineService.ListRoutinesByUser:output_type -> habit.ListRoutinesByUserResponse
+	25, // 60: habit.RoutineService.MarkRoutineCompleted:output_type -> habit.MarkRoutineCompletedResponse
+	27, // 61: habit.RoutineService.UnmarkRoutineCompleted:output_type -> habit.UnmarkRoutineCompletedResponse
+	29, // 62: habit.RoutineService.GetRoutineLogs:output_type -> habit.GetRoutineLogsResponse
+	44, // [44:63] is the sub-list for method output_type
+	25, // [25:44] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
-func init() { file_proto_habit_v2_habit_proto_init() }
-func file_proto_habit_v2_habit_proto_init() {
-	if File_proto_habit_v2_habit_proto != nil {
+func init() { file_proto_habit_v4_habit_proto_init() }
+func file_proto_habit_v4_habit_proto_init() {
+	if File_proto_habit_v4_habit_proto != nil {
 		return
 	}
-	file_proto_habit_v2_habit_proto_msgTypes[13].OneofWrappers = []any{}
-	file_proto_habit_v2_habit_proto_msgTypes[31].OneofWrappers = []any{}
+	file_proto_habit_v4_habit_proto_msgTypes[14].OneofWrappers = []any{}
+	file_proto_habit_v4_habit_proto_msgTypes[38].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_habit_v2_habit_proto_rawDesc), len(file_proto_habit_v2_habit_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_habit_v4_habit_proto_rawDesc), len(file_proto_habit_v4_habit_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   35,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
-		GoTypes:           file_proto_habit_v2_habit_proto_goTypes,
-		DependencyIndexes: file_proto_habit_v2_habit_proto_depIdxs,
-		MessageInfos:      file_proto_habit_v2_habit_proto_msgTypes,
+		GoTypes:           file_proto_habit_v4_habit_proto_goTypes,
+		DependencyIndexes: file_proto_habit_v4_habit_proto_depIdxs,
+		MessageInfos:      file_proto_habit_v4_habit_proto_msgTypes,
 	}.Build()
-	File_proto_habit_v2_habit_proto = out.File
-	file_proto_habit_v2_habit_proto_goTypes = nil
-	file_proto_habit_v2_habit_proto_depIdxs = nil
+	File_proto_habit_v4_habit_proto = out.File
+	file_proto_habit_v4_habit_proto_goTypes = nil
+	file_proto_habit_v4_habit_proto_depIdxs = nil
 }

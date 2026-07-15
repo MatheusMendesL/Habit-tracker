@@ -91,13 +91,39 @@ INSERT INTO habit_logs (habit_id, completed_at)
 VALUES ($1, $2) ON CONFLICT (habit_id, completed_at) DO NOTHING;
 
 -- name: UnmarkHabitCompleted :exec
-DELETE FROM habit_logs
-WHERE habit_id = $1
-  AND DATE(completed_at) = DATE(@completed_at::timestamp);
-
--- name: GetHabitLogs :many
-SELECT habit_id, completed_at
+DELETE
 FROM habit_logs
 WHERE habit_id = $1
-  AND completed_at BETWEEN @start_date::timestamp AND @end_date::timestamp
+  AND completed_at >= DATE (@completed_at:: timestamp)
+  AND completed_at
+    < DATE (@completed_at:: timestamp) + INTERVAL '1 day';
+
+-- name: GetHabitLogs :many
+SELECT habit_id,
+       completed_at
+FROM habit_logs
+WHERE habit_id = $1
+  AND completed_at >= @start_date::timestamp
+  AND completed_at <= @end_date::timestamp
+ORDER BY completed_at DESC;
+
+-- name: MarkRoutineCompleted :exec
+INSERT INTO routine_logs (routine_id, completed_at)
+VALUES ($1, $2) ON CONFLICT (routine_id, completed_at) DO NOTHING;
+
+-- name: UnmarkRoutineCompleted :exec
+DELETE
+FROM routine_logs
+WHERE routine_id = $1
+  AND completed_at >= DATE (@completed_at:: timestamp)
+  AND completed_at
+    < DATE (@completed_at:: timestamp) + INTERVAL '1 day';
+
+-- name: GetRoutineLogs :many
+SELECT routine_id,
+       completed_at
+FROM routine_logs
+WHERE routine_id = $1
+  AND completed_at >= @start_date::timestamp
+  AND completed_at <= @end_date::timestamp
 ORDER BY completed_at DESC;

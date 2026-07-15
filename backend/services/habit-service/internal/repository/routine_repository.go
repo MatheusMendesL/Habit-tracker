@@ -63,13 +63,37 @@ func (r *RoutineRepository) DeleteRoutine(ctx context.Context, routineID uuid.UU
 }
 
 func (r *RoutineRepository) ListRoutinesByUser(ctx context.Context, userID uuid.UUID) ([]db.Routine, error) {
-	return r.q.ListRoutinesByUser(ctx, userID)
+	routines, err := r.q.ListRoutinesByUser(ctx, userID)
+
+	if err != nil {
+		return []db.Routine{}, err
+	}
+
+	return routines, nil
 }
 
-func (r *RoutineRepository) AddHabitToRoutine(ctx context.Context, arg db.AddHabitToRoutineParams) error {
-	return r.q.AddHabitToRoutine(ctx, arg)
+func (r *RoutineRepository) AddHabitToRoutine(ctx context.Context, req db.AddHabitToRoutineParams) error {
+	return r.q.AddHabitToRoutine(ctx, req)
 }
 
-func (r *RoutineRepository) RemoveHabitFromRoutine(ctx context.Context, arg db.RemoveHabitFromRoutineParams) error {
-	return r.q.RemoveHabitFromRoutine(ctx, arg)
+func (r *RoutineRepository) RemoveHabitFromRoutine(ctx context.Context, req db.RemoveHabitFromRoutineParams) error {
+	return r.q.RemoveHabitFromRoutine(ctx, req)
+}
+
+func (r *RoutineRepository) MarkRoutineCompleted(ctx context.Context, req db.MarkRoutineCompletedParams) error {
+	return r.q.MarkRoutineCompleted(ctx, req)
+}
+
+func (r *RoutineRepository) UnmarkRoutineCompleted(ctx context.Context, req db.UnmarkRoutineCompletedParams) error {
+	return r.q.UnmarkRoutineCompleted(ctx, req)
+}
+
+func (r *RoutineRepository) GetRoutineLogs(ctx context.Context, req db.GetRoutineLogsParams) ([]db.GetRoutineLogsRow, error) {
+	logs, err := r.q.GetRoutineLogs(ctx, req)
+
+	if err != nil {
+		return []db.GetRoutineLogsRow{}, err
+	}
+
+	return logs, nil
 }
