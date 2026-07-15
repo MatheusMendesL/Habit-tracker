@@ -37,3 +37,9 @@ type RoutineHabit struct {
 	RoutineID uuid.UUID
 	HabitID   uuid.UUID
 }
+
+type RoutineLog struct {
+	ID          uuid.UUID
+	RoutineID   uuid.UUID
+	CompletedAt time.Time
+}

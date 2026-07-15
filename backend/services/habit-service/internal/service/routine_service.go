@@ -142,3 +142,45 @@ func (s *RoutineService) RemoveHabitFromRoutine(ctx context.Context, params db.R
 
 	return s.repo.RemoveHabitFromRoutine(ctx, params)
 }
+
+func (s *RoutineService) MarkRoutineCompleted(ctx context.Context, params db.MarkRoutineCompletedParams) error {
+	if params.RoutineID == uuid.Nil || params.CompletedAt.IsZero() {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, params.RoutineID)
+
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
+		return err
+	}
+
+	return s.repo.MarkRoutineCompleted(ctx, params)
+}
+
+func (s *RoutineService) UnmarkRoutineCompleted(ctx context.Context, params db.UnmarkRoutineCompletedParams) error {
+	if params.RoutineID == uuid.Nil || params.CompletedAt.IsZero() {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, params.RoutineID)
+
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
+		return err
+	}
+
+	return s.repo.UnmarkRoutineCompleted(ctx, params)
+}
+
+func (s *RoutineService) GetRoutineLogs(ctx context.Context, params db.GetRoutineLogsParams) ([]db.GetRoutineLogsRow, error) {
+	if params.RoutineID == uuid.Nil || params.StartDate.IsZero() || params.EndDate.IsZero() {
+		return []db.GetRoutineLogsRow{}, AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetRoutineByID(ctx, params.RoutineID)
+
+	if err = ReturnError(err, AppErr.ErrRoutineNotFound); err != nil {
+		return []db.GetRoutineLogsRow{}, err
+	}
+
+	return s.repo.GetRoutineLogs(ctx, params)
+}

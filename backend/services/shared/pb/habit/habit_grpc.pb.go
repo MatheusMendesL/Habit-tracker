@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v7.34.0
-// source: proto/habit/v2/habit.proto
+// source: proto/habit/v4/habit.proto
 
 package habit
 
@@ -421,7 +421,7 @@ var HabitService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/habit/v2/habit.proto",
+	Metadata: "proto/habit/v4/habit.proto",
 }
 
 const (
@@ -432,6 +432,9 @@ const (
 	RoutineService_AddHabitToRoutine_FullMethodName      = "/habit.RoutineService/AddHabitToRoutine"
 	RoutineService_RemoveHabitFromRoutine_FullMethodName = "/habit.RoutineService/RemoveHabitFromRoutine"
 	RoutineService_ListRoutinesByUser_FullMethodName     = "/habit.RoutineService/ListRoutinesByUser"
+	RoutineService_MarkRoutineCompleted_FullMethodName   = "/habit.RoutineService/MarkRoutineCompleted"
+	RoutineService_UnmarkRoutineCompleted_FullMethodName = "/habit.RoutineService/UnmarkRoutineCompleted"
+	RoutineService_GetRoutineLogs_FullMethodName         = "/habit.RoutineService/GetRoutineLogs"
 )
 
 // RoutineServiceClient is the client API for RoutineService service.
@@ -445,6 +448,9 @@ type RoutineServiceClient interface {
 	AddHabitToRoutine(ctx context.Context, in *AddHabitToRoutineRequest, opts ...grpc.CallOption) (*AddHabitToRoutineResponse, error)
 	RemoveHabitFromRoutine(ctx context.Context, in *RemoveHabitFromRoutineRequest, opts ...grpc.CallOption) (*RemoveHabitFromRoutineResponse, error)
 	ListRoutinesByUser(ctx context.Context, in *ListRoutinesByUserRequest, opts ...grpc.CallOption) (*ListRoutinesByUserResponse, error)
+	MarkRoutineCompleted(ctx context.Context, in *MarkRoutineCompletedRequest, opts ...grpc.CallOption) (*MarkRoutineCompletedResponse, error)
+	UnmarkRoutineCompleted(ctx context.Context, in *UnmarkRoutineCompletedRequest, opts ...grpc.CallOption) (*UnmarkRoutineCompletedResponse, error)
+	GetRoutineLogs(ctx context.Context, in *GetRoutineLogsRequest, opts ...grpc.CallOption) (*GetRoutineLogsResponse, error)
 }
 
 type routineServiceClient struct {
@@ -525,6 +531,36 @@ func (c *routineServiceClient) ListRoutinesByUser(ctx context.Context, in *ListR
 	return out, nil
 }
 
+func (c *routineServiceClient) MarkRoutineCompleted(ctx context.Context, in *MarkRoutineCompletedRequest, opts ...grpc.CallOption) (*MarkRoutineCompletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkRoutineCompletedResponse)
+	err := c.cc.Invoke(ctx, RoutineService_MarkRoutineCompleted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routineServiceClient) UnmarkRoutineCompleted(ctx context.Context, in *UnmarkRoutineCompletedRequest, opts ...grpc.CallOption) (*UnmarkRoutineCompletedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UnmarkRoutineCompletedResponse)
+	err := c.cc.Invoke(ctx, RoutineService_UnmarkRoutineCompleted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routineServiceClient) GetRoutineLogs(ctx context.Context, in *GetRoutineLogsRequest, opts ...grpc.CallOption) (*GetRoutineLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRoutineLogsResponse)
+	err := c.cc.Invoke(ctx, RoutineService_GetRoutineLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoutineServiceServer is the server API for RoutineService service.
 // All implementations must embed UnimplementedRoutineServiceServer
 // for forward compatibility.
@@ -536,6 +572,9 @@ type RoutineServiceServer interface {
 	AddHabitToRoutine(context.Context, *AddHabitToRoutineRequest) (*AddHabitToRoutineResponse, error)
 	RemoveHabitFromRoutine(context.Context, *RemoveHabitFromRoutineRequest) (*RemoveHabitFromRoutineResponse, error)
 	ListRoutinesByUser(context.Context, *ListRoutinesByUserRequest) (*ListRoutinesByUserResponse, error)
+	MarkRoutineCompleted(context.Context, *MarkRoutineCompletedRequest) (*MarkRoutineCompletedResponse, error)
+	UnmarkRoutineCompleted(context.Context, *UnmarkRoutineCompletedRequest) (*UnmarkRoutineCompletedResponse, error)
+	GetRoutineLogs(context.Context, *GetRoutineLogsRequest) (*GetRoutineLogsResponse, error)
 	mustEmbedUnimplementedRoutineServiceServer()
 }
 
@@ -566,6 +605,15 @@ func (UnimplementedRoutineServiceServer) RemoveHabitFromRoutine(context.Context,
 }
 func (UnimplementedRoutineServiceServer) ListRoutinesByUser(context.Context, *ListRoutinesByUserRequest) (*ListRoutinesByUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRoutinesByUser not implemented")
+}
+func (UnimplementedRoutineServiceServer) MarkRoutineCompleted(context.Context, *MarkRoutineCompletedRequest) (*MarkRoutineCompletedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkRoutineCompleted not implemented")
+}
+func (UnimplementedRoutineServiceServer) UnmarkRoutineCompleted(context.Context, *UnmarkRoutineCompletedRequest) (*UnmarkRoutineCompletedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnmarkRoutineCompleted not implemented")
+}
+func (UnimplementedRoutineServiceServer) GetRoutineLogs(context.Context, *GetRoutineLogsRequest) (*GetRoutineLogsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRoutineLogs not implemented")
 }
 func (UnimplementedRoutineServiceServer) mustEmbedUnimplementedRoutineServiceServer() {}
 func (UnimplementedRoutineServiceServer) testEmbeddedByValue()                        {}
@@ -714,6 +762,60 @@ func _RoutineService_ListRoutinesByUser_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoutineService_MarkRoutineCompleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkRoutineCompletedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoutineServiceServer).MarkRoutineCompleted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoutineService_MarkRoutineCompleted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoutineServiceServer).MarkRoutineCompleted(ctx, req.(*MarkRoutineCompletedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoutineService_UnmarkRoutineCompleted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnmarkRoutineCompletedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoutineServiceServer).UnmarkRoutineCompleted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoutineService_UnmarkRoutineCompleted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoutineServiceServer).UnmarkRoutineCompleted(ctx, req.(*UnmarkRoutineCompletedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoutineService_GetRoutineLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoutineLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoutineServiceServer).GetRoutineLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoutineService_GetRoutineLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoutineServiceServer).GetRoutineLogs(ctx, req.(*GetRoutineLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RoutineService_ServiceDesc is the grpc.ServiceDesc for RoutineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -749,7 +851,19 @@ var RoutineService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListRoutinesByUser",
 			Handler:    _RoutineService_ListRoutinesByUser_Handler,
 		},
+		{
+			MethodName: "MarkRoutineCompleted",
+			Handler:    _RoutineService_MarkRoutineCompleted_Handler,
+		},
+		{
+			MethodName: "UnmarkRoutineCompleted",
+			Handler:    _RoutineService_UnmarkRoutineCompleted_Handler,
+		},
+		{
+			MethodName: "GetRoutineLogs",
+			Handler:    _RoutineService_GetRoutineLogs_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/habit/v2/habit.proto",
+	Metadata: "proto/habit/v4/habit.proto",
 }

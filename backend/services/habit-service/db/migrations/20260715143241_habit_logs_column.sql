@@ -5,14 +5,9 @@ EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE habit_logs
 (
-    id           UUID PRIMARY KEY   DEFAULT gen_random_uuid(),
-    habit_id     UUID      NOT NULL,
-    completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_habit_logs_habit
-        FOREIGN KEY (habit_id)
-            REFERENCES habits (id)
-            ON DELETE CASCADE,
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    habit_id     UUID      NOT NULL REFERENCES habits (id) ON DELETE CASCADE,
+    completed_at TIMESTAMP NOT NULL,
 
     UNIQUE (habit_id, completed_at)
 );
