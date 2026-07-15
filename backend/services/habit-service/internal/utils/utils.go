@@ -48,3 +48,10 @@ func ToProtoLog(log db.GetHabitLogsRow) *pbHabit.HabitLog {
 		CompletedAt: timestamppb.New(log.CompletedAt),
 	}
 }
+
+func ToProtoRoutineLog(log db.GetRoutineLogsRow) *pbHabit.RoutineLog {
+	return &pbHabit.RoutineLog{
+		RoutineId:   log.RoutineID.String(),
+		CompletedAt: timestamppb.New(log.CompletedAt),
+	}
+}
