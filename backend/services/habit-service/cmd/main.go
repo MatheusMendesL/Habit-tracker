@@ -59,7 +59,7 @@ func startServer() {
 	defer conn.Close()
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
-	habitService := service.NewHabitService(HabitRepo, userServiceClient)
+	habitService := service.NewHabitService(HabitRepo, RoutineRepo, userServiceClient)
 	routineService := service.NewRoutineService(RoutineRepo, userServiceClient, habitService)
 	habitHandler := handler.NewHabitHandler(habitService, logger, userServiceClient)
 	RoutineHandler := handler.NewRoutineHandler(routineService, logger, userServiceClient)
