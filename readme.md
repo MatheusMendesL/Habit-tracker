@@ -6,7 +6,7 @@
 - Shared routines
 - Challenges
 - Achievements
-- XP & Level system
+- XP & Level system (internal progression)
 - Feed
 - Leaderboards
 - Group chat
@@ -14,6 +14,7 @@
 - Team dashboard
 - Custom achievements
 - Role & permission system
+- Required & optional habits
 - Calendar view
 - Recurring challenges
 - File attachments
