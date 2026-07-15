@@ -28,8 +28,14 @@ type HabitHandler struct {
 
 const defaultTimeout = 3 * time.Second
 
-func WithTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
-	return context.WithTimeout(ctx, defaultTimeout)
+func WithTimeout(ctx context.Context, customTimeout ...time.Duration) (context.Context, context.CancelFunc) {
+	timeout := defaultTimeout
+
+	if len(customTimeout) > 0 {
+		timeout = customTimeout[0]
+	}
+
+	return context.WithTimeout(ctx, timeout)
 }
 
 func ReceiveErrors(err error) error {
@@ -98,7 +104,7 @@ func NewHabitHandler(
 }
 
 func (s *HabitHandler) CreateHabit(ctx context.Context, req *pbHabit.CreateHabitRequest) (*pbHabit.CreateHabitResponse, error) {
-	ctx, cancel := WithTimeout(ctx)
+	ctx, cancel := WithTimeout(ctx, 7*time.Second)
 	defer cancel()
 
 	reqHabit := req.Habit
@@ -300,7 +306,7 @@ func (s *HabitHandler) DeleteHabit(ctx context.Context, req *pbHabit.DeleteHabit
 }
 
 func (s *HabitHandler) ListHabitsByUser(ctx context.Context, req *pbHabit.ListHabitsByUserRequest) (*pbHabit.ListHabitsByUserResponse, error) {
-	ctx, cancel := WithTimeout(ctx)
+	ctx, cancel := WithTimeout(ctx, 7*time.Second)
 	defer cancel()
 
 	userID, err := uuid.Parse(req.UserId)
