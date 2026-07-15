@@ -135,14 +135,14 @@ const getHabitLogs = `-- name: GetHabitLogs :many
 SELECT habit_id, completed_at
 FROM habit_logs
 WHERE habit_id = $1
-  AND completed_at BETWEEN $2 AND $3
+  AND completed_at BETWEEN $2::timestamp AND $3::timestamp
 ORDER BY completed_at DESC
 `
 
 type GetHabitLogsParams struct {
-	HabitID       uuid.UUID
-	CompletedAt   time.Time
-	CompletedAt_2 time.Time
+	HabitID   uuid.UUID
+	StartDate time.Time
+	EndDate   time.Time
 }
 
 type GetHabitLogsRow struct {
@@ -151,7 +151,7 @@ type GetHabitLogsRow struct {
 }
 
 func (q *Queries) GetHabitLogs(ctx context.Context, arg GetHabitLogsParams) ([]GetHabitLogsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getHabitLogs, arg.HabitID, arg.CompletedAt, arg.CompletedAt_2)
+	rows, err := q.db.QueryContext(ctx, getHabitLogs, arg.HabitID, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}
@@ -374,19 +374,18 @@ func (q *Queries) RemoveHabitFromRoutine(ctx context.Context, arg RemoveHabitFro
 }
 
 const unmarkHabitCompleted = `-- name: UnmarkHabitCompleted :exec
-DELETE
-FROM habit_logs
+DELETE FROM habit_logs
 WHERE habit_id = $1
-  AND DATE (completed_at) = DATE ($2)
+  AND DATE(completed_at) = DATE($2::timestamp)
 `
 
 type UnmarkHabitCompletedParams struct {
-	HabitID uuid.UUID
-	Date    interface{}
+	HabitID     uuid.UUID
+	CompletedAt time.Time
 }
 
 func (q *Queries) UnmarkHabitCompleted(ctx context.Context, arg UnmarkHabitCompletedParams) error {
-	_, err := q.db.ExecContext(ctx, unmarkHabitCompleted, arg.HabitID, arg.Date)
+	_, err := q.db.ExecContext(ctx, unmarkHabitCompleted, arg.HabitID, arg.CompletedAt)
 	return err
 }
 

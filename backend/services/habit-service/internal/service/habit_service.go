@@ -106,5 +106,33 @@ func (s *HabitService) ListHabitsByRoutine(ctx context.Context, routineID uuid.U
 		return []db.Habit{}, err
 	}
 
-	return s.repo.ListHabitsByUser(ctx, routineID)
+	return s.repo.ListHabitsByRoutine(ctx, routineID)
+}
+
+func (s *HabitService) MarkHabitCompleted(ctx context.Context, markHabit db.MarkHabitCompletedParams) error {
+	if markHabit.HabitID == uuid.Nil || markHabit.CompletedAt.IsZero() {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetHabitByID(ctx, markHabit.HabitID)
+
+	if err = ReturnError(err, AppErr.ErrHabitNotFound); err != nil {
+		return err
+	}
+
+	return s.repo.MarkHabitCompleted(ctx, markHabit)
+}
+
+func (s *HabitService) UnmarkHabitCompleted(ctx context.Context, unmarkHabit db.UnmarkHabitCompletedParams) error {
+	if unmarkHabit.HabitID == uuid.Nil || unmarkHabit.CompletedAt.IsZero() {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetHabitByID(ctx, unmarkHabit.HabitID)
+
+	if err = ReturnError(err, AppErr.ErrHabitNotFound); err != nil {
+		return err
+	}
+
+	return s.repo.UnmarkHabitCompleted(ctx, unmarkHabit)
 }

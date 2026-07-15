@@ -230,7 +230,7 @@ func (s *HabitHandler) EditHabit(ctx context.Context, req *pbHabit.EditHabitRequ
 	imgURL := ""
 	if HabitimgURL != nil {
 		params.ImageUrl = utils.ToNullString(*HabitimgURL)
-		desc = *HabitimgURL
+		imgURL = *HabitimgURL
 	}
 
 	habit, err := s.HabitService.EditHabit(ctx, params)
@@ -392,11 +392,95 @@ func (s *HabitHandler) ListHabitsByRoutine(ctx context.Context, req *pbHabit.Lis
 
 }
 
+func (s *HabitHandler) MarkHabitCompleted(ctx context.Context, req *pbHabit.MarkHabitCompletedRequest) (*pbHabit.MarkHabitCompletedResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, err := uuid.Parse(req.HabitId)
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var completedAt time.Time
+	if req.CompletedAt != nil {
+		completedAt = req.CompletedAt.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid completed_at date",
+			zap.Any("completedAt", req.CompletedAt),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.MarkHabitCompletedParams{
+		HabitID:     habitID,
+		CompletedAt: completedAt,
+	}
+
+	err = s.HabitService.MarkHabitCompleted(ctx, params)
+	if err != nil {
+		s.logger.Error("error to execute MarkHabitCompleted method",
+			zap.String("habit_id", habitID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("MarkHabitCompleted method was ok",
+		zap.String("habit_id", habitID.String()),
+	)
+
+	return &pbHabit.MarkHabitCompletedResponse{Success: true}, nil
+}
+
+func (s *HabitHandler) UnmarkHabitCompleted(ctx context.Context, req *pbHabit.UnmarkHabitCompletedRequest) (*pbHabit.UnmarkHabitCompletedResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	habitID, err := uuid.Parse(req.HabitId)
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var completedAt time.Time
+	if req.CompletedAt != nil {
+		completedAt = req.CompletedAt.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid completed_at date",
+			zap.Any("completedAt", req.CompletedAt),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.UnmarkHabitCompletedParams{
+		HabitID:     habitID,
+		CompletedAt: completedAt,
+	}
+
+	err = s.HabitService.UnmarkHabitCompleted(ctx, params)
+	if err != nil {
+		s.logger.Error("error to execute UnmarkHabitCompleted method",
+			zap.String("habit_id", habitID.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("UnmarkHabitCompleted method was ok",
+		zap.String("habit_id", habitID.String()),
+	)
+
+	return &pbHabit.UnmarkHabitCompletedResponse{Success: true}, nil
+}
+
 /*
 
 what to do in this order:
 
-MarkHabitCompleted
-UnmarkHabitCompleted
 GetHabitLogs
 */

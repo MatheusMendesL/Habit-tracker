@@ -73,9 +73,39 @@ func (r *HabitRepository) DeleteHabit(ctx context.Context, habitID uuid.UUID) er
 }
 
 func (r *HabitRepository) ListHabitsByUser(ctx context.Context, userID uuid.UUID) ([]db.Habit, error) {
-	return r.q.ListHabitsByUser(ctx, userID)
+	habits, err := r.q.ListHabitsByUser(ctx, userID)
+
+	if err != nil {
+		return []db.Habit{}, err
+	}
+
+	return habits, nil
 }
 
 func (r *HabitRepository) ListHabitsByRoutine(ctx context.Context, routineID uuid.UUID) ([]db.Habit, error) {
-	return r.q.ListHabitsByRoutine(ctx, routineID)
+	habits, err := r.q.ListHabitsByRoutine(ctx, routineID)
+
+	if err != nil {
+		return []db.Habit{}, err
+	}
+
+	return habits, nil
+}
+
+func (r *HabitRepository) MarkHabitCompleted(ctx context.Context, req db.MarkHabitCompletedParams) error {
+	return r.q.MarkHabitCompleted(ctx, req)
+}
+
+func (r *HabitRepository) UnmarkHabitCompleted(ctx context.Context, req db.UnmarkHabitCompletedParams) error {
+	return r.q.UnmarkHabitCompleted(ctx, req)
+}
+
+func (r *HabitRepository) GetHabitsLog(ctx context.Context, req db.GetHabitLogsParams) ([]db.GetHabitLogsRow, error) {
+	logs, err := r.q.GetHabitLogs(ctx, req)
+
+	if err != nil {
+		return []db.GetHabitLogsRow{}, err
+	}
+
+	return logs, nil
 }
