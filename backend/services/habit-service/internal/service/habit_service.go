@@ -136,3 +136,16 @@ func (s *HabitService) UnmarkHabitCompleted(ctx context.Context, unmarkHabit db.
 
 	return s.repo.UnmarkHabitCompleted(ctx, unmarkHabit)
 }
+
+func (s *HabitService) GetHabitLogs(ctx context.Context, arg db.GetHabitLogsParams) ([]db.GetHabitLogsRow, error) {
+	if arg.HabitID == uuid.Nil || arg.StartDate.IsZero() || arg.EndDate.IsZero() {
+		return []db.GetHabitLogsRow{}, AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetHabitByID(ctx, arg.HabitID)
+	if err = ReturnError(err, AppErr.ErrHabitNotFound); err != nil {
+		return []db.GetHabitLogsRow{}, err
+	}
+
+	return s.repo.GetHabitsLog(ctx, arg)
+}

@@ -484,9 +484,67 @@ func (s *HabitHandler) UnmarkHabitCompleted(ctx context.Context, req *pbHabit.Un
 	return &pbHabit.UnmarkHabitCompletedResponse{Success: true}, nil
 }
 
-/*
+func (s *HabitHandler) GetHabitLogs(ctx context.Context, req *pbHabit.GetHabitLogsRequest) (*pbHabit.GetHabitLogsResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
 
-what to do in this order:
+	habitID, err := uuid.Parse(req.HabitId)
+	if err != nil {
+		s.logger.Warn("invalid habit id",
+			zap.String("habit_id", req.HabitId),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
 
-GetHabitLogs
-*/
+	var startDate time.Time
+	if req.StartDate != nil {
+		startDate = req.StartDate.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid started_at date",
+			zap.Any("startDate", req.StartDate),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	var endDate time.Time
+	if req.EndDate != nil {
+		endDate = req.EndDate.AsTime().UTC()
+	} else {
+		s.logger.Warn("invalid ended_at date",
+			zap.Any("endedDate", req.EndDate),
+		)
+		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+	}
+
+	params := db.GetHabitLogsParams{
+		HabitID:   habitID,
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	dbLogs, err := s.HabitService.GetHabitLogs(ctx, params)
+
+	if err != nil {
+		s.logger.Error("error to execute GetHabitLogs method",
+			zap.String("habit_id", habitID.String()),
+			zap.Any("startDate", req.StartDate),
+			zap.Any("endedDate", req.EndDate),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	pbLogs := make([]*pbHabit.HabitLog, 0, len(dbLogs))
+
+	for _, l := range dbLogs {
+		pbLogs = append(pbLogs, utils.ToProtoLog(l))
+	}
+
+	s.logger.Info("GetHabitLogs method was ok",
+		zap.String("habit_id", habitID.String()),
+		zap.Any("startDate", req.StartDate),
+		zap.Any("endedDate", req.EndDate),
+	)
+
+	return &pbHabit.GetHabitLogsResponse{Logs: pbLogs}, nil
+}
