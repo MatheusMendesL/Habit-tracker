@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package stats;
+
+option go_package = "pb/stats";
+
+import "google/protobuf/timestamp.proto";
+
+message UserStats {
+  string user_id = 1;
+
+  int32 completed_habits = 2;
+  int32 completed_routines = 3;
+
+  int32 current_habit_streak = 4;
+  int32 longest_habit_streak = 5;
+
+  int32 current_routine_streak = 6;
+  int32 longest_routine_streak = 7;
+
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message CreateUserStatsRequest {
+  string user_id = 1;
+}
+
+message CreateUserStatsResponse {
+  UserStats stats = 1;
+}
+
+message GetUserStatsRequest {
+  string user_id = 1;
+}
+
+message GetUserStatsResponse {
+  UserStats stats = 1;
+}
+
+message DeleteUserStatsRequest {
+  string user_id = 1;
+}
+
+message DeleteUserStatsResponse {
+  bool success = 1;
+}
+
+message RegisterHabitCompletionRequest {
+  string user_id = 1;
+  string habit_id = 2;
+  google.protobuf.Timestamp completed_at = 3;
+}
+
+message RegisterHabitCompletionResponse {
+  bool success = 1;
+}
+
+message UndoHabitCompletionRequest {
+  string user_id = 1;
+  string habit_id = 2;
+  google.protobuf.Timestamp completed_at = 3;
+}
+
+message UndoHabitCompletionResponse {
+  bool success = 1;
+}
+
+message RegisterRoutineCompletionRequest {
+  string user_id = 1;
+  string routine_id = 2;
+  google.protobuf.Timestamp completed_at = 3;
+}
+
+message RegisterRoutineCompletionResponse {
+  bool success = 1;
+}
+
+message UndoRoutineCompletionRequest {
+  string user_id = 1;
+  string routine_id = 2;
+  google.protobuf.Timestamp completed_at = 3;
+}
+
+message UndoRoutineCompletionResponse {
+  bool success = 1;
+}
+
+service StatsService {
+  rpc CreateUserStats(CreateUserStatsRequest)
+      returns (CreateUserStatsResponse);
+
+  rpc GetUserStats(GetUserStatsRequest)
+      returns (GetUserStatsResponse);
+
+  rpc DeleteUserStats(DeleteUserStatsRequest)
+      returns (DeleteUserStatsResponse);
+
+  rpc RegisterHabitCompletion(RegisterHabitCompletionRequest)
+      returns (RegisterHabitCompletionResponse);
+
+  rpc UndoHabitCompletion(UndoHabitCompletionRequest)
+      returns (UndoHabitCompletionResponse);
+
+  rpc RegisterRoutineCompletion(RegisterRoutineCompletionRequest)
+      returns (RegisterRoutineCompletionResponse);
+
+  rpc UndoRoutineCompletion(UndoRoutineCompletionRequest)
+      returns (UndoRoutineCompletionResponse);
+}

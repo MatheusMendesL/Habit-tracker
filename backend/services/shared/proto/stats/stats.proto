@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package stats;
-
-option go_package = "pb/stats";
-
-import "google/protobuf/timestamp.proto";
