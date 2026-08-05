@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserStat struct {
+type UserStats struct {
 	UserID               uuid.UUID
 	CompletedHabits      int32
 	CompletedRoutines    int32

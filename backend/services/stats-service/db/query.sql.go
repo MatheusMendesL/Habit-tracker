@@ -15,10 +15,9 @@ const createUserStats = `-- name: CreateUserStats :one
 INSERT INTO user_stats(user_id)
 VALUES ($1) RETURNING user_id, completed_habits, completed_routines, current_habit_streak, longest_habit_streak, current_routine_streak, longest_routine_streak, created_at, updated_at
 `
-
-func (q *Queries) CreateUserStats(ctx context.Context, userID uuid.UUID) (UserStat, error) {
+func (q *Queries) CreateUserStats(ctx context.Context, userID uuid.UUID) (UserStats, error) {
 	row := q.db.QueryRowContext(ctx, createUserStats, userID)
-	var i UserStat
+	var i UserStats
 	err := row.Scan(
 		&i.UserID,
 		&i.CompletedHabits,
@@ -73,9 +72,9 @@ SELECT user_id, completed_habits, completed_routines, current_habit_streak, long
 WHERE user_id = $1
 `
 
-func (q *Queries) GetUserStats(ctx context.Context, userID uuid.UUID) (UserStat, error) {
+func (q *Queries) GetUserStats(ctx context.Context, userID uuid.UUID) (UserStats, error) {
 	row := q.db.QueryRowContext(ctx, getUserStats, userID)
-	var i UserStat
+	var i UserStats
 	err := row.Scan(
 		&i.UserID,
 		&i.CompletedHabits,
