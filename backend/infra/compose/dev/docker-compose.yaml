@@ -69,6 +69,23 @@ services:
     depends_on:
       - user-service
 
+  stats-service:
+    env_file:
+      - ../../../services/stats-service/.env
+    
+    build:
+      context: ../../../services/stats-service
+      dockerfile: Dockerfile.dev
+    
+    volumes:
+      - ../../../services/stats-service:/app
+    
+    ports:
+      - "8082:8082"
+    
+    depends_on:
+      - habit-service
+      - user-service
   # por os serviços que faltam dps aqui e no nginx
 
   nginx:
@@ -83,3 +100,4 @@ services:
       - user-service
       - social-service
       - habit-service
+      - stats-service

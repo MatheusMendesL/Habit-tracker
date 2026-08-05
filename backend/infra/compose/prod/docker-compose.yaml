@@ -46,6 +46,20 @@ services:
 
     depends_on:
       - user-service
+    
+  stats-service:
+    restart: unless-stopped
+    env_file:
+      - ../../../services/stats-service/.env
+
+    build:
+      context: ../../../
+      dockerfile: services/stats-service/Dockerfile
+
+    depends_on:
+      - user-service
+      - habit-service
+
 
   nginx:
     build:
@@ -61,3 +75,4 @@ services:
       - user-service
       - social-service
       - habit-service
+      - stats-service
