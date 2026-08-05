@@ -56,11 +56,6 @@ services:
       context: ../../../
       dockerfile: services/stats-service/Dockerfile
 
-    depends_on:
-      - user-service
-      - habit-service
-
-
   nginx:
     build:
       context: ../../nginx
