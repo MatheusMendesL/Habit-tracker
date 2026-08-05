@@ -9,8 +9,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// add o sqlc pro queries funcionar
-
 func Conn() (*sql.DB, *Queries, error) {
 	_ = godotenv.Load()
 

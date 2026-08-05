@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE user_stats
 (
     user_id                UUID PRIMARY KEY,
@@ -9,4 +10,7 @@ CREATE TABLE user_stats
     longest_routine_streak INTEGER     NOT NULL DEFAULT 0,
     created_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
-)
+);
+
+-- +goose Down
+DROP TABLE IF EXISTS user_stats;
