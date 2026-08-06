@@ -1,3 +1,9 @@
 package main
 
-func main() {}
+func main() {
+	startServer()
+}
+
+func startServer() {
+
+}
