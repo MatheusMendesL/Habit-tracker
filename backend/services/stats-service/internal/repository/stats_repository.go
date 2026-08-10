@@ -11,7 +11,7 @@ type StatsRepository struct {
 	q *db.Queries
 }
 
-func NewSocialRepository(q *db.Queries) *StatsRepository {
+func NewStatsRepository(q *db.Queries) *StatsRepository {
 	return &StatsRepository{q: q}
 }
 
