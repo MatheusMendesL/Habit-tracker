@@ -1,6 +1,6 @@
 # Habit Tracker
 
-[🇧🇷 Leia em português](readme.pt-BR.md)
+[🇧🇷 Leia em português](README.pt-BR.md)
 
 A scalable habit and routine management platform built with Go and a microservices architecture.
 
