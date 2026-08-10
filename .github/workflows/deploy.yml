@@ -1,0 +1,30 @@
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+
+# Add the secrets in the GitHub repository
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy na Oracle Cloud
+        uses: appleboy/ssh-action@v1.2.2
+
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+
+          script: |
+            cd ~/habit-tracker
+
+            git pull origin main
+
+            docker compose -f backend/infra/compose/prod/docker-compose.yaml down
+
+            docker compose -f backend/infra/compose/prod/docker-compose.yaml up -d --build
