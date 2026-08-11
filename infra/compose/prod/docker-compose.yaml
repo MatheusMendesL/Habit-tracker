@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  auth-service:
+  restart: unless-stopped
+
+  build:
+    context: ${ROUTE_DOCKER}/auth-service
+    dockerfile: Dockerfile
+
+  env_file:
+    - ${ROUTE_SERVICES}/auth-service/.env
+
+  depends_on:
+    - redis
+
+  user-service:
+    restart: unless-stopped
+
+    env_file:
+      - ${ROUTE_DOCKER}/user-service/.env
+
+    build:
+      context: ${ROUTE_DOCKER}
+      dockerfile: user-service/Dockerfile
+
+  social-service:
+    restart: unless-stopped
+
+    env_file:
+      - ${ROUTE_DOCKER}/social-service/.env
+
+    build:
+      context: ${ROUTE_DOCKER}
+      dockerfile: social-service/Dockerfile
+
+    depends_on:
+      - user-service
+
+  habit-service:
+    restart: unless-stopped
+
+    env_file:
+      - ${ROUTE_DOCKER}/habit-service/.env
+
+    build:
+      context: ${ROUTE_DOCKER}
+      dockerfile: habit-service/Dockerfile
+
+    depends_on:
+      - user-service
+
+  stats-service:
+    restart: unless-stopped
+
+    env_file:
+      - ${ROUTE_DOCKER}/stats-service/.env
+
+    build:
+      context: ${ROUTE_DOCKER}
+      dockerfile: stats-service/Dockerfile
+
+    depends_on:
+      - habit-service
+      - user-service
+
+  nginx:
+    restart: unless-stopped
+
+    build:
+      context: ../../nginx
+      dockerfile: Dockerfile
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - auth-service
+      - user-service
+      - social-service
+      - habit-service
+      - stats-service

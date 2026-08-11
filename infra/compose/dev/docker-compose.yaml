@@ -6,14 +6,14 @@ services:
 
   auth-service:
     build:
-      context: ../../../auth-services-node
+      context: ${ROUTE_DOCKER}/auth-service
       dockerfile: Dockerfile
 
     env_file:
-      - ../../../auth-services-node/.env
+      - ${ROUTE_DOCKER}/auth-service/.env
 
     volumes:
-      - ../../../auth-services-node:/app
+      - ${ROUTE_DOCKER}/auth-service:/app
       - /app/node_modules
 
     ports:
@@ -23,28 +23,29 @@ services:
       - redis
 
   user-service:
-    env_file:
-      - ../../../services/user-service/.env
     build:
-      context: ../../../services/user-service
+      context: ${ROUTE_DOCKER}/user-service
       dockerfile: Dockerfile.dev
 
+    env_file:
+      - ${ROUTE_DOCKER}/user-service/.env
+
     volumes:
-      - ../../../services/user-service:/app
+      - ${ROUTE_DOCKER}/user-service:/app
 
     ports:
       - "8080:8080"
 
   social-service:
-    env_file:
-      - ../../../services/social-service/.env
-
     build:
-      context: ../../../services/social-service
+      context: ${ROUTE_DOCKER}/social-service
       dockerfile: Dockerfile.dev
 
+    env_file:
+      - ${ROUTE_DOCKER}/social-service/.env
+
     volumes:
-      - ../../../services/social-service:/app
+      - ${ROUTE_DOCKER}/social-service:/app
 
     ports:
       - "8081:8081"
@@ -53,15 +54,15 @@ services:
       - user-service
 
   habit-service:
-    env_file:
-      - ../../../services/habit-service/.env
-
     build:
-      context: ../../../services/habit-service
+      context: ${ROUTE_DOCKER}/habit-service
       dockerfile: Dockerfile.dev
 
+    env_file:
+      - ${ROUTE_DOCKER}/habit-service/.env
+
     volumes:
-      - ../../../services/habit-service:/app
+      - ${ROUTE_DOCKER}/habit-service:/app
 
     ports:
       - "8082:8082"
@@ -70,27 +71,27 @@ services:
       - user-service
 
   stats-service:
-    env_file:
-      - ../../../services/stats-service/.env
-    
     build:
-      context: ../../../services/stats-service
+      context: ${ROUTE_DOCKER}/stats-service
       dockerfile: Dockerfile.dev
-    
+
+    env_file:
+      - ${ROUTE_DOCKER}/stats-service/.env
+
     volumes:
-      - ../../../services/stats-service:/app
-    
+      - ${ROUTE_DOCKER}/stats-service:/app
+
     ports:
-      - "8082:8082"
-    
+      - "8083:8083"
+
     depends_on:
       - habit-service
       - user-service
-  # por os serviços que faltam dps aqui e no nginx
 
   nginx:
     build:
       context: ../../nginx
+      dockerfile: Dockerfile
 
     ports:
       - "80:80"
