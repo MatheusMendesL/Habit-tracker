@@ -1,12 +1,20 @@
 package handler
 
 import (
+	"context"
+	"database/sql"
+	"errors"
 	pbUser "shared/pb/user"
+	AppErr "stats-service/internal/errors"
 	"stats-service/internal/service"
+	"time"
 
 	pbStats "shared/pb/stats"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type StatsHandler struct {
@@ -26,4 +34,92 @@ func NewStatsHandler(
 		logger:            logger,
 		UserServiceClient: userClient,
 	}
+}
+
+const defaultTimeout = 3 * time.Second
+
+func WithTimeout(ctx context.Context, customTimeout ...time.Duration) (context.Context, context.CancelFunc) {
+	timeout := defaultTimeout
+
+	if len(customTimeout) > 0 {
+		timeout = customTimeout[0]
+	}
+
+	return context.WithTimeout(ctx, timeout)
+}
+
+func (s *StatsHandler) Verification(val any, name string, nameVal string) error {
+	switch v := val.(type) {
+	case string:
+		if v == "" {
+			s.logger.Warn("invalid "+name,
+				zap.String(nameVal, v),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	case int32:
+		if v <= 0 {
+			s.logger.Warn("invalid "+name,
+				zap.Int32(nameVal, v),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	case uuid.UUID:
+		if v == uuid.Nil {
+			s.logger.Warn("invalid "+name,
+				zap.String(nameVal, v.String()),
+			)
+			return status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
+		}
+	}
+
+	return nil
+}
+
+func ReceiveErrors(err error) error {
+	switch {
+	case errors.Is(err, AppErr.ErrInvalidArgument):
+		return status.Error(codes.InvalidArgument, err.Error())
+
+	case errors.Is(err, AppErr.ErrNullField):
+		return status.Error(codes.InvalidArgument, err.Error())
+
+	case errors.Is(err, AppErr.ErrUserNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, AppErr.ErrRoutineNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, AppErr.ErrHabitNotFound):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, sql.ErrNoRows):
+		return status.Error(codes.NotFound, err.Error())
+
+	default:
+		return status.Error(codes.Internal, err.Error())
+	}
+}
+
+func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserStatsRequest) (*pbStats.CreateUserStatsResponse, error){
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	idUser := req.UserId
+
+	if err := s.Verification(idUser, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+
+	userIDnew, err := uuid.Parse(idUser)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("user_id", userIDnew),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	return &pbStats.CreateUserStatsResponse{}, nil
 }
