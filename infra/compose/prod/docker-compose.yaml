@@ -6,37 +6,37 @@ services:
     restart: unless-stopped
 
   auth-service:
-  restart: unless-stopped
+    restart: unless-stopped
 
-  build:
-    context: ${ROUTE_DOCKER}/auth-service
-    dockerfile: Dockerfile
+    build:
+      context: ${ROUTE_DOCKER}/auth-service
+      dockerfile: Dockerfile
 
-  env_file:
-    - ${ROUTE_SERVICES}/auth-service/.env
+    env_file:
+      - ${ROUTE_DOCKER}/auth-service/.env
 
-  depends_on:
-    - redis
+    depends_on:
+      - redis
 
   user-service:
     restart: unless-stopped
 
+    build:
+      context: ${ROUTE_ROOT}
+      dockerfile: backend/services/user-service/Dockerfile
+
     env_file:
       - ${ROUTE_DOCKER}/user-service/.env
-
-    build:
-      context: ${ROUTE_DOCKER}
-      dockerfile: user-service/Dockerfile
 
   social-service:
     restart: unless-stopped
 
+    build:
+      context: ${ROUTE_ROOT}
+      dockerfile: backend/services/social-service/Dockerfile
+
     env_file:
       - ${ROUTE_DOCKER}/social-service/.env
-
-    build:
-      context: ${ROUTE_DOCKER}
-      dockerfile: social-service/Dockerfile
 
     depends_on:
       - user-service
@@ -44,12 +44,12 @@ services:
   habit-service:
     restart: unless-stopped
 
+    build:
+      context: ${ROUTE_ROOT}
+      dockerfile: backend/services/habit-service/Dockerfile
+
     env_file:
       - ${ROUTE_DOCKER}/habit-service/.env
-
-    build:
-      context: ${ROUTE_DOCKER}
-      dockerfile: habit-service/Dockerfile
 
     depends_on:
       - user-service
@@ -57,12 +57,12 @@ services:
   stats-service:
     restart: unless-stopped
 
+    build:
+      context: ${ROUTE_ROOT}
+      dockerfile: backend/services/stats-service/Dockerfile
+
     env_file:
       - ${ROUTE_DOCKER}/stats-service/.env
-
-    build:
-      context: ${ROUTE_DOCKER}
-      dockerfile: stats-service/Dockerfile
 
     depends_on:
       - habit-service
