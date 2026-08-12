@@ -7,6 +7,7 @@ import (
 	pbUser "shared/pb/user"
 	AppErr "stats-service/internal/errors"
 	"stats-service/internal/service"
+	"stats-service/internal/utils"
 	"time"
 
 	pbStats "shared/pb/stats"
@@ -101,7 +102,7 @@ func ReceiveErrors(err error) error {
 	}
 }
 
-func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserStatsRequest) (*pbStats.CreateUserStatsResponse, error){
+func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserStatsRequest) (*pbStats.CreateUserStatsResponse, error) {
 	ctx, cancel := WithTimeout(ctx)
 	defer cancel()
 
@@ -121,5 +122,17 @@ func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserS
 		return nil, ReceiveErrors(err)
 	}
 
-	return &pbStats.CreateUserStatsResponse{}, nil
+	userStats, err := s.StatsService.CreateUserStats(ctx, userIDnew)
+
+	if err != nil {
+		s.logger.Error("error to execute CreateStats method",
+			zap.String("userid", userIDnew.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	return &pbStats.CreateUserStatsResponse{
+		Stats: utils.ToProtoStats(userStats),
+	}, nil
 }
