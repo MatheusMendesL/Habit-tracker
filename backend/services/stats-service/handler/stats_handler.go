@@ -88,10 +88,7 @@ func ReceiveErrors(err error) error {
 	case errors.Is(err, AppErr.ErrUserNotFound):
 		return status.Error(codes.NotFound, err.Error())
 
-	case errors.Is(err, AppErr.ErrRoutineNotFound):
-		return status.Error(codes.NotFound, err.Error())
-
-	case errors.Is(err, AppErr.ErrHabitNotFound):
+	case errors.Is(err, AppErr.ErrUserStatsNotFound):
 		return status.Error(codes.NotFound, err.Error())
 
 	case errors.Is(err, sql.ErrNoRows):
@@ -102,17 +99,11 @@ func ReceiveErrors(err error) error {
 	}
 }
 
-func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserStatsRequest) (*pbStats.CreateUserStatsResponse, error) {
-	ctx, cancel := WithTimeout(ctx)
+func (s *StatsHandler) CreateUserStats(ctx context.Context, req *pbStats.CreateUserStatsRequest) (*pbStats.CreateUserStatsResponse, error) {
+	ctx, cancel := WithTimeout(ctx, 7*time.Second)
 	defer cancel()
 
-	idUser := req.UserId
-
-	if err := s.Verification(idUser, "user id", "user_id"); err != nil {
-		return nil, err
-	}
-
-	userIDnew, err := uuid.Parse(idUser)
+	userIDnew, err := uuid.Parse(req.UserId)
 
 	if err != nil {
 		s.logger.Error("error to transform to uuid",
@@ -120,6 +111,12 @@ func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserS
 			zap.Error(err),
 		)
 		return nil, ReceiveErrors(err)
+	}
+
+	idUser := req.UserId
+
+	if err := s.Verification(idUser, "user id", "user_id"); err != nil {
+		return nil, err
 	}
 
 	userStats, err := s.StatsService.CreateUserStats(ctx, userIDnew)
@@ -132,7 +129,86 @@ func (s *StatsHandler) CreateStats(ctx context.Context, req *pbStats.CreateUserS
 		return nil, ReceiveErrors(err)
 	}
 
+	s.logger.Info("CreateUserStats method was ok",
+		zap.String("user_id", userIDnew.String()),
+	)
+
 	return &pbStats.CreateUserStatsResponse{
 		Stats: utils.ToProtoStats(userStats),
 	}, nil
+}
+
+func (s *StatsHandler) GetUserStats(ctx context.Context, req *pbStats.GetUserStatsRequest) (*pbStats.GetUserStatsResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("user_id", userIDnew),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	idUser := req.UserId
+
+	if err := s.Verification(idUser, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+
+	userStats, err := s.StatsService.GetUserStats(ctx, userIDnew)
+
+	if err != nil {
+		s.logger.Error("error to execute GetUserStats method",
+			zap.String("user_id", userIDnew.String()),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("GetUserStats method was ok",
+		zap.String("user_id", userIDnew.String()),
+	)
+
+	return &pbStats.GetUserStatsResponse{Stats: utils.ToProtoStats(userStats)}, nil
+}
+
+func (s *StatsHandler) DeleteUserStats(ctx context.Context, req *pbStats.DeleteUserStatsRequest) (*pbStats.DeleteUserStatsResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+
+	if err != nil {
+		s.logger.Error("error to transform to uuid",
+			zap.Any("user_id", userIDnew),
+			zap.Error(err),
+		)
+		return nil, ReceiveErrors(err)
+	}
+
+	idUser := req.UserId
+
+	if err := s.Verification(idUser, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+
+	err = s.StatsService.DeleteUserStats(ctx, userIDnew)
+
+	if err != nil {
+		s.logger.Error("error to execute DeleteUserStats method",
+			zap.String("user_id", userIDnew.String()),
+			zap.Error(err),
+		)
+	}
+
+	s.logger.Info("DeleteUserStats method was ok",
+		zap.String("user_id", userIDnew.String()),
+	)
+
+	return &pbStats.DeleteUserStatsResponse{
+		Success: false,
+	}, ReceiveErrors(err)
 }

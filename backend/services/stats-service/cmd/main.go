@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"os"
+	pbHabit "shared/pb/habit"
 	pb "shared/pb/stats"
 	pbUser "shared/pb/user"
 	"stats-service/db"
@@ -58,7 +59,8 @@ func startServer() {
 	defer conn.Close()
 
 	userServiceClient := pbUser.NewUserServiceClient(conn)
-	statsService := service.NewStatsService(statsRepo, userServiceClient)
+	habitServiceClient := pbHabit.NewHabitServiceClient(conn)
+	statsService := service.NewStatsService(statsRepo, userServiceClient, habitServiceClient)
 	statsHandler := handler.NewStatsHandler(statsService, logger, userServiceClient)
 
 	/*tlsCredentials, err := loadTLCredentials()
