@@ -212,3 +212,43 @@ func (s *StatsHandler) DeleteUserStats(ctx context.Context, req *pbStats.DeleteU
 		Success: false,
 	}, ReceiveErrors(err)
 }
+
+func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats.RegisterHabitCompletionRequest) (*pbStats.RegisterHabitCompletionResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+	if err != nil {
+		s.logger.Error("error to transform to uuid", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	if err := s.Verification(req.UserId, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+	if err := s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	var completedAt time.Time
+	if req.CompletedAt != nil {
+		completedAt = req.CompletedAt.AsTime()
+	} else {
+		completedAt = time.Now()
+	}
+
+	err = s.StatsService.RegisterHabitCompletion(ctx, userIDnew, req.HabitId, completedAt)
+	if err != nil {
+		s.logger.Error("error to execute RegisterHabitCompletion method", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("RegisterHabitCompletion method was ok",
+		zap.String("user_id", userIDnew.String()),
+		zap.String("habit_id", req.HabitId),
+	)
+
+	return &pbStats.RegisterHabitCompletionResponse{
+		Success: true,
+	}, nil
+}

@@ -8,6 +8,7 @@ import (
 	"stats-service/db"
 	AppErr "stats-service/internal/errors"
 	"stats-service/internal/repository"
+	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -79,4 +80,20 @@ func (s *StatsService) DeleteUserStats(ctx context.Context, userID uuid.UUID) er
 	}
 
 	return s.repo.DeleteUserStats(ctx, userID)
+}
+
+func (s *StatsService) RegisterHabitCompletion(ctx context.Context, userID uuid.UUID, habitID string, completedAt time.Time) error {
+	if userID == uuid.Nil || habitID == "" {
+		return AppErr.ErrInvalidArgument
+	}
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return AppErr.ErrUserNotFound
+		}
+		return err
+	}
+
+	return s.repo.RegisterHabitCompletion(ctx, userID)
 }
