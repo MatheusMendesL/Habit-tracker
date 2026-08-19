@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"user-service/db"
+	AppErr "user-service/internal/errors"
 
 	"github.com/google/uuid"
 )
@@ -26,6 +28,9 @@ func ToNullString(param string) sql.NullString {
 func (r *UserRepository) FindByID(ctx context.Context, id uuid.UUID) (*db.User, error) {
 	row, err := r.q.GetUserByID(ctx, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, AppErr.ErrUserNotFound
+		}
 		return nil, err
 	}
 
