@@ -1,38 +1,72 @@
-const jwt = require("jsonwebtoken");
-const redis = require("../config/redis"); 
+const authService = require("../internal/service/auth_service");
+const { response } = require("../utils/functions");
 
-async function refresh(req, res) {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(401).json({ message: "Refresh token ausente" });
-  }
-
+async function signup(req, res) {
   try {
-    const payload = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET
+    const result = await authService.signup(req.body);
+    return res.status(201).json(
+      response("success", "Usuario criado com sucesso", null, 1, {
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      })
     );
-
-    const userId = payload.id;
-
-    const savedRefresh = await redis.get(`refresh:user:${userId}`);
-
-    if (!savedRefresh || savedRefresh !== refreshToken) {
-      return res.status(403).json({ message: "Refresh inválido" });
-    }
-
-    const newAccessToken = jwt.sign(
-      { id: userId },
-      process.env.JWT_SECRET,
-      { expiresIn: "30m" }
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
     );
-
-    return res.json({ accessToken: newAccessToken });
-
-  } catch (err) {
-    return res.status(403).json({ message: "Refresh inválido" });
   }
 }
 
-module.exports = { refresh };
+async function login(req, res) {
+  try {
+    const result = await authService.login(req.body);
+    return res.json(
+      response("success", "Login realizado", null, 1, {
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      })
+    );
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
+    );
+  }
+}
+
+async function logout(req, res) {
+  try {
+    const userId = req.userId;
+    await authService.revokeRefreshToken(userId);
+    return res.json(response("success", "Logout realizado", null, 1, null));
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
+    );
+  }
+}
+
+async function refresh(req, res) {
+  try {
+    const { refreshToken } = req.body;
+    const result = await authService.refreshAccessToken(refreshToken);
+    return res.json(response("success", "Token renovado", null, 1, result));
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
+    );
+  }
+}
+
+async function getUserData(req, res) {
+  return res.json(response("success", "Usuario autenticado", null, 1, { id: req.userId }));
+}
+
+module.exports = {
+  signup,
+  login,
+  logout,
+  refresh,
+  getUserData,
+};

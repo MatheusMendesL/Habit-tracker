@@ -1,185 +1,37 @@
-const functionsModel = require("../models/user_model")
-const { response, comparePass } = require("../utils/functions");
-const AuthService = require("../services/auth_service");
-const jwt = require("jsonwebtoken");
+const userRepository = require("../internal/repository/user_repository");
+const { response } = require("../utils/functions");
 
-async function signup(req, res) {
-    const { name, email, tel, password } = req.body
-
-    const data_signup = {
-        name,
-        email,
-        tel,
-        password,
-    };
-
-    try {
-        const searchEmail = await functionsModel.findByEmail(email);
-
-        if (searchEmail.data.length > 0) {
-            return res.status(401).json(
-                response("error", "This email already exists", null, 0, null)
-            );
-        }
-
-        const { query_sql, affectedRows, data, insertId } =
-            await functionsModel.signup(data_signup);
-
-        if (!insertId)
-            return res
-                .status(500)
-                .json({ status: "error", message: "Erro ao criar usuário" });
-
-        const accessToken = jwt.sign(
-            { id: insertId },
-            process.env.JWT_SECRET,
-            { expiresIn: "30m" }
-        );
-
-        const refreshToken = jwt.sign(
-            { id: insertId },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        await AuthService.signup({
-            id: insertId,
-            refreshToken
-        });
-
-        res.json(
-            response("success", "User added successfully", query_sql, affectedRows, {
-                data,
-                insertId,
-                accessToken,
-                refreshToken
-            })
-        )
-
-    } catch (error) {
-        res.status(500).json(
-            response("error", error.message, null, 0, null)
-        );
-    }
-}
-
-async function login(req, res) {
-    try {
-        const { email, password } = req.body;
-
-        const user = await functionsModel.findByEmail(email);
-        if (!user || user.data.length === 0) {
-            return res.status(401).json(
-                response("error", "Credenciais inválidas", null, 0, null)
-            );
-        }
-
-        const user_data = user.data[0];
-
-        const valid = await comparePass(password, user_data.password);
-        if (!valid) {
-            return res.status(401).json(
-                response("error", "Credenciais inválidas", null, 0, null)
-            );
-        }
-
-        const id = user_data.id
-        const accessToken = jwt.sign(
-            { id: id },
-            process.env.JWT_SECRET,
-            { expiresIn: "30m" }
-        );
-
-        const refreshToken = jwt.sign(
-            { id: id },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        await AuthService.login({
-            id: id,
-            refreshToken
-        });
-
-        res.json(
-            response("success", "Login realizado", null, 1, {
-                user_data,
-                accessToken,
-                refreshToken
-            })
-        );
-
-    } catch (error) {
-        res.status(500).json(
-            response("error", error.message, null, 0, null)
-        );
-    }
-}
-
-async function get_user_data(req, res) {
+async function getUserData(req, res) {
+  try {
     const userId = req.userId;
+    const result = await userRepository.getUserById(userId);
 
-    try {
-        const { query_sql, affectedRows, data } =
-            await functionsModel.get_user_data(userId);
-        res.json(
-            response(
-                "success",
-                "Got user data successfully",
-                query_sql,
-                affectedRows,
-                data
-            )
-        )
-    } catch (error) {
-        res.status(500).json(
-            response("error", error.message, null, 0, null)
-        )
-    }
+    return res.json(
+      response("success", "Usuario encontrado", null, result.affectedRows, result.data)
+    );
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
+    );
+  }
 }
 
-async function logout(req, res) {
-    try {
-        const userId = req.userId;
-        await AuthService.logout(userId);
-
-        res.json(
-            response("success", "Logout realizado", userId, 1, null)
-        );
-    } catch (error) {
-        res.status(500).json(
-            response("error", error.message, null, 0, null)
-        );
-    }
-}
-
-async function get_user_data_test(req, res) {
+async function getUserDataById(req, res) {
+  try {
     const userId = req.params.id;
+    const result = await userRepository.getUserById(userId);
 
-    try {
-        const { query_sql, affectedRows, data } =
-            await functionsModel.get_user_data(userId);
-
-        res.json(
-            response(
-                "success",
-                "Got user data successfully",
-                query_sql,
-                affectedRows,
-                data
-            )
-        );
-    } catch (error) {
-        res.status(500).json(
-            response("error", error.message, null, 0, null)
-        );
-    }
+    return res.json(
+      response("success", "Usuario encontrado", null, result.affectedRows, result.data)
+    );
+  } catch (error) {
+    return res.status(error.status || 500).json(
+      response("error", error.message, null, 0, null)
+    );
+  }
 }
 
 module.exports = {
-    login,
-    signup,
-    get_user_data,
-    logout,
-    get_user_data_test
-}
+  getUserData,
+  getUserDataById,
+};
