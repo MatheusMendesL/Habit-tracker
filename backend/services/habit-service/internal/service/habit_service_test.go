@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"habit-service/db"
+	AppErr "habit-service/internal/errors"
 	"habit-service/internal/repository"
 	"regexp"
 	pbUser "shared/pb/user"
@@ -90,4 +93,136 @@ func TestHabitService_GetHabitByID(t *testing.T) {
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatalf("database expectations were not met: %v", err)
 	}
+}
+
+func TestHabitService_GetHabitByID_NotFound(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to create sqlmock: %v", err)
+	}
+	defer mockDB.Close()
+
+	habitID := uuid.New()
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT id, user_id, name, description, image_url, created_at FROM habits WHERE id = $1")).
+		WithArgs(habitID).
+		WillReturnError(sql.ErrNoRows)
+
+	queries := db.New(mockDB)
+	habitRepo := repository.NewHabitRepository(queries)
+	routineRepo := repository.NewRoutineRepository(queries)
+	userClient := &mockUserServiceClient{}
+	service := NewHabitService(habitRepo, routineRepo, userClient)
+
+	habit, err := service.GetHabitByID(context.Background(), habitID)
+
+	// isso é pra ligar a struct e validar caso ela n seja nil
+	if habit != (db.Habit{}) {
+		t.Fatalf("GetHabitByID() expected empty habit struct, got %#v", habit)
+	}
+
+	if !errors.Is(err, AppErr.ErrHabitNotFound) {
+		t.Fatalf("GetHabitByID() error = %v, want %v", err, AppErr.ErrHabitNotFound)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("database expectations were not met: %v", err)
+	}
+
+}
+
+func TestHabitService_GetHabitByID_DatabaseError(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to create the sqlmock: %v", err)
+	}
+
+	defer mockDB.Close()
+
+	habitID := uuid.New()
+	dbErr := errors.New("fatal database connection failure")
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT id, user_id, name, description, image_url, created_at FROM habits WHERE id = $1")).
+		WithArgs(habitID).
+		WillReturnError(dbErr)
+
+	queries := db.New(mockDB)
+	habitRepo := repository.NewHabitRepository(queries)
+	routineRepo := repository.NewRoutineRepository(queries)
+	userClient := &mockUserServiceClient{}
+	service := NewHabitService(habitRepo, routineRepo, userClient)
+
+	habit, err := service.GetHabitByID(context.Background(), habitID)
+
+	if habit != (db.Habit{}) {
+		t.Fatalf("GetHabitByID() expected empty habit struct, got %#v", habit)
+	}
+
+	if !errors.Is(err, dbErr) {
+		t.Fatalf("GetHabitByID() error = %v, want %v", err, dbErr)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("database expectations were not met: %v", err)
+	}
+}
+
+func TestHabitService_CreateHabit(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+
+	if err != nil {
+		t.Fatalf("failed to create the sqlmock: %v", err)
+	}
+
+	defer mockDB.Close()
+
+	habitID := uuid.New()
+	userID := uuid.New()
+	name := "habito 1"
+	desc := "desc 1"
+	img_url := "img.png"
+	createdAt := time.Now().UTC().Truncate(time.Microsecond)
+
+	arg := repository.CreateHabitParams{
+		UserID:      userID,
+		Name:        name,
+		Description: sql.NullString{String: desc, Valid: true},
+		ImageUrl:    sql.NullString{String: img_url, Valid: true},
+	}
+
+	mock.ExpectQuery(regexp.QuoteMeta("INSERT INTO habits (user_id, name, description, image_url, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, user_id, name, description, image_url, created_at")).
+		WithArgs(arg.UserID, arg.Name, arg.Description, arg.ImageUrl).
+		WillReturnRows(
+			sqlmock.NewRows([]string{"id", "user_id", "name", "description", "image_url", "created_at"}).
+				AddRow(habitID, userID, name, desc, img_url, createdAt),
+		)
+
+	queries := db.New(mockDB)
+	habitRepo := repository.NewHabitRepository(queries)
+	routineRepo := repository.NewRoutineRepository(queries)
+	userClient := &mockUserServiceClient{}
+	service := NewHabitService(habitRepo, routineRepo, userClient)
+
+	habit, err := service.CreateHabit(context.Background(), arg)
+
+	if err != nil {
+		t.Fatalf("CreateHabit() returned unexpected error: %v", err)
+	}
+	if habit.ID != habitID {
+		t.Fatalf("CreateHabit() returned wrong habit ID: got %s, want %s", habit.ID, habitID)
+	}
+	if habit.UserID != userID {
+		t.Fatalf("CreateHabit() returned wrong user ID: got %s, want %s", habit.UserID, userID)
+	}
+	if habit.Name != name {
+		t.Fatalf("CreateHabit() returned wrong name: got %s, want %s", habit.Name, name)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("database expectations were not met: %v", err)
+	}
+
+}
+
+func TestHabitService_CreateHabit_DatabaseError(t *testing.T) {
+
 }
