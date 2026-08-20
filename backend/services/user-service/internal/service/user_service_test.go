@@ -87,7 +87,7 @@ func TestUserService_GetUserByID_NotFound(t *testing.T) {
 	}
 }
 
-func TestUserService_GetUserById_DatabaseError(t *testing.T) {
+func TestUserService_GetUserByID_DatabaseError(t *testing.T) {
 	mockDB, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("failed to create sqlmock: %v", err)
