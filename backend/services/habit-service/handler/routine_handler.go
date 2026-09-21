@@ -8,9 +8,9 @@ import (
 	"habit-service/internal/repository"
 	"habit-service/internal/service"
 	"habit-service/internal/utils"
+	"shared"
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
-	"shared"
 	"time"
 
 	"github.com/google/uuid"
@@ -505,10 +505,10 @@ func (s *RoutineHandler) GetRoutineLogs(ctx context.Context, req *pbHabit.GetRou
 	}
 
 	var startDate time.Time
-	startDate := shared.NormalizeTimestamp(req.StartDate)
+	startDate = shared.NormalizeTimestamp(req.StartDate)
 
 	var endDate time.Time
-	endDate := shared.NormalizeTimestamp(req.EndDate)
+	endDate = shared.NormalizeTimestamp(req.EndDate)
 
 	params := db.GetRoutineLogsParams{
 		RoutineID: routineID,
