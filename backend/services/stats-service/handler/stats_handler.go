@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"shared"
 	pbUser "shared/pb/user"
 	AppErr "stats-service/internal/errors"
 	"stats-service/internal/service"
@@ -223,19 +224,14 @@ func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats
 		return nil, ReceiveErrors(err)
 	}
 
-	if err := s.Verification(req.UserId, "user id", "user_id"); err != nil {
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
 		return nil, err
 	}
-	if err := s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
+	if err = s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
 		return nil, err
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime()
-	} else {
-		completedAt = time.Now()
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	err = s.StatsService.RegisterHabitCompletion(ctx, userIDnew, req.HabitId, completedAt)
 	if err != nil {
@@ -249,6 +245,41 @@ func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats
 	)
 
 	return &pbStats.RegisterHabitCompletionResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *StatsHandler) UndoHabitCompletion(ctx context.Context, req *pbStats.UndoHabitCompletionRequest) (*pbStats.UndoHabitCompletionResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+	if err != nil {
+		s.logger.Error("error to transform to uuid", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+	if err = s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
+
+	err = s.StatsService.UndoHabitCompletion(ctx, userIDnew, req.HabitId, completedAt)
+	if err != nil {
+		s.logger.Error("error to execute UndoHabitCompletion method", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("UndoHabitCompletion method was ok",
+		zap.String("user_id", userIDnew.String()),
+		zap.String("habit_id", req.HabitId),
+	)
+
+	return &pbStats.UndoHabitCompletionResponse{
 		Success: true,
 	}, nil
 }

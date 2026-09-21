@@ -9,6 +9,7 @@ import (
 	"habit-service/internal/repository"
 	"habit-service/internal/service"
 	"habit-service/internal/utils"
+	"shared"
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
 	"time"
@@ -410,15 +411,7 @@ func (s *HabitHandler) MarkHabitCompleted(ctx context.Context, req *pbHabit.Mark
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid completed_at date",
-			zap.Any("completedAt", req.CompletedAt),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	params := db.MarkHabitCompletedParams{
 		HabitID:     habitID,
@@ -453,15 +446,7 @@ func (s *HabitHandler) UnmarkHabitCompleted(ctx context.Context, req *pbHabit.Un
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid completed_at date",
-			zap.Any("completedAt", req.CompletedAt),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	params := db.UnmarkHabitCompletedParams{
 		HabitID:     habitID,
@@ -497,24 +482,10 @@ func (s *HabitHandler) GetHabitLogs(ctx context.Context, req *pbHabit.GetHabitLo
 	}
 
 	var startDate time.Time
-	if req.StartDate != nil {
-		startDate = req.StartDate.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid started_at date",
-			zap.Any("startDate", req.StartDate),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	startDate = shared.NormalizeTimestamp(req.StartDate)
 
 	var endDate time.Time
-	if req.EndDate != nil {
-		endDate = req.EndDate.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid ended_at date",
-			zap.Any("endedDate", req.EndDate),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	endDate = shared.NormalizeTimestamp(req.EndDate)
 
 	params := db.GetHabitLogsParams{
 		HabitID:   habitID,

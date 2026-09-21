@@ -10,6 +10,7 @@ import (
 	"habit-service/internal/utils"
 	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
+	"shared"
 	"time"
 
 	"github.com/google/uuid"
@@ -433,15 +434,7 @@ func (s *RoutineHandler) MarkRoutineCompleted(ctx context.Context, req *pbHabit.
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid completed_at date",
-			zap.Any("completedAt", req.CompletedAt),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	params := db.MarkRoutineCompletedParams{
 		RoutineID:   routineID,
@@ -476,15 +469,7 @@ func (s *RoutineHandler) UnmarkRoutineCompleted(ctx context.Context, req *pbHabi
 		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid completed_at date",
-			zap.Any("completedAt", req.CompletedAt),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	params := db.UnmarkRoutineCompletedParams{
 		RoutineID:   routineID,
@@ -520,24 +505,10 @@ func (s *RoutineHandler) GetRoutineLogs(ctx context.Context, req *pbHabit.GetRou
 	}
 
 	var startDate time.Time
-	if req.StartDate != nil {
-		startDate = req.StartDate.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid started_at date",
-			zap.Any("startDate", req.StartDate),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	startDate := shared.NormalizeTimestamp(req.StartDate)
 
 	var endDate time.Time
-	if req.EndDate != nil {
-		endDate = req.EndDate.AsTime().UTC()
-	} else {
-		s.logger.Warn("invalid ended_at date",
-			zap.Any("endedDate", req.EndDate),
-		)
-		return nil, status.Error(codes.InvalidArgument, AppErr.ErrInvalidArgument.Error())
-	}
+	endDate := shared.NormalizeTimestamp(req.EndDate)
 
 	params := db.GetRoutineLogsParams{
 		RoutineID: routineID,

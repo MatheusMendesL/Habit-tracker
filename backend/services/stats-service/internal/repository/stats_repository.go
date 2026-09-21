@@ -6,6 +6,7 @@ import (
 	"errors"
 	"stats-service/db"
 	AppErr "stats-service/internal/errors"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -45,6 +46,10 @@ func (r *StatsRepository) DeleteUserStats(ctx context.Context, userID uuid.UUID)
 	return r.q.DeleteUserStats(ctx, userID)
 }
 
-func (r *StatsRepository) RegisterHabitCompletion(ctx context.Context, userID uuid.UUID) error {
+func (r *StatsRepository) RegisterHabitCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
 	return r.q.IncrementCompletedHabits(ctx, userID)
+}
+
+func (r *StatsRepository) UndoUndoHabitCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
+	return r.q.DecrementCompletedHabits(ctx, userID)
 }

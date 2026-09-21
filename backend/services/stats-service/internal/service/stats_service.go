@@ -86,6 +86,7 @@ func (s *StatsService) RegisterHabitCompletion(ctx context.Context, userID uuid.
 	if userID == uuid.Nil || habitID == "" {
 		return AppErr.ErrInvalidArgument
 	}
+	completedAt = completedAt.UTC().Truncate(time.Microsecond)
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
 	if err != nil {
@@ -95,5 +96,22 @@ func (s *StatsService) RegisterHabitCompletion(ctx context.Context, userID uuid.
 		return err
 	}
 
-	return s.repo.RegisterHabitCompletion(ctx, userID)
+	return s.repo.RegisterHabitCompletion(ctx, userID, completedAt)
+}
+
+func (s *StatsService) UndoHabitCompletion(ctx context.Context, userID uuid.UUID, habitID string, completedAt time.Time) error {
+	if userID == uuid.Nil || habitID == "" {
+		return AppErr.ErrInvalidArgument
+	}
+	completedAt = completedAt.UTC().Truncate(time.Microsecond)
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return AppErr.ErrUserNotFound
+		}
+		return err
+	}
+
+	return s.repo.UndoUndoHabitCompletion(ctx, userID, completedAt)
 }
