@@ -113,5 +113,39 @@ func (s *StatsService) UndoHabitCompletion(ctx context.Context, userID uuid.UUID
 		return err
 	}
 
-	return s.repo.UndoUndoHabitCompletion(ctx, userID, completedAt)
+	return s.repo.UndoHabitCompletion(ctx, userID, completedAt)
+}
+
+func (s *StatsService) RegisterRoutineCompletion(ctx context.Context, userID uuid.UUID, routineID string, completedAt time.Time) error {
+	if userID == uuid.Nil || routineID == "" {
+		return AppErr.ErrInvalidArgument
+	}
+	completedAt = completedAt.UTC().Truncate(time.Microsecond)
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return AppErr.ErrUserNotFound
+		}
+		return err
+	}
+
+	return s.repo.RegisterRoutineCompletion(ctx, userID, completedAt)
+}
+
+func (s *StatsService) UndoRoutineCompletion(ctx context.Context, userID uuid.UUID, routineID string, completedAt time.Time) error {
+	if userID == uuid.Nil || routineID == "" {
+		return AppErr.ErrInvalidArgument
+	}
+	completedAt = completedAt.UTC().Truncate(time.Microsecond)
+
+	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return AppErr.ErrUserNotFound
+		}
+		return err
+	}
+
+	return s.repo.UndoRoutineCompletion(ctx, userID, completedAt)
 }

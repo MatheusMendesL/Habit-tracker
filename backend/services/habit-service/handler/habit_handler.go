@@ -60,6 +60,10 @@ func ReceiveErrors(err error) error {
 		return status.Error(codes.NotFound, err.Error())
 
 	default:
+		st, ok := status.FromError(err)
+		if ok {
+			return st.Err()
+		}
 		return status.Error(codes.Internal, err.Error())
 	}
 }
