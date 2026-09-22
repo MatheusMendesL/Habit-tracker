@@ -1053,4 +1053,5 @@ func TestRoutineService_GetRoutineLogs_DatabaseError(t *testing.T) {
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatalf("database expectations were not met: %v", err)
 	}
+
 }
