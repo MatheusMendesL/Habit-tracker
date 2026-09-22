@@ -87,8 +87,10 @@ func (s *HabitService) ListHabitsByUser(ctx context.Context, userID uuid.UUID) (
 	}
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
-
-	if err = ReturnError(err, AppErr.ErrUserNotFound); err != nil {
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return []db.Habit{}, AppErr.ErrUserNotFound
+		}
 		return []db.Habit{}, err
 	}
 

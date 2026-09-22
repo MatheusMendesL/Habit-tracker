@@ -6,6 +6,7 @@ import (
 	"errors"
 	"stats-service/db"
 	AppErr "stats-service/internal/errors"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -45,6 +46,54 @@ func (r *StatsRepository) DeleteUserStats(ctx context.Context, userID uuid.UUID)
 	return r.q.DeleteUserStats(ctx, userID)
 }
 
-func (r *StatsRepository) RegisterHabitCompletion(ctx context.Context, userID uuid.UUID) error {
+func (r *StatsRepository) RegisterHabitCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
+	_, err := r.q.GetUserStats(ctx, userID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return AppErr.ErrUserStatsNotFound
+		}
+		return err
+	}
+
 	return r.q.IncrementCompletedHabits(ctx, userID)
+}
+
+func (r *StatsRepository) UndoHabitCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
+	_, err := r.q.GetUserStats(ctx, userID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return AppErr.ErrUserStatsNotFound
+		}
+		return err
+	}
+
+	return r.q.DecrementCompletedHabits(ctx, userID)
+}
+
+func (r *StatsRepository) RegisterRoutineCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
+	_, err := r.q.GetUserStats(ctx, userID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return AppErr.ErrUserStatsNotFound
+		}
+		return err
+	}
+
+	return r.q.IncrementCompletedRoutines(ctx, userID)
+}
+
+func (r *StatsRepository) UndoRoutineCompletion(ctx context.Context, userID uuid.UUID, completedAt time.Time) error {
+	_, err := r.q.GetUserStats(ctx, userID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return AppErr.ErrUserStatsNotFound
+		}
+		return err
+	}
+
+	return r.q.DecrementCompletedRoutines(ctx, userID)
 }

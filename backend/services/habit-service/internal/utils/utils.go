@@ -3,6 +3,7 @@ package utils
 import (
 	"database/sql"
 	"habit-service/db"
+	"shared"
 	pbHabit "shared/pb/habit"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -29,7 +30,7 @@ func ToProtoHabit(habit db.Habit) *pbHabit.Habit {
 		Name:        habit.Name,
 		Description: NullStringToString(habit.Description),
 		ImageUrl:    NullStringToString(habit.ImageUrl),
-		CreatedAt:   timestamppb.New(habit.CreatedAt),
+		CreatedAt:   timestamppb.New(shared.NormalizeTime(habit.CreatedAt)),
 	}
 }
 
@@ -38,20 +39,20 @@ func ToProtoRoutine(routine db.Routine) *pbHabit.Routine {
 		Id:        routine.ID.String(),
 		UserId:    routine.UserID.String(),
 		Name:      routine.Name,
-		CreatedAt: timestamppb.New(routine.CreatedAt),
+		CreatedAt: timestamppb.New(shared.NormalizeTime(routine.CreatedAt)),
 	}
 }
 
 func ToProtoLog(log db.GetHabitLogsRow) *pbHabit.HabitLog {
 	return &pbHabit.HabitLog{
 		HabitId:     log.HabitID.String(),
-		CompletedAt: timestamppb.New(log.CompletedAt),
+		CompletedAt: timestamppb.New(shared.NormalizeTime(log.CompletedAt)),
 	}
 }
 
 func ToProtoRoutineLog(log db.GetRoutineLogsRow) *pbHabit.RoutineLog {
 	return &pbHabit.RoutineLog{
 		RoutineId:   log.RoutineID.String(),
-		CompletedAt: timestamppb.New(log.CompletedAt),
+		CompletedAt: timestamppb.New(shared.NormalizeTime(log.CompletedAt)),
 	}
 }

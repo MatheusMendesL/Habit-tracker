@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"shared"
 	pbUser "shared/pb/user"
 	AppErr "stats-service/internal/errors"
 	"stats-service/internal/service"
@@ -78,6 +79,10 @@ func (s *StatsHandler) Verification(val any, name string, nameVal string) error 
 }
 
 func ReceiveErrors(err error) error {
+	if err == nil {
+		return nil
+	}
+
 	switch {
 	case errors.Is(err, AppErr.ErrInvalidArgument):
 		return status.Error(codes.InvalidArgument, err.Error())
@@ -95,6 +100,10 @@ func ReceiveErrors(err error) error {
 		return status.Error(codes.NotFound, err.Error())
 
 	default:
+		st, ok := status.FromError(err)
+		if ok {
+			return st.Err()
+		}
 		return status.Error(codes.Internal, err.Error())
 	}
 }
@@ -202,6 +211,10 @@ func (s *StatsHandler) DeleteUserStats(ctx context.Context, req *pbStats.DeleteU
 			zap.String("user_id", userIDnew.String()),
 			zap.Error(err),
 		)
+
+		return &pbStats.DeleteUserStatsResponse{
+			Success: false,
+		}, ReceiveErrors(err)
 	}
 
 	s.logger.Info("DeleteUserStats method was ok",
@@ -209,8 +222,8 @@ func (s *StatsHandler) DeleteUserStats(ctx context.Context, req *pbStats.DeleteU
 	)
 
 	return &pbStats.DeleteUserStatsResponse{
-		Success: false,
-	}, ReceiveErrors(err)
+		Success: true,
+	}, nil
 }
 
 func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats.RegisterHabitCompletionRequest) (*pbStats.RegisterHabitCompletionResponse, error) {
@@ -223,19 +236,14 @@ func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats
 		return nil, ReceiveErrors(err)
 	}
 
-	if err := s.Verification(req.UserId, "user id", "user_id"); err != nil {
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
 		return nil, err
 	}
-	if err := s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
+	if err = s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
 		return nil, err
 	}
 
-	var completedAt time.Time
-	if req.CompletedAt != nil {
-		completedAt = req.CompletedAt.AsTime()
-	} else {
-		completedAt = time.Now()
-	}
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
 
 	err = s.StatsService.RegisterHabitCompletion(ctx, userIDnew, req.HabitId, completedAt)
 	if err != nil {
@@ -249,6 +257,111 @@ func (s *StatsHandler) RegisterHabitCompletion(ctx context.Context, req *pbStats
 	)
 
 	return &pbStats.RegisterHabitCompletionResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *StatsHandler) UndoHabitCompletion(ctx context.Context, req *pbStats.UndoHabitCompletionRequest) (*pbStats.UndoHabitCompletionResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+	if err != nil {
+		s.logger.Error("error to transform to uuid", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+	if err = s.Verification(req.HabitId, "habit id", "habit_id"); err != nil {
+		return nil, err
+	}
+
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
+
+	err = s.StatsService.UndoHabitCompletion(ctx, userIDnew, req.HabitId, completedAt)
+	if err != nil {
+		s.logger.Error("error to execute UndoHabitCompletion method", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("UndoHabitCompletion method was ok",
+		zap.String("user_id", userIDnew.String()),
+		zap.String("habit_id", req.HabitId),
+	)
+
+	return &pbStats.UndoHabitCompletionResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *StatsHandler) RegisterRoutineCompletion(ctx context.Context, req *pbStats.RegisterRoutineCompletionRequest) (*pbStats.RegisterRoutineCompletionResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+	if err != nil {
+		s.logger.Error("error to transform to uuid", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+	if err = s.Verification(req.RoutineId, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
+
+	err = s.StatsService.RegisterRoutineCompletion(ctx, userIDnew, req.RoutineId, completedAt)
+	if err != nil {
+		s.logger.Error("error to execute RegisterRoutineCompletion method", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("RegisterRoutineCompletion method was ok",
+		zap.String("user_id", userIDnew.String()),
+		zap.String("routine_id", req.RoutineId),
+	)
+
+	return &pbStats.RegisterRoutineCompletionResponse{
+		Success: true,
+	}, nil
+}
+
+func (s *StatsHandler) UndoRoutineCompletion(ctx context.Context, req *pbStats.UndoRoutineCompletionRequest) (*pbStats.UndoRoutineCompletionResponse, error) {
+	ctx, cancel := WithTimeout(ctx)
+	defer cancel()
+
+	userIDnew, err := uuid.Parse(req.UserId)
+	if err != nil {
+		s.logger.Error("error to transform to uuid", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	if err = s.Verification(req.UserId, "user id", "user_id"); err != nil {
+		return nil, err
+	}
+	if err = s.Verification(req.RoutineId, "routine id", "routine_id"); err != nil {
+		return nil, err
+	}
+
+	completedAt := shared.NormalizeTimestamp(req.CompletedAt)
+
+	err = s.StatsService.UndoRoutineCompletion(ctx, userIDnew, req.RoutineId, completedAt)
+	if err != nil {
+		s.logger.Error("error to execute UndoRoutineCompletion method", zap.Error(err))
+		return nil, ReceiveErrors(err)
+	}
+
+	s.logger.Info("UndoRoutineCompletion method was ok",
+		zap.String("user_id", userIDnew.String()),
+		zap.String("routine_id", req.RoutineId),
+	)
+
+	return &pbStats.UndoRoutineCompletionResponse{
 		Success: true,
 	}, nil
 }
