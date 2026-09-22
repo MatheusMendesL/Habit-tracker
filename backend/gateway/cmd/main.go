@@ -32,6 +32,5 @@ func runServer(logger *zap.Logger) error {
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		return err
 	}
-	logger.Info("The API is running!")
 	return nil
 }
