@@ -15,6 +15,7 @@ const createUserStats = `-- name: CreateUserStats :one
 INSERT INTO user_stats(user_id)
 VALUES ($1) RETURNING user_id, completed_habits, completed_routines, current_habit_streak, longest_habit_streak, current_routine_streak, longest_routine_streak, created_at, updated_at
 `
+
 func (q *Queries) CreateUserStats(ctx context.Context, userID uuid.UUID) (UserStats, error) {
 	row := q.db.QueryRowContext(ctx, createUserStats, userID)
 	var i UserStats
@@ -39,8 +40,8 @@ SET completed_habits = GREATEST(completed_habits - 1, 0),
 WHERE user_id = $1
 `
 
-func (q *Queries) DecrementCompletedHabits(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, decrementCompletedHabits, id)
+func (q *Queries) DecrementCompletedHabits(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, decrementCompletedHabits, userID)
 	return err
 }
 
@@ -51,8 +52,8 @@ SET completed_routines = GREATEST(completed_routines - 1, 0),
 WHERE user_id = $1
 `
 
-func (q *Queries) DecrementCompletedRoutines(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, decrementCompletedRoutines, id)
+func (q *Queries) DecrementCompletedRoutines(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, decrementCompletedRoutines, userID)
 	return err
 }
 
@@ -96,8 +97,8 @@ SET completed_habits = completed_habits + 1,
 WHERE user_id = $1
 `
 
-func (q *Queries) IncrementCompletedHabits(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, incrementCompletedHabits, id)
+func (q *Queries) IncrementCompletedHabits(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, incrementCompletedHabits, userID)
 	return err
 }
 
@@ -108,8 +109,8 @@ SET completed_routines = completed_routines + 1,
 WHERE user_id = $1
 `
 
-func (q *Queries) IncrementCompletedRoutines(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, incrementCompletedRoutines, id)
+func (q *Queries) IncrementCompletedRoutines(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, incrementCompletedRoutines, userID)
 	return err
 }
 
@@ -124,11 +125,11 @@ WHERE user_id = $3
 type UpdateHabitStreaksParams struct {
 	CurrentHabitStreak int32
 	LongestHabitStreak int32
-	ID                 uuid.UUID
+	UserID             uuid.UUID
 }
 
 func (q *Queries) UpdateHabitStreaks(ctx context.Context, arg UpdateHabitStreaksParams) error {
-	_, err := q.db.ExecContext(ctx, updateHabitStreaks, arg.CurrentHabitStreak, arg.LongestHabitStreak, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateHabitStreaks, arg.CurrentHabitStreak, arg.LongestHabitStreak, arg.UserID)
 	return err
 }
 
@@ -143,10 +144,10 @@ WHERE user_id = $3
 type UpdateRoutineStreaksParams struct {
 	LongestRoutineStreak int32
 	CurrentRoutineStreak int32
-	ID                   uuid.UUID
+	UserID               uuid.UUID
 }
 
 func (q *Queries) UpdateRoutineStreaks(ctx context.Context, arg UpdateRoutineStreaksParams) error {
-	_, err := q.db.ExecContext(ctx, updateRoutineStreaks, arg.LongestRoutineStreak, arg.CurrentRoutineStreak, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateRoutineStreaks, arg.LongestRoutineStreak, arg.CurrentRoutineStreak, arg.UserID)
 	return err
 }

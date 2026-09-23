@@ -37,6 +37,10 @@ func ReceiveErrors(err error) error {
 	case errors.Is(err, sql.ErrNoRows):
 		return status.Error(codes.NotFound, AppErr.ErrUserNotFound.Error())
 	default:
+		st, ok := status.FromError(err)
+		if ok {
+			return st.Err()
+		}
 		return status.Error(codes.Internal, err.Error())
 	}
 }
