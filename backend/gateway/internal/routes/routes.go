@@ -1,6 +1,7 @@
 package routes
 
 import (
+	userHandler "gateway/internal/handlers/user"
 	"gateway/internal/middlewares"
 	"gateway/internal/routes/habit"
 	"gateway/internal/routes/social"
@@ -11,7 +12,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func ControlRoutes() *chi.Mux {
+func ControlRoutes(userHandler *userHandler.UserHandler) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Recoverer)
@@ -20,7 +21,7 @@ func ControlRoutes() *chi.Mux {
 	r.Use(middlewares.Cors)
 
 	r.Route("/api/v1", func(r chi.Router) {
-		user.UserRoutes(r)
+		user.UserRoutes(r, userHandler)
 		stats.StatsRoutes(r)
 		social.SocialRoutes(r)
 		habit.HabitRoutes(r)
