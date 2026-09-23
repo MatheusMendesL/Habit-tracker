@@ -1,13 +1,15 @@
 const bcrypt = require("bcrypt")
 
-function response(status, message, query, affected_rows, data) {
+function response(status, message, data = null, httpInfo = null, error = null, startedAt = Date.now()) {
     return {
-        status: status,
-        message: message,
-        query: query,
-        affected_rows: affected_rows,
         timestamp: new Date().toISOString(),
-        data: data
+        api_version: "v1",
+        duration_ms: startedAt ? Date.now() - startedAt : 0,
+        error: error || "",
+        message: message || "",
+        data: data ?? null,
+        status: status || "success",
+        http: httpInfo || null,
     }
 }
 

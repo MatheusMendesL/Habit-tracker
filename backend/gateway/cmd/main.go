@@ -9,6 +9,7 @@ import (
 	userHandler "gateway/internal/handlers/user"
 	"gateway/internal/routes"
 
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -18,6 +19,10 @@ import (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found for gateway; relying on environment variables")
+	}
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
@@ -35,7 +40,8 @@ func main() {
 }
 
 func runServer(logger *zap.Logger) error {
-	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	typeServerUser := os.Getenv("USER_SERVICE_ADDR")
+	conn, err := grpc.Dial(typeServerUser, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
@@ -47,7 +53,9 @@ func runServer(logger *zap.Logger) error {
 	r := routes.ControlRoutes(userHandler)
 	logger.Info("Gateway is running on :8081")
 
-	if err := http.ListenAndServe(":8081", r); err != nil {
+	portServer := os.Getenv("PORT")
+
+	if err := http.ListenAndServe(portServer, r); err != nil {
 		return err
 	}
 
