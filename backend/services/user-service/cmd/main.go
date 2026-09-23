@@ -13,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -40,10 +41,13 @@ func startServer() {
 	if err != nil {
 		logger.Fatal("The server is not listening", zap.Error(err))
 	}
+
 	dbConn, queries, err := db.Conn()
+
 	if err != nil {
 		logger.Fatal("Error to connect with de DB", zap.Error(err))
 	}
+
 	defer dbConn.Close()
 
 	userRepo := repository.NewUserRepository(queries)
@@ -64,6 +68,8 @@ func startServer() {
 	)
 
 	pb.RegisterUserServiceServer(grpcServer, userHandler)
+
+	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(list); err != nil {
 		logger.Fatal("The User service server is not running", zap.Error(err))
@@ -87,13 +93,14 @@ func startServer() {
 		"./cert/user-service-cert.pem",
 		"./cert/user-service-key.pem",
 	)
+
 	if err != nil {
 		return nil, err
 	}
 
 	config := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
-		/*ClientAuth:   tls.RequireAndVerifyClientCert,
+		/*ClientAuth: tls.RequireAndVerifyClientCert,
 		ClientCAs: certPool,
 	}
 

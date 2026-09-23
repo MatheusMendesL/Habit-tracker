@@ -9,6 +9,8 @@ import (
 	pbUser "shared/pb/user"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func ReturnError(err error, target error) error {
@@ -43,8 +45,10 @@ func (s *RoutineService) CreateRoutine(ctx context.Context, arg repository.Creat
 	}
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: arg.UserID.String()})
-
-	if err = ReturnError(err, AppErr.ErrUserNotFound); err != nil {
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return db.Routine{}, AppErr.ErrUserNotFound
+		}
 		return db.Routine{}, err
 	}
 
@@ -95,8 +99,10 @@ func (s *RoutineService) ListRoutinesByUser(ctx context.Context, userID uuid.UUI
 	}
 
 	_, err := s.GetUserByID(ctx, &pbUser.GetUserByIDRequest{UserId: userID.String()})
-
-	if err = ReturnError(err, AppErr.ErrUserNotFound); err != nil {
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return []db.Routine{}, AppErr.ErrUserNotFound
+		}
 		return []db.Routine{}, err
 	}
 
