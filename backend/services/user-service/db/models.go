@@ -15,7 +15,7 @@ import (
 // mudar o delete pra q n delete o user pra sempre
 // tlvz verificação por CNPJ pra casos de empresas
 // enviar email na hr de criar conta pro email
-// e pra parte de empresa pensar melhor, mt coisa talvez pra add
+// e pra parte de empresa pensar melhor, mt coisa talvez pra adicionar
 
 type User struct {
 	ID        uuid.UUID
