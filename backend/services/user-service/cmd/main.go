@@ -3,6 +3,7 @@ package main
 import (
 	"net"
 	"os"
+	"shared"
 	pb "shared/pb/user"
 	"user-service/db"
 	"user-service/handler"
@@ -54,14 +55,13 @@ func startServer() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService, logger)
 
-	/*tlsCredentials, err := loadTLCredentials()
-
+	tlsCredentials, err := shared.LoadServerTLSCredentials()
 	if err != nil {
 		logger.Fatal("failed to load TLS credentials", zap.Error(err))
-	}*/
+	}
 
 	grpcServer := grpc.NewServer(
-		/*grpc.Creds(tlsCredentials),*/
+		grpc.Creds(tlsCredentials),
 		grpc.UnaryInterceptor(
 			grpcZap.UnaryServerInterceptor(logger),
 		),

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"shared"
 
 	"gateway/internal/clients"
 	userHandler "gateway/internal/handlers/user"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	pb "shared/pb/user"
 
@@ -41,7 +41,16 @@ func main() {
 
 func runServer(logger *zap.Logger) error {
 	typeServerUser := os.Getenv("USER_SERVICE_ADDR")
-	conn, err := grpc.Dial(typeServerUser, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if typeServerUser == "" {
+		typeServerUser = "localhost:8080"
+	}
+
+	tlsCredentials, err := shared.LoadClientTLSCredentials()
+	if err != nil {
+		return err
+	}
+
+	conn, err := grpc.Dial(typeServerUser, grpc.WithTransportCredentials(tlsCredentials))
 	if err != nil {
 		return err
 	}
