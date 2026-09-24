@@ -11,5 +11,7 @@ func UserRoutes(r chi.Router, h *userHandler.UserHandler) {
 	r.Route("/user", func(r chi.Router) {
 		r.Use(middlewares.RequireAuth)
 		r.Get("/GetUserByID/{id}", h.GetUserByID)
+		r.Post("/SearchUsers", h.SearchUsers)
+		r.Delete("/DeleteUser/{id}", h.DeleteUser)
 	})
 }
