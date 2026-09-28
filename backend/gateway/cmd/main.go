@@ -41,10 +41,6 @@ func main() {
 
 func runServer(logger *zap.Logger) error {
 	typeServerUser := os.Getenv("USER_SERVICE_ADDR")
-	if typeServerUser == "" {
-		typeServerUser = "localhost:8080"
-	}
-
 	tlsCredentials, err := shared.LoadClientTLSCredentials()
 	if err != nil {
 		return err
