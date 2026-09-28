@@ -14,6 +14,9 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 COPY --from=builder /app/services/stats-service/app .
+COPY --from=builder /app/services/stats-service/cert ./cert
+
+ENV SERVICE_NAME=stats-service
 
 EXPOSE 8083
 

@@ -33,6 +33,9 @@ services:
     env_file:
       - ${ROUTE_DOCKER}/user-service/.env
 
+    environment:
+      SERVICE_NAME: user-service
+
     volumes:
       - ${ROUTE_DOCKER}/user-service:/app
 
@@ -46,6 +49,9 @@ services:
 
     env_file:
       - ${ROUTE_DOCKER}/social-service/.env
+
+    environment:
+      SERVICE_NAME: social-service
 
     volumes:
       - ${ROUTE_DOCKER}/social-service:/app
@@ -64,6 +70,9 @@ services:
     env_file:
       - ${ROUTE_DOCKER}/habit-service/.env
 
+    environment:
+      SERVICE_NAME: habit-service
+
     volumes:
       - ${ROUTE_DOCKER}/habit-service:/app
 
@@ -80,6 +89,9 @@ services:
 
     env_file:
       - ${ROUTE_DOCKER}/stats-service/.env
+
+    environment:
+      SERVICE_NAME: stats-service
 
     volumes:
       - ${ROUTE_DOCKER}/stats-service:/app
