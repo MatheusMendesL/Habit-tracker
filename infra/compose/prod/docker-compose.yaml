@@ -28,6 +28,9 @@ services:
     env_file:
       - ${ROUTE_DOCKER}/user-service/.env
 
+    environment:
+      SERVICE_NAME: user-service
+
   social-service:
     restart: unless-stopped
 
@@ -37,6 +40,9 @@ services:
 
     env_file:
       - ${ROUTE_DOCKER}/social-service/.env
+
+    environment:
+      SERVICE_NAME: social-service
 
     depends_on:
       - user-service
@@ -51,6 +57,9 @@ services:
     env_file:
       - ${ROUTE_DOCKER}/habit-service/.env
 
+    environment:
+      SERVICE_NAME: habit-service
+
     depends_on:
       - user-service
 
@@ -63,6 +72,9 @@ services:
 
     env_file:
       - ${ROUTE_DOCKER}/stats-service/.env
+
+    environment:
+      SERVICE_NAME: stats-service
 
     depends_on:
       - habit-service

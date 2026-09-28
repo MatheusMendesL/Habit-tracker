@@ -39,3 +39,16 @@
 - Feed Service
 - File Service
 - Routine Service (split from Habit Service)
+
+## TLS certificates
+
+Generate the local CA and one server certificate for each Go service before
+starting the services:
+
+```bash
+./backend/services/shared/gen-certs.sh
+```
+
+The script creates the shared CA in `backend/services/certs` and copies the
+service certificates to each `cert` directory. Private keys and generated
+certificates are ignored by Git.

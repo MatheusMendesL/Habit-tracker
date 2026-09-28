@@ -14,6 +14,9 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 COPY --from=builder /app/services/habit-service/app .
+COPY --from=builder /app/services/habit-service/cert ./cert
+
+ENV SERVICE_NAME=habit-service
 
 EXPOSE 8082
 
