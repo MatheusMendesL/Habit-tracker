@@ -1,0 +1,11 @@
+**
+!gateway/
+!gateway/**
+gateway/.env
+gateway/.env.*
+!services/
+!services/shared/
+!services/shared/**
+!services/user-service/
+!services/user-service/cert/
+!services/user-service/cert/ca-cert.pem
