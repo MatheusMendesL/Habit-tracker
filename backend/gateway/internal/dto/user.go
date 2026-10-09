@@ -30,3 +30,28 @@ type DeleteUserRequest struct {
 type DeleteUserResponse struct {
 	Success bool `json:"success"`
 }
+
+type GetUsersByIDsRequest struct {
+	IDs []string `json:"ids"`
+}
+
+type GetUsersByIDsResponse struct {
+	Users []*User `json:"users"`
+}
+
+type EditUserRequest struct {
+	Name  *string `json:"name,omitempty"`
+	Email *string `json:"email,omitempty"`
+}
+
+type EditUserResponse struct {
+	User *User `json:"user"`
+}
+
+type EditPasswordRequest struct {
+	NewPassword string `json:"new_password"`
+}
+
+type EditPasswordResponse struct {
+	Success bool `json:"success"`
+}
