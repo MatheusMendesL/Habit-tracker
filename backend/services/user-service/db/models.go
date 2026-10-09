@@ -10,6 +10,13 @@ import (
 	"github.com/google/uuid"
 )
 
+// tá mt simples, oq add dps:
+// talvez 2 ou mais tabelas, uma de empresa e uma pra email separados, ainda mais pq algm pode ter conta corporativa e normal
+// mudar o delete pra q n delete o user pra sempre
+// tlvz verificação por CNPJ pra casos de empresas
+// enviar email na hr de criar conta pro email
+// e pra parte de empresa pensar melhor, mt coisa talvez pra add
+
 type User struct {
 	ID        uuid.UUID
 	Name      string

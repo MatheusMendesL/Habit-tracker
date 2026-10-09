@@ -4,6 +4,8 @@ go 1.26.1
 
 require (
 	github.com/go-chi/chi/v5 v5.3.2
+	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/joho/godotenv v1.5.1
 	go.uber.org/zap v1.18.1
 	google.golang.org/grpc v1.79.3
 	shared v0.0.0

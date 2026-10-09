@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ResponseStatus string
@@ -55,4 +57,12 @@ func Response(res Response_struct, w http.ResponseWriter, status int, msg string
 		fmt.Println("erro ao enviar resposta: ", err)
 		return
 	}
+}
+
+func TimestampToProto(value time.Time) (*timestamppb.Timestamp, error) {
+	timestamp := timestamppb.New(value)
+	if err := timestamp.CheckValid(); err != nil {
+		return nil, fmt.Errorf("invalid timestamp: %w", err)
+	}
+	return timestamp, nil
 }

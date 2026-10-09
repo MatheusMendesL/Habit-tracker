@@ -10,7 +10,6 @@ RUN go install github.com/air-verse/air@latest
 
 COPY . .
 
-EXPOSE 8083
+EXPOSE 8083/tcp
 
 CMD ["air"]
-
