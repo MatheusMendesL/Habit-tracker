@@ -97,9 +97,16 @@ func runServer(logger *zap.Logger) error {
 	routineClient := clients.NewRoutineClient(pbHabit.NewRoutineServiceClient(habitConn))
 	routineHandler := habitHandlers.NewRoutineHandler(routineClient)
 	statsClient := clients.NewStatsClient(pbStats.NewStatsServiceClient(statsConn))
-	statsHTTPHandler := statsHandler.NewStatsHandler(statsClient)
+	statsHandler := statsHandler.NewStatsHandler(statsClient)
 
-	r := routes.ControlRoutes(userHandler, socialHandler, habitHandler, routineHandler, statsHTTPHandler)
+	r := routes.ControlRoutes(
+		userHandler,
+		socialHandler,
+		habitHandler,
+		routineHandler,
+		statsHandler,
+	)
+
 	logger.Info("Gateway is running on :8081")
 
 	portServer := os.Getenv("PORT")
