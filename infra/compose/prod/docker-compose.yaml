@@ -100,10 +100,16 @@ services:
       SERVICE_NAME: gateway
       PORT: ":8084"
       USER_SERVICE_ADDR: user-service:8080
+      SOCIAL_SERVICE_ADDR: social-service:8081
+      HABIT_SERVICE_ADDR: habit-service:8082
+      STATS_SERVICE_ADDR: stats-service:8083
       TLS_CA_CERT_PATH: /app/cert/ca-cert.pem
 
     depends_on:
       - user-service
+      - social-service
+      - habit-service
+      - stats-service
 
     ports:
       - "8084:8084/tcp"
