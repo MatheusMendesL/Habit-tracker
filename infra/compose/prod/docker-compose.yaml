@@ -45,6 +45,7 @@ services:
       SERVICE_NAME: social-service
       TYPE: tcp
       PORT: ":8081"
+      USER_SERVICE_ADDR: user-service:8080
 
     depends_on:
       - user-service

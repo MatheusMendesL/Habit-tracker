@@ -81,7 +81,8 @@ func startServer() {
 
 	userServiceClient := pbUser.NewUserServiceClient(userConn)
 	habitServiceClient := pbHabit.NewHabitServiceClient(habitConn)
-	statsService := service.NewStatsService(statsRepo, userServiceClient, habitServiceClient)
+	routineServiceClient := pbHabit.NewRoutineServiceClient(habitConn)
+	statsService := service.NewStatsService(statsRepo, userServiceClient, habitServiceClient, routineServiceClient)
 	statsHandler := handler.NewStatsHandler(statsService, logger, userServiceClient)
 
 	serverTLS, err := shared.LoadServerTLSCredentials()

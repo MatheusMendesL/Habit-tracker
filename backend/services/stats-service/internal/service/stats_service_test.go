@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	pbHabit "shared/pb/habit"
 	pbUser "shared/pb/user"
 	"stats-service/db"
 	AppErr "stats-service/internal/errors"
@@ -62,6 +63,32 @@ func (m *mockStatsUserServiceClient) DeleteUser(ctx context.Context, in *pbUser.
 
 func (m *mockStatsUserServiceClient) SearchUser(ctx context.Context, in *pbUser.SearchUserRequest, opts ...grpc.CallOption) (*pbUser.SearchUserResponse, error) {
 	return &pbUser.SearchUserResponse{}, nil
+}
+
+type mockStatsHabitServiceClient struct {
+	pbHabit.HabitServiceClient
+	ownerID string
+	err     error
+}
+
+func (m *mockStatsHabitServiceClient) GetHabitByID(_ context.Context, req *pbHabit.GetHabitByIDRequest, _ ...grpc.CallOption) (*pbHabit.GetHabitByIDResponse, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+	return &pbHabit.GetHabitByIDResponse{Habit: &pbHabit.Habit{Id: req.HabitId, UserId: m.ownerID}}, nil
+}
+
+type mockStatsRoutineServiceClient struct {
+	pbHabit.RoutineServiceClient
+	ownerID string
+	err     error
+}
+
+func (m *mockStatsRoutineServiceClient) GetRoutineByID(_ context.Context, req *pbHabit.GetRoutineByIDRequest, _ ...grpc.CallOption) (*pbHabit.GetRoutineByIDResponse, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+	return &pbHabit.GetRoutineByIDResponse{Routine: &pbHabit.Routine{Id: req.RoutineId, UserId: m.ownerID}}, nil
 }
 
 func TestStatsService_CreateUserStats(t *testing.T) {
@@ -433,7 +460,7 @@ func TestStatsService_RegisterHabitCompletion(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, &mockStatsHabitServiceClient{ownerID: userID.String()})
 
 	if err := service.RegisterHabitCompletion(context.Background(), userID, "habit-1", completedAt); err != nil {
 		t.Fatalf("RegisterHabitCompletion() returned unexpected error: %v", err)
@@ -501,7 +528,7 @@ func TestStatsService_RegisterHabitCompletion_DatabaseError(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, &mockStatsHabitServiceClient{ownerID: userID.String()})
 
 	err = service.RegisterHabitCompletion(context.Background(), userID, "habit-1", completedAt)
 	if !errors.Is(err, expectedErr) {
@@ -535,7 +562,7 @@ func TestStatsService_UndoHabitCompletion(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, &mockStatsHabitServiceClient{ownerID: userID.String()})
 
 	if err := service.UndoHabitCompletion(context.Background(), userID, "habit-1", completedAt); err != nil {
 		t.Fatalf("UndoHabitCompletion() returned unexpected error: %v", err)
@@ -603,7 +630,7 @@ func TestStatsService_UndoHabitCompletion_DatabaseError(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, &mockStatsHabitServiceClient{ownerID: userID.String()})
 
 	err = service.UndoHabitCompletion(context.Background(), userID, "habit-1", completedAt)
 	if !errors.Is(err, expectedErr) {
@@ -637,7 +664,7 @@ func TestStatsService_RegisterRoutineCompletion(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil, &mockStatsRoutineServiceClient{ownerID: userID.String()})
 
 	if err := service.RegisterRoutineCompletion(context.Background(), userID, "routine-1", completedAt); err != nil {
 		t.Fatalf("RegisterRoutineCompletion() returned unexpected error: %v", err)
@@ -705,7 +732,7 @@ func TestStatsService_RegisterRoutineCompletion_DatabaseError(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil, &mockStatsRoutineServiceClient{ownerID: userID.String()})
 
 	err = service.RegisterRoutineCompletion(context.Background(), userID, "routine-1", completedAt)
 	if !errors.Is(err, expectedErr) {
@@ -739,7 +766,7 @@ func TestStatsService_UndoRoutineCompletion(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil, &mockStatsRoutineServiceClient{ownerID: userID.String()})
 
 	if err := service.UndoRoutineCompletion(context.Background(), userID, "routine-1", completedAt); err != nil {
 		t.Fatalf("UndoRoutineCompletion() returned unexpected error: %v", err)
@@ -807,12 +834,47 @@ func TestStatsService_UndoRoutineCompletion_DatabaseError(t *testing.T) {
 
 	queries := db.New(mockDB)
 	repo := repository.NewStatsRepository(queries)
-	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil)
+	service := NewStatsService(repo, &mockStatsUserServiceClient{}, nil, &mockStatsRoutineServiceClient{ownerID: userID.String()})
 
 	err = service.UndoRoutineCompletion(context.Background(), userID, "routine-1", completedAt)
 	if !errors.Is(err, expectedErr) {
 		t.Fatalf("UndoRoutineCompletion() error = %v, want %v", err, expectedErr)
 	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("database expectations were not met: %v", err)
+	}
+}
+
+func TestStatsService_CompletionOwnership(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to create sqlmock: %v", err)
+	}
+	defer mockDB.Close()
+
+	userID := uuid.New()
+	otherUserID := uuid.New().String()
+	repo := repository.NewStatsRepository(db.New(mockDB))
+
+	habitService := NewStatsService(
+		repo,
+		&mockStatsUserServiceClient{},
+		&mockStatsHabitServiceClient{ownerID: otherUserID},
+	)
+	if err := habitService.RegisterHabitCompletion(context.Background(), userID, "habit-id", time.Now()); status.Code(err) != codes.PermissionDenied {
+		t.Fatalf("RegisterHabitCompletion() error = %v, want PermissionDenied", err)
+	}
+
+	routineService := NewStatsService(
+		repo,
+		&mockStatsUserServiceClient{},
+		nil,
+		&mockStatsRoutineServiceClient{ownerID: otherUserID},
+	)
+	if err := routineService.RegisterRoutineCompletion(context.Background(), userID, "routine-id", time.Now()); status.Code(err) != codes.PermissionDenied {
+		t.Fatalf("RegisterRoutineCompletion() error = %v, want PermissionDenied", err)
+	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatalf("database expectations were not met: %v", err)
 	}

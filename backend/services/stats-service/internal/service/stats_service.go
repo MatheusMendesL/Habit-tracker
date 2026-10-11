@@ -18,7 +18,8 @@ import (
 type StatsService struct {
 	pbHabit.HabitServiceClient
 	pbUser.UserServiceClient
-	repo *repository.StatsRepository
+	repo          *repository.StatsRepository
+	routineClient pbHabit.RoutineServiceClient
 }
 
 func ReturnError(err error, target error) error {
@@ -33,12 +34,47 @@ func ReturnError(err error, target error) error {
 	return err
 }
 
-func NewStatsService(r *repository.StatsRepository, userClient pbUser.UserServiceClient, habitClient pbHabit.HabitServiceClient) *StatsService {
-	return &StatsService{
+func NewStatsService(r *repository.StatsRepository, userClient pbUser.UserServiceClient, habitClient pbHabit.HabitServiceClient, routineClients ...pbHabit.RoutineServiceClient) *StatsService {
+	service := &StatsService{
 		repo:               r,
 		UserServiceClient:  userClient,
 		HabitServiceClient: habitClient,
 	}
+	if len(routineClients) > 0 {
+		service.routineClient = routineClients[0]
+	}
+	return service
+}
+
+func (s *StatsService) verifyHabitOwnership(ctx context.Context, userID uuid.UUID, habitID string) error {
+	habit, err := s.HabitServiceClient.GetHabitByID(ctx, &pbHabit.GetHabitByIDRequest{HabitId: habitID})
+	if err != nil {
+		return err
+	}
+	if habit == nil || habit.Habit == nil {
+		return status.Error(codes.Internal, "habit service returned an empty response")
+	}
+	if habit.Habit.UserId != userID.String() {
+		return status.Error(codes.PermissionDenied, "habit does not belong to the user")
+	}
+	return nil
+}
+
+func (s *StatsService) verifyRoutineOwnership(ctx context.Context, userID uuid.UUID, routineID string) error {
+	if s.routineClient == nil {
+		return status.Error(codes.Unavailable, "routine service client is unavailable")
+	}
+	routine, err := s.routineClient.GetRoutineByID(ctx, &pbHabit.GetRoutineByIDRequest{RoutineId: routineID})
+	if err != nil {
+		return err
+	}
+	if routine == nil || routine.Routine == nil {
+		return status.Error(codes.Internal, "routine service returned an empty response")
+	}
+	if routine.Routine.UserId != userID.String() {
+		return status.Error(codes.PermissionDenied, "routine does not belong to the user")
+	}
+	return nil
 }
 
 func (s *StatsService) CreateUserStats(ctx context.Context, userID uuid.UUID) (db.UserStats, error) {
@@ -96,6 +132,9 @@ func (s *StatsService) RegisterHabitCompletion(ctx context.Context, userID uuid.
 		return err
 	}
 
+	if err := s.verifyHabitOwnership(ctx, userID, habitID); err != nil {
+		return err
+	}
 	return s.repo.RegisterHabitCompletion(ctx, userID, completedAt)
 }
 
@@ -113,6 +152,9 @@ func (s *StatsService) UndoHabitCompletion(ctx context.Context, userID uuid.UUID
 		return err
 	}
 
+	if err := s.verifyHabitOwnership(ctx, userID, habitID); err != nil {
+		return err
+	}
 	return s.repo.UndoHabitCompletion(ctx, userID, completedAt)
 }
 
@@ -130,6 +172,9 @@ func (s *StatsService) RegisterRoutineCompletion(ctx context.Context, userID uui
 		return err
 	}
 
+	if err := s.verifyRoutineOwnership(ctx, userID, routineID); err != nil {
+		return err
+	}
 	return s.repo.RegisterRoutineCompletion(ctx, userID, completedAt)
 }
 
@@ -147,5 +192,8 @@ func (s *StatsService) UndoRoutineCompletion(ctx context.Context, userID uuid.UU
 		return err
 	}
 
+	if err := s.verifyRoutineOwnership(ctx, userID, routineID); err != nil {
+		return err
+	}
 	return s.repo.UndoRoutineCompletion(ctx, userID, completedAt)
 }
