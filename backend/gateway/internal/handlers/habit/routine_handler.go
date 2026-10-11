@@ -13,11 +13,12 @@ import (
 )
 
 type RoutineHandler struct {
-	client *clients.RoutineClient
+	client      *clients.RoutineClient
+	habitClient *clients.HabitClient
 }
 
-func NewRoutineHandler(client *clients.RoutineClient) *RoutineHandler {
-	return &RoutineHandler{client: client}
+func NewRoutineHandler(client *clients.RoutineClient, habitClient *clients.HabitClient) *RoutineHandler {
+	return &RoutineHandler{client: client, habitClient: habitClient}
 }
 
 func (h *RoutineHandler) CreateRoutine(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,17 @@ func (h *RoutineHandler) CreateRoutine(w http.ResponseWriter, r *http.Request) {
 func (h *RoutineHandler) GetRoutineByID(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	response, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), chi.URLParam(r, "id"))
+	if err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
+	helper.Response(helper.Response_struct{Data: response}, w, http.StatusOK, "routine found", info, time.Since(start).Milliseconds())
+}
+
+func (h *RoutineHandler) GetSharedRoutineByID(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+	info := map[string]string{"method": r.Method, "url": r.URL.String()}
 	response, err := h.client.GetRoutineByID(r.Context(), chi.URLParam(r, "id"))
 	if err != nil {
 		writeHabitError(w, start, info, err)
@@ -50,12 +62,17 @@ func (h *RoutineHandler) GetRoutineByID(w http.ResponseWriter, r *http.Request) 
 func (h *RoutineHandler) EditRoutine(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	routineID := chi.URLParam(r, "id")
+	if _, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
 	var request dto.EditRoutineRequest
 	if code, message := decodeHabitJSON(w, r, &request); code != 0 {
 		habitBodyError(w, start, info, code, message)
 		return
 	}
-	response, err := h.client.EditRoutine(r.Context(), chi.URLParam(r, "id"), &request)
+	response, err := h.client.EditRoutine(r.Context(), routineID, &request)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -66,7 +83,12 @@ func (h *RoutineHandler) EditRoutine(w http.ResponseWriter, r *http.Request) {
 func (h *RoutineHandler) DeleteRoutine(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
-	response, err := h.client.DeleteRoutine(r.Context(), chi.URLParam(r, "id"))
+	routineID := chi.URLParam(r, "id")
+	if _, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
+	response, err := h.client.DeleteRoutine(r.Context(), routineID)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -88,12 +110,22 @@ func (h *RoutineHandler) ListRoutinesByUser(w http.ResponseWriter, r *http.Reque
 func (h *RoutineHandler) AddHabitToRoutine(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	routineID := chi.URLParam(r, "id")
+	userID := middlewares.UserIDFromContext(r.Context())
+	if _, err := authorizeRoutine(r.Context(), h.client, userID, routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
 	var request dto.RoutineHabitRequest
 	if code, message := decodeHabitJSON(w, r, &request); code != 0 {
 		habitBodyError(w, start, info, code, message)
 		return
 	}
-	response, err := h.client.AddHabitToRoutine(r.Context(), chi.URLParam(r, "id"), &request)
+	if _, err := authorizeHabit(r.Context(), h.habitClient, userID, request.HabitID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
+	response, err := h.client.AddHabitToRoutine(r.Context(), routineID, &request)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -104,8 +136,19 @@ func (h *RoutineHandler) AddHabitToRoutine(w http.ResponseWriter, r *http.Reques
 func (h *RoutineHandler) RemoveHabitFromRoutine(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
-	request := &dto.RoutineHabitRequest{HabitID: chi.URLParam(r, "habitID")}
-	response, err := h.client.RemoveHabitFromRoutine(r.Context(), chi.URLParam(r, "id"), request)
+	routineID := chi.URLParam(r, "id")
+	habitID := chi.URLParam(r, "habitID")
+	userID := middlewares.UserIDFromContext(r.Context())
+	if _, err := authorizeRoutine(r.Context(), h.client, userID, routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
+	if _, err := authorizeHabit(r.Context(), h.habitClient, userID, habitID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
+	request := &dto.RoutineHabitRequest{HabitID: habitID}
+	response, err := h.client.RemoveHabitFromRoutine(r.Context(), routineID, request)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -116,6 +159,11 @@ func (h *RoutineHandler) RemoveHabitFromRoutine(w http.ResponseWriter, r *http.R
 func (h *RoutineHandler) MarkRoutineCompleted(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	routineID := chi.URLParam(r, "id")
+	if _, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
 	var request dto.RoutineCompletionRequest
 	if code, message := decodeHabitJSON(w, r, &request); code != 0 {
 		habitBodyError(w, start, info, code, message)
@@ -125,7 +173,7 @@ func (h *RoutineHandler) MarkRoutineCompleted(w http.ResponseWriter, r *http.Req
 		habitBodyError(w, start, info, http.StatusBadRequest, "completed_at is required")
 		return
 	}
-	response, err := h.client.MarkRoutineCompleted(r.Context(), chi.URLParam(r, "id"), request.CompletedAt)
+	response, err := h.client.MarkRoutineCompleted(r.Context(), routineID, request.CompletedAt)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -136,6 +184,11 @@ func (h *RoutineHandler) MarkRoutineCompleted(w http.ResponseWriter, r *http.Req
 func (h *RoutineHandler) UnmarkRoutineCompleted(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	routineID := chi.URLParam(r, "id")
+	if _, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
 	var request dto.RoutineCompletionRequest
 	if code, message := decodeHabitJSON(w, r, &request); code != 0 {
 		habitBodyError(w, start, info, code, message)
@@ -145,7 +198,7 @@ func (h *RoutineHandler) UnmarkRoutineCompleted(w http.ResponseWriter, r *http.R
 		habitBodyError(w, start, info, http.StatusBadRequest, "completed_at is required")
 		return
 	}
-	response, err := h.client.UnmarkRoutineCompleted(r.Context(), chi.URLParam(r, "id"), request.CompletedAt)
+	response, err := h.client.UnmarkRoutineCompleted(r.Context(), routineID, request.CompletedAt)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return
@@ -156,6 +209,11 @@ func (h *RoutineHandler) UnmarkRoutineCompleted(w http.ResponseWriter, r *http.R
 func (h *RoutineHandler) GetRoutineLogs(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	info := map[string]string{"method": r.Method, "url": r.URL.String()}
+	routineID := chi.URLParam(r, "id")
+	if _, err := authorizeRoutine(r.Context(), h.client, middlewares.UserIDFromContext(r.Context()), routineID); err != nil {
+		writeHabitError(w, start, info, err)
+		return
+	}
 	startDate, err := time.Parse(time.RFC3339Nano, r.URL.Query().Get("start_date"))
 	if err != nil {
 		habitBodyError(w, start, info, http.StatusBadRequest, "valid start_date is required")
@@ -166,7 +224,7 @@ func (h *RoutineHandler) GetRoutineLogs(w http.ResponseWriter, r *http.Request) 
 		habitBodyError(w, start, info, http.StatusBadRequest, "valid end_date is required")
 		return
 	}
-	response, err := h.client.GetRoutineLogs(r.Context(), chi.URLParam(r, "id"), startDate, endDate)
+	response, err := h.client.GetRoutineLogs(r.Context(), routineID, startDate, endDate)
 	if err != nil {
 		writeHabitError(w, start, info, err)
 		return

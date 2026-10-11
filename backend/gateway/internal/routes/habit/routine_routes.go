@@ -12,6 +12,7 @@ func RoutineRoutes(r chi.Router, h *habitHandler.RoutineHandler) {
 		r.Use(middlewares.RequireAuth)
 		r.Post("/", h.CreateRoutine)
 		r.Get("/", h.ListRoutinesByUser)
+		r.Get("/shared/{id}", h.GetSharedRoutineByID)
 		r.Get("/{id}", h.GetRoutineByID)
 		r.Put("/{id}", h.EditRoutine)
 		r.Delete("/{id}", h.DeleteRoutine)

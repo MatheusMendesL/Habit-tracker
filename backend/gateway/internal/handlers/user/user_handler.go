@@ -11,12 +11,22 @@ import (
 	"gateway/internal/clients"
 	"gateway/internal/dto"
 	"gateway/internal/helper"
+	"gateway/internal/middlewares"
 
 	"github.com/go-chi/chi/v5"
 )
 
 type UserHandler struct {
 	client *clients.UserClient
+}
+
+func requireAuthenticatedUser(w http.ResponseWriter, r *http.Request, userID string, start time.Time, httpInfo map[string]string) bool {
+	if userID == middlewares.UserIDFromContext(r.Context()) {
+		return true
+	}
+	durationMs := time.Since(start).Milliseconds()
+	helper.Response(helper.Response_struct{Error: "user id does not match authenticated user"}, w, http.StatusForbidden, "forbidden", httpInfo, durationMs)
+	return false
 }
 
 func NewUserHandler(client *clients.UserClient) *UserHandler {
@@ -129,6 +139,9 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		helper.Response(helper.Response_struct{Error: "missing user id"}, w, http.StatusBadRequest, "user not found", httpInfo, durationMs)
 		return
 	}
+	if !requireAuthenticatedUser(w, r, userID, start, httpInfo) {
+		return
+	}
 
 	response, err := h.client.DeleteUser(r.Context(), &dto.DeleteUserRequest{ID: userID})
 	if err != nil {
@@ -206,6 +219,9 @@ func (h *UserHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 		helper.Response(helper.Response_struct{Error: "missing user id"}, w, http.StatusBadRequest, "missing user id", httpInfo, durationMs)
 		return
 	}
+	if !requireAuthenticatedUser(w, r, userID, start, httpInfo) {
+		return
+	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, 1000)
 	defer r.Body.Close()
@@ -259,6 +275,9 @@ func (h *UserHandler) EditPassword(w http.ResponseWriter, r *http.Request) {
 	if userID == "" {
 		durationMs := time.Since(start).Milliseconds()
 		helper.Response(helper.Response_struct{Error: "missing user id"}, w, http.StatusBadRequest, "missing user id", httpInfo, durationMs)
+		return
+	}
+	if !requireAuthenticatedUser(w, r, userID, start, httpInfo) {
 		return
 	}
 
