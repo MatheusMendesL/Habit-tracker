@@ -93,9 +93,9 @@ func runServer(logger *zap.Logger) error {
 	socialClient := clients.NewSocialClient(pbSocial.NewSocialServiceClient(socialConn))
 	socialHandler := socialHandler.NewSocialHandler(socialClient)
 	habitClient := clients.NewHabitClient(pbHabit.NewHabitServiceClient(habitConn))
-	habitHandler := habitHandlers.NewHabitHandler(habitClient)
 	routineClient := clients.NewRoutineClient(pbHabit.NewRoutineServiceClient(habitConn))
-	routineHandler := habitHandlers.NewRoutineHandler(routineClient)
+	habitHandler := habitHandlers.NewHabitHandler(habitClient, routineClient)
+	routineHandler := habitHandlers.NewRoutineHandler(routineClient, habitClient)
 	statsClient := clients.NewStatsClient(pbStats.NewStatsServiceClient(statsConn))
 	statsHandler := statsHandler.NewStatsHandler(statsClient)
 
