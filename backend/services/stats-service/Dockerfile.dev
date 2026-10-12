@@ -1,14 +1,12 @@
-FROM golang:1.25
+FROM golang:1.26
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY . .
 
-RUN go mod download
+WORKDIR /app/services/stats-service
 
 RUN go install github.com/air-verse/air@latest
-
-COPY . .
 
 EXPOSE 8083/tcp
 

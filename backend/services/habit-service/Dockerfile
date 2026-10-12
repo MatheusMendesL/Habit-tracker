@@ -14,7 +14,6 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 COPY --from=builder /app/backend/services/habit-service/app .
-COPY --from=builder /app/backend/services/habit-service/cert ./cert
 
 ENV SERVICE_NAME=habit-service
 

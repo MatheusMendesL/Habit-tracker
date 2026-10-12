@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   redis:
     image: redis:7
@@ -27,28 +25,39 @@ services:
 
   user-service:
     build:
-      context: ${ROUTE_DOCKER}/user-service
-      dockerfile: Dockerfile.dev
+      context: ${ROUTE_ROOT}/backend
+      dockerfile: services/user-service/Dockerfile.dev
 
     env_file:
       - ${ROUTE_DOCKER}/user-service/.env
 
+    environment:
+      SERVICE_NAME: user-service
+
     volumes:
-      - ${ROUTE_DOCKER}/user-service:/app
+      - ${ROUTE_ROOT}/backend:/app
+
+    working_dir: /app/services/user-service
 
     ports:
       - "8080:8080"
 
   social-service:
     build:
-      context: ${ROUTE_DOCKER}/social-service
-      dockerfile: Dockerfile.dev
+      context: ${ROUTE_ROOT}/backend
+      dockerfile: services/social-service/Dockerfile.dev
 
     env_file:
       - ${ROUTE_DOCKER}/social-service/.env
 
+    environment:
+      SERVICE_NAME: social-service
+      USER_SERVICE_ADDR: user-service:8080
+
     volumes:
-      - ${ROUTE_DOCKER}/social-service:/app
+      - ${ROUTE_ROOT}/backend:/app
+
+    working_dir: /app/services/social-service
 
     ports:
       - "8081:8081"
@@ -58,14 +67,20 @@ services:
 
   habit-service:
     build:
-      context: ${ROUTE_DOCKER}/habit-service
-      dockerfile: Dockerfile.dev
+      context: ${ROUTE_ROOT}/backend
+      dockerfile: services/habit-service/Dockerfile.dev
 
     env_file:
       - ${ROUTE_DOCKER}/habit-service/.env
 
+    environment:
+      SERVICE_NAME: habit-service
+      USER_SERVICE_ADDR: user-service:8080
+
     volumes:
-      - ${ROUTE_DOCKER}/habit-service:/app
+      - ${ROUTE_ROOT}/backend:/app
+
+    working_dir: /app/services/habit-service
 
     ports:
       - "8082:8082"
@@ -75,14 +90,21 @@ services:
 
   stats-service:
     build:
-      context: ${ROUTE_DOCKER}/stats-service
-      dockerfile: Dockerfile.dev
+      context: ${ROUTE_ROOT}/backend
+      dockerfile: services/stats-service/Dockerfile.dev
 
     env_file:
       - ${ROUTE_DOCKER}/stats-service/.env
 
+    environment:
+      SERVICE_NAME: stats-service
+      USER_SERVICE_ADDR: user-service:8080
+      HABIT_SERVICE_ADDR: habit-service:8082
+
     volumes:
-      - ${ROUTE_DOCKER}/stats-service:/app
+      - ${ROUTE_ROOT}/backend:/app
+
+    working_dir: /app/services/stats-service
 
     ports:
       - "8083:8083"
@@ -101,6 +123,33 @@ services:
 
     depends_on:
       - auth-service
+      - gateway
+      - user-service
+      - social-service
+      - habit-service
+      - stats-service
+
+  gateway:
+    build:
+      context: ${ROUTE_ROOT}/backend
+      dockerfile: gateway/Dockerfile
+
+    env_file:
+      - ${ROUTE_ROOT}/backend/gateway/.env
+
+    environment:
+      SERVICE_NAME: gateway
+      PORT: ":8084"
+      USER_SERVICE_ADDR: user-service:8080
+      SOCIAL_SERVICE_ADDR: social-service:8081
+      HABIT_SERVICE_ADDR: habit-service:8082
+      STATS_SERVICE_ADDR: stats-service:8083
+      TLS_CA_CERT_PATH: /app/cert/ca-cert.pem
+
+    ports:
+      - "8084:8084/tcp"
+
+    depends_on:
       - user-service
       - social-service
       - habit-service

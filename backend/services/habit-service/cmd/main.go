@@ -5,9 +5,9 @@ import (
 	"habit-service/handler"
 	"habit-service/internal/repository"
 	"habit-service/internal/service"
-	"log"
 	"net"
 	"os"
+	"shared"
 	pb "shared/pb/habit"
 	pbUser "shared/pb/user"
 
@@ -15,7 +15,6 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -53,9 +52,19 @@ func startServer() {
 	HabitRepo := repository.NewHabitRepository(queries)
 	RoutineRepo := repository.NewRoutineRepository(queries)
 
-	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	userServiceAddr := os.Getenv("USER_SERVICE_ADDR")
+	if userServiceAddr == "" {
+		userServiceAddr = "localhost:8080"
+	}
+
+	clientTLS, err := shared.LoadClientTLSCredentials()
 	if err != nil {
-		log.Fatalf("Não foi possível conectar: %v", err)
+		logger.Fatal("failed to load client TLS credentials", zap.Error(err))
+	}
+
+	conn, err := grpc.NewClient(userServiceAddr, grpc.WithTransportCredentials(clientTLS))
+	if err != nil {
+		logger.Fatal("failed to create user service client", zap.Error(err))
 	}
 	defer conn.Close()
 
@@ -65,15 +74,13 @@ func startServer() {
 	habitHandler := handler.NewHabitHandler(habitService, logger, userServiceClient)
 	RoutineHandler := handler.NewRoutineHandler(routineService, logger, userServiceClient)
 
-	/*tlsCredentials, err := loadTLCredentials()
-
-
+	serverTLS, err := shared.LoadServerTLSCredentials()
 	if err != nil {
-		logger.Fatal("failed to load TLS credentials", zap.Error(err))
-	}*/
+		logger.Fatal("failed to load server TLS credentials", zap.Error(err))
+	}
 
 	grpcServer := grpc.NewServer(
-		/*grpc.Creds(tlsCredentials),*/
+		grpc.Creds(serverTLS),
 		grpc.UnaryInterceptor(
 			grpcZap.UnaryServerInterceptor(logger),
 		),

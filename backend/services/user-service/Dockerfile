@@ -14,7 +14,6 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 COPY --from=builder /app/backend/services/user-service/app .
-COPY --from=builder /app/backend/services/user-service/cert ./cert
 
 ENV SERVICE_NAME=user-service
 
