@@ -4,31 +4,20 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"shared"
 
 	"gateway/internal/clients"
-	habitHandlers "gateway/internal/handlers/habit"
-	socialHandler "gateway/internal/handlers/social"
-	statsHandler "gateway/internal/handlers/stats"
 	userHandler "gateway/internal/handlers/user"
 	"gateway/internal/routes"
 
-	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
-	pbHabit "shared/pb/habit"
-	pbSocial "shared/pb/social"
-	pbStats "shared/pb/stats"
 	pb "shared/pb/user"
 
 	"go.uber.org/zap"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found for gateway; relying on environment variables")
-	}
-
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
@@ -46,72 +35,19 @@ func main() {
 }
 
 func runServer(logger *zap.Logger) error {
-	typeServerUser := os.Getenv("USER_SERVICE_ADDR")
-	tlsCredentials, err := shared.LoadClientTLSCredentials()
-	if err != nil {
-		return err
-	}
-
-	conn, err := grpc.Dial(typeServerUser, grpc.WithTransportCredentials(tlsCredentials))
+	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	typeServerSocial := os.Getenv("SOCIAL_SERVICE_ADDR")
-	if typeServerSocial == "" {
-		typeServerSocial = "localhost:8081"
-	}
-	socialConn, err := grpc.Dial(typeServerSocial, grpc.WithTransportCredentials(tlsCredentials))
-	if err != nil {
-		return err
-	}
-	defer socialConn.Close()
-
-	typeServerHabit := os.Getenv("HABIT_SERVICE_ADDR")
-	if typeServerHabit == "" {
-		typeServerHabit = "localhost:8082"
-	}
-	habitConn, err := grpc.Dial(typeServerHabit, grpc.WithTransportCredentials(tlsCredentials))
-	if err != nil {
-		return err
-	}
-	defer habitConn.Close()
-
-	typeServerStats := os.Getenv("STATS_SERVICE_ADDR")
-	if typeServerStats == "" {
-		typeServerStats = "localhost:8083"
-	}
-	statsConn, err := grpc.Dial(typeServerStats, grpc.WithTransportCredentials(tlsCredentials))
-	if err != nil {
-		return err
-	}
-	defer statsConn.Close()
-
 	userClient := clients.NewUserClient(pb.NewUserServiceClient(conn))
 	userHandler := userHandler.NewUserHandler(userClient)
-	socialClient := clients.NewSocialClient(pbSocial.NewSocialServiceClient(socialConn))
-	socialHandler := socialHandler.NewSocialHandler(socialClient)
-	habitClient := clients.NewHabitClient(pbHabit.NewHabitServiceClient(habitConn))
-	routineClient := clients.NewRoutineClient(pbHabit.NewRoutineServiceClient(habitConn))
-	habitHandler := habitHandlers.NewHabitHandler(habitClient, routineClient)
-	routineHandler := habitHandlers.NewRoutineHandler(routineClient, habitClient)
-	statsClient := clients.NewStatsClient(pbStats.NewStatsServiceClient(statsConn))
-	statsHandler := statsHandler.NewStatsHandler(statsClient)
 
-	r := routes.ControlRoutes(
-		userHandler,
-		socialHandler,
-		habitHandler,
-		routineHandler,
-		statsHandler,
-	)
-
+	r := routes.ControlRoutes(userHandler)
 	logger.Info("Gateway is running on :8081")
 
-	portServer := os.Getenv("PORT")
-
-	if err := http.ListenAndServe(portServer, r); err != nil {
+	if err := http.ListenAndServe(":8081", r); err != nil {
 		return err
 	}
 

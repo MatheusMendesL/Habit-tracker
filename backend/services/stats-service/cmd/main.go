@@ -4,7 +4,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"shared"
 	pbHabit "shared/pb/habit"
 	pb "shared/pb/stats"
 	pbUser "shared/pb/user"
@@ -17,6 +16,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -52,46 +52,25 @@ func startServer() {
 
 	statsRepo := repository.NewStatsRepository(queries)
 
-	userServiceAddr := os.Getenv("USER_SERVICE_ADDR")
-	if userServiceAddr == "" {
-		userServiceAddr = "localhost:8080"
-	}
-
-	habitServiceAddr := os.Getenv("HABIT_SERVICE_ADDR")
-	if habitServiceAddr == "" {
-		habitServiceAddr = "localhost:8082"
-	}
-
-	clientTLS, err := shared.LoadClientTLSCredentials()
+	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		logger.Fatal("failed to load client TLS credentials", zap.Error(err))
+		log.Fatalf("Não foi possível conectar: %v", err)
 	}
+	defer conn.Close()
 
-	userConn, err := grpc.NewClient(userServiceAddr, grpc.WithTransportCredentials(clientTLS))
-	if err != nil {
-		log.Fatalf("Não foi possível conectar ao User Service: %v", err)
-	}
-	defer userConn.Close()
-
-	habitConn, err := grpc.NewClient(habitServiceAddr, grpc.WithTransportCredentials(clientTLS))
-	if err != nil {
-		log.Fatalf("Não foi possível conectar ao Habit Service: %v", err)
-	}
-	defer habitConn.Close()
-
-	userServiceClient := pbUser.NewUserServiceClient(userConn)
-	habitServiceClient := pbHabit.NewHabitServiceClient(habitConn)
-	routineServiceClient := pbHabit.NewRoutineServiceClient(habitConn)
-	statsService := service.NewStatsService(statsRepo, userServiceClient, habitServiceClient, routineServiceClient)
+	userServiceClient := pbUser.NewUserServiceClient(conn)
+	habitServiceClient := pbHabit.NewHabitServiceClient(conn)
+	statsService := service.NewStatsService(statsRepo, userServiceClient, habitServiceClient)
 	statsHandler := handler.NewStatsHandler(statsService, logger, userServiceClient)
 
-	serverTLS, err := shared.LoadServerTLSCredentials()
+	/*tlsCredentials, err := loadTLCredentials()
+
 	if err != nil {
-		logger.Fatal("failed to load server TLS credentials", zap.Error(err))
-	}
+		logger.Fatal("failed to load TLS credentials", zap.Error(err))
+	}*/
 
 	grpcServer := grpc.NewServer(
-		grpc.Creds(serverTLS),
+		/*grpc.Creds(tlsCredentials),*/
 		grpc.UnaryInterceptor(
 			grpcZap.UnaryServerInterceptor(logger),
 		),
